@@ -1,0 +1,30 @@
+version: "3.2"
+services:
+
+  sql-server:
+    container_name: sql-server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "MeteorFlow2024"
+      ACCEPT_EULA: "Y"
+      
+  meteor-db:
+    container_name: meteor-core
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "meteor"
+      POSTGRES_PASSWORD: "MeteorFlow2024"
+      POSTGRES_DB: "core"
+
+  cache:
+    container_name: cache-api
+    image: redis:latest
+    ports:
+      - "6380:6380"
+    command: ["redis-server", "--requirepass", "MeteorFlow2024"]
+
+  

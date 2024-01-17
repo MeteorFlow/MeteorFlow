@@ -1,0 +1,13 @@
+.Rating--total {
+  padding-right: 50px;
+  border-right: 1px solid var(--border-color);
+}
+
+.Rating--star {
+  width: 300px;
+  padding-left: 50px;
+}
+.Rating--star__detail {
+  width: 100%;
+  margin-bottom: 5px;
+}

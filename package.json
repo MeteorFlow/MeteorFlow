@@ -1,0 +1,26 @@
+{
+  "name": "MeteorFlow",
+  "version": "1.0.0",
+  "scripts": {
+    "check-env": "bash scripts/env.sh || powershell scripts/env.ps1",
+    "restore": "bash scripts/restore.sh || powershell scripts/restore.ps1",
+    "build": "bash scripts/build.sh || powershell scripts/build.ps1",
+    "dev": "bash scripts/dev.sh || powershell scripts/dev.ps1",
+    "clean": "bash scripts/clean.sh || powershell scripts/clean.ps1",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "unix:check-env": "bash scripts/env.sh",
+    "unix:restore": "bash scripts/restore.sh",
+    "unix:build": "bash scripts/build.sh",
+    "unix:dev": "bash scripts/dev.sh",
+    "unix:clean": "bash scripts/clean.sh",
+    "win:check-env": "powershell scripts/env.ps1",
+    "win:restore": "powershell scripts/restore.ps1",
+    "win:build": "powershell scripts/build.ps1",
+    "win:dev": "powershell scripts/dev.ps1",
+    "win:clean": "powershell scripts/clean.ps1",
+    "db:update": "npm run db:update --prefix ./src/MeteorFlow.Web",
+    "db:remove": "npm run db:remove --prefix ./src/MeteorFlow.Web",
+    "db:add": "npm run db:add --prefix ./src/MeteorFlow.Web"
+  }
+}

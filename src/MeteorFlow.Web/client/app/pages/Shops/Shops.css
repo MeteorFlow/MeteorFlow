@@ -1,0 +1,15 @@
+.ShopsPage--ShopItem {
+  display: flex;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  width: 400px;
+  height: 100px;
+}
+
+.ShopsPage--ShopItem:hover {
+  cursor: pointer;
+}
+
+.ShopsPage--container {
+  margin: 100px 140px;
+}
