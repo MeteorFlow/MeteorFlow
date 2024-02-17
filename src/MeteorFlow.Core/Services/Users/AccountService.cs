@@ -16,6 +16,7 @@ public class AccountService(IMapper mapper, IAccountContext accountContext) : IA
 
     public async ValueTask<Accounts> AddAsync(Accounts accounts)
     {
+        
         accounts.Profile ??= new Profiles();
         var result = await accountContext.CreateAccount(mapper.Map<Account>(accounts));
 

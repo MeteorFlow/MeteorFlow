@@ -1,5 +1,6 @@
 using MeteorFlow.Core.Services.AppSettings;
 using MeteorFlow.Core.Services.Metadata;
+using MeteorFlow.Core.Services.Stations;
 using MeteorFlow.Core.Services.Users;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,11 +13,10 @@ public static class ServiceCollections
         // Configure and register your core services here
         // services.AddTransient<IMyService, MyService>();
         services.AddScoped<IAppSettingsService, AppSettingsService>();
-
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IUsersService, UsersService>();
-
         services.AddScoped<IMetadataService, MetadataService>();
+        services.AddScoped<IStationService, StationService>();
 
         // You can also configure services using the configuration parameter
         // var someConfigValue = configuration.GetValue<string>("SomeConfigKey");

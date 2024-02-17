@@ -1,4 +1,5 @@
 using AutoMapper;
+using MeteorFlow.Domain.Tenants;
 using MeteorFlow.Domain.Utils;
 using Newtonsoft.Json;
 
@@ -17,11 +18,11 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Address,
                 act => act.MapFrom(src => JsonConvert.DeserializeObject<Address>(src.AddressJson)));
         CreateMap<Domain.Accounts, Entities.Account>()
-            .ForMember(dest => dest.UserId, act => act.MapFrom(src => src.Profile.Id));
+            .ForMember(dest => dest.ProfileId, act => act.MapFrom(src => src.Profile.Id));
         CreateMap<Entities.Account, Domain.Accounts>();
         
-        CreateMap<Domain.Stations, Entities.Stations>();
-        CreateMap<Entities.Stations, Domain.Stations>();
+        CreateMap<Stations, Entities.Tenants.Stations>();
+        CreateMap<Entities.Tenants.Stations, Stations>();
         
         CreateMap<Domain.ObservationElements, Entities.ObservationElements>()
             .ForMember(dest => dest.ParentId, act => act.MapFrom(src => src.Parent.Id));

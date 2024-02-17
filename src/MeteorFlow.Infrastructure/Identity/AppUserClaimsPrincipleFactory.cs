@@ -15,7 +15,7 @@ public class AppUserClaimsPrincipleFactory(UserManager<Account> userManager, IOp
         //claimsIdentity.AddClaim(new Claim(ClaimTypes.Email,user?.Email));
         claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, account.UserName));
         // claimsIdentity.AddClaim(new Claim(ClaimTypes.MobilePhone,user.PhoneNumber));
-        claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, account.UserId.ToString(), ClaimValueTypes.String));
+        claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, account.ProfileId.ToString(), ClaimValueTypes.String));
 
         claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, account.Type.ToString()));
 

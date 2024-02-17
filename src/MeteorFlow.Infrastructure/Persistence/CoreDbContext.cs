@@ -1,4 +1,5 @@
 using MeteorFlow.Core.Entities;
+using MeteorFlow.Core.Entities.Tenants;
 using MeteorFlow.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,6 +68,10 @@ public class CoreDbContext : DbContext, ICoreDbContext
             .HasOne(u => u.Account)
             .WithMany(u => u.AccountTokens)
             .HasForeignKey(u => u.UserId);
+        modelBuilder.Entity<ObservationElements>()
+            .HasOne(u => u.Parent)            
+            .WithMany()
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
     #endregion

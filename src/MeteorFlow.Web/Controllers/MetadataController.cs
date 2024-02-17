@@ -11,7 +11,6 @@ namespace MeteorFlow.Web.Controllers;
 public class MetadataController(IMetadataService metadataService, ILogger<MetadataController> logger) : ControllerBase
 {
     private readonly ILogger<MetadataController> _logger = logger;
-    private readonly IMetadataService _metadataService = metadataService;
 
     [HttpGet]
     [Route("elements")]
@@ -19,7 +18,7 @@ public class MetadataController(IMetadataService metadataService, ILogger<Metada
     {
         try
         {
-            var elements = await _metadataService.GetElementsAsync();
+            var elements = await metadataService.GetElementsAsync();
             return Ok(elements);
         }
         catch (Exception)
@@ -34,7 +33,7 @@ public class MetadataController(IMetadataService metadataService, ILogger<Metada
     {
         try
         {
-            var units = await _metadataService.GetUnitsAsync();
+            var units = await metadataService.GetUnitsAsync();
             return Ok(units);
         }
         catch (Exception)
@@ -43,20 +42,7 @@ public class MetadataController(IMetadataService metadataService, ILogger<Metada
         }
     }
 
-    [HttpGet]
-    [Route("stations")]
-    public async ValueTask<IActionResult> GetStations()
-    {
-        try
-        {
-            var stations = await _metadataService.GetStationsAsync();
-            return Ok(stations);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
+
 
     [HttpGet]
     [Route("value")]
@@ -64,7 +50,7 @@ public class MetadataController(IMetadataService metadataService, ILogger<Metada
     {
         try
         {
-            var values = await _metadataService.GetValuesAsync(elementId, stationId);
+            var values = await metadataService.GetValuesAsync(elementId, stationId);
             return Ok(values);
         }
         catch (Exception)
@@ -80,7 +66,7 @@ public class MetadataController(IMetadataService metadataService, ILogger<Metada
     {
         try
         {
-            await _metadataService.AddValuesAsync(values);
+            await metadataService.AddValuesAsync(values);
             return CreatedAtAction(nameof(AddValue), values);
         }
         catch (Exception)
@@ -95,38 +81,8 @@ public class MetadataController(IMetadataService metadataService, ILogger<Metada
     {
         try
         {
-            await _metadataService.AddElementsAsync(elements);
+            await metadataService.AddElementsAsync(elements);
             return CreatedAtAction(nameof(AddElement), elements);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-    
-    [HttpPost]
-    [Route("station")]
-    public async ValueTask<IActionResult> AddStation([FromBody] Stations stations)
-    {
-        try
-        {
-            await _metadataService.AddStationAsync(stations);
-            return CreatedAtAction(nameof(AddStation), stations);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-    
-    [HttpPost]
-    [Route("unit")]
-    public async ValueTask<IActionResult> AddUnit([FromBody] ICollection<Units> units)
-    {
-        try
-        {
-            await _metadataService.AddUnitsAsync(units);
-            return CreatedAtAction(nameof(AddUnit), units);
         }
         catch (Exception)
         {
@@ -140,7 +96,7 @@ public class MetadataController(IMetadataService metadataService, ILogger<Metada
     {
         try
         {
-            await _metadataService.UpdateValuesAsync(values);
+            await metadataService.UpdateValuesAsync(values);
             return Ok();
         }
         catch (Exception)

@@ -1,4 +1,5 @@
 using MeteorFlow.Core.Entities;
+using MeteorFlow.Core.Entities.Tenants;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeteorFlow.Core.Extensions;

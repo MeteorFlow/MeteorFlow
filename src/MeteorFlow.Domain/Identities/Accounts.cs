@@ -1,3 +1,4 @@
+using MeteorFlow.Domain.Tenants;
 using MeteorFlow.Domain.Utils;
 
 namespace MeteorFlow.Domain;
@@ -9,6 +10,7 @@ public class Accounts : BaseEntity<int>
     public string UserName { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public Profiles Profile { get; set; }
+    public Stations Station { get; set; }
 }
 
 public class LoginInfo

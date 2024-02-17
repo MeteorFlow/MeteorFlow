@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using MeteorFlow.Domain;
-using Account = MeteorFlow.Core.Entities.Account;
 
 namespace MeteorFlow.Core.Entities;
 
@@ -23,8 +22,5 @@ public class Profiles
     public string AddressJson { get; set; } = string.Empty;
 
     public virtual Account? Account { get; set; }
-
-    [ForeignKey("Station")]
-    public int StationId { get; set; }
-    public virtual Stations Station { get; set; }
+    
 }

@@ -7,11 +7,9 @@ public interface IMetadataService
 {
     ValueTask<ICollection<ObservationElements>> GetElementsAsync();
     ValueTask<ICollection<Units>> GetUnitsAsync();
-    ValueTask<ICollection<Stations>> GetStationsAsync();
     ValueTask<ObservationValues> GetValuesAsync(int elementId, int stationId);
     ValueTask AddValuesAsync(ICollection<ObservationValues> values);
     ValueTask AddElementsAsync(ICollection<ObservationElements> elements);
-    ValueTask AddStationAsync(Stations stations);
     ValueTask AddUnitsAsync(ICollection<Units> units);
     ValueTask UpdateValuesAsync(ICollection<ObservationValues> values);
 }

@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
+using MeteorFlow.Core.Services.Stations;
 using MeteorFlow.Core.Services.Users;
 using MeteorFlow.Domain;
 using MeteorFlow.Infrastructure.Extensions;
@@ -11,7 +11,7 @@ namespace MeteorFlow.Web.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(IAccountService accountService, IJwtService jwtService, ILogger<AuthController> logger)
+public class AuthController(IAccountService accountService, IJwtService jwtService, ILogger<AuthController> logger, IStationService stationService)
     : ControllerBase
 {
     private readonly ILogger<AuthController> _logger = logger;
@@ -21,6 +21,24 @@ public class AuthController(IAccountService accountService, IJwtService jwtServi
     {
         try
         {
+            if (accounts is null)
+            {
+                throw new ValidationException("Account cannot be null");
+            }
+
+            if (accounts.Station is null)
+            {
+                throw new ValidationException("Account must be associated with a station");
+            }
+
+            var station = await stationService.GetStationByIdAsync(accounts.Station.Id);
+            if (station is null)
+            {
+                throw new ValidationException("Station not found");
+            }
+
+            accounts.Station = station;
+            
             var result = await accountService.AddAsync(accounts);
             return Ok(result);
         }

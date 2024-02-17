@@ -17,7 +17,7 @@ public class UsersService(ICoreDbContext context, IMapper mapper) : IUsersServic
 
     public async ValueTask<ICollection<Accounts>> GetAllAccountsAsync()
     {
-        var entities = await context.Accounts.Include(account => account.User).ToListAsync();
+        var entities = await context.Accounts.Include(account => account.Profile).ToListAsync();
         return mapper.Map<IList<Accounts>>(entities);
     }
 
@@ -51,16 +51,13 @@ public class UsersService(ICoreDbContext context, IMapper mapper) : IUsersServic
 
     public async ValueTask RemoveAsync(int id)
     {
-        var entity = await context.Accounts.Include(t => t.User).Where(t => t.Id == id).FirstOrDefaultAsync();
+        var entity = await context.Accounts.Include(t => t.Profile).Where(t => t.Id == id).FirstOrDefaultAsync();
         if (entity is null)
         {
             throw new ValidationException($"Invalid: {id} is not existed.");
         }
 
-        if (entity.User is not null)
-        {
-            context.Profiles.Remove(entity.User);
-        }
+        context.Profiles.Remove(entity.Profile);
 
         context.Accounts.Remove(entity);
         await context.SaveChangesAsync();

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using MeteorFlow.Core.Entities.Tenants;
 
 namespace MeteorFlow.Core.Entities;
 
