@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import Dialog from '../../components/Dialog.vue'
 
 const isOpen = ref(false)

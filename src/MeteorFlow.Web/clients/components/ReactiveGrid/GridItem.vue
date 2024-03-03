@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UCard } from "#components";
-import type { Layout } from "~/@types/vue-grid";
+import type { Layout } from "~/models";
 
 const props = defineProps<Layout>()
 

@@ -2,16 +2,17 @@
 export default defineNuxtConfig({
   srcDir: "clients/",
   modules: [
-    '@nuxt/ui',
+    "@nuxt/ui",
     [
       "@nuxtjs/i18n",
       {
         /* module options */
       },
     ],
+    "nuxt-icon",
   ],
   ui: {
-    icons: ['heroicons', 'fa', 'fa6-solid']
+    icons: ["heroicons", "fa", "fa6-solid"],
   },
   devtools: {
     // Enable devtools (default: true)
@@ -19,5 +20,6 @@ export default defineNuxtConfig({
     // VS Code Server options
     vscode: {},
     // ...other options
-  }
+  },
+  plugins: [{ src: "~/plugins/chart.client.ts", mode: "client" }],
 });
