@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Card from "../../components/Card.vue";
-import { UTable } from "#components";
+
+import type { TableColumn } from "~/models";
 
 const InfraSettings = [
   {
@@ -19,10 +19,7 @@ const InfraSettings = [
     title: "Postgres version",
     val: "15",
   },
-].map((el) => ({
-  title: el.title,
-  val: { value: el.val, class: "text-right" },
-}));
+];
 
 const UsageSettings = [
   {
@@ -49,22 +46,38 @@ const UsageSettings = [
     title: "Branches",
     val: "1",
   },
-].map((el) => ({
-  title: el.title,
-  val: { value: el.val, class: "text-right" },
-}));
+];
+
+const headers = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "val",
+    label: "Value",
+    align: "right",
+  },
+] as TableColumn[];
+
+const data = {
+  labels: ["January", "February", "March", "April", "May", "June"],
+  datasets: [
+    {
+      label: "Data",
+      data: [65, 59, 80, 81, 56, 55],
+      backgroundColor: "rgb(255, 99, 132)",
+    }
+  ]
+}
 </script>
 
 <template>
   <div>
     <NuxtLayout name="default">
       <div class="grid grid-cols-2 gap-4">
-        <Card size="md" title="Infrastructure Settings" icon="i-fa6-solid-tag">
-          <UTable :rows="InfraSettings" :ui="{ thead: 'collapse', divide: '' }">
-            <template #val-data="{ row }">
-              {{ row.val.value }}
-            </template>
-          </UTable>
+        <CoreCard size="md" title="Infrastructure Settings" icon="i-fa6-solid-tag">
+          <CoreTable :rows="InfraSettings" :columns="headers" hide-header />
 
           <template #footer>
             <div>
@@ -72,20 +85,20 @@ const UsageSettings = [
               connecting from different languages, frameworks, and platforms.
             </div>
           </template>
-        </Card>
+        </CoreCard>
 
-        <Card size="md" title="Usage" icon="i-fa6-solid-tag">
-          <UTable :rows="UsageSettings" :ui="{ thead: 'collapse', divide: '' }">
-            <template #val-data="{ row }">
-              {{ row.val.value }}
-            </template>
-          </UTable>
+        <CoreCard size="md" title="Usage" icon="i-fa6-solid-tag">
+          <CoreTable :rows="UsageSettings" :columns="headers" hide-header />
           <template #footer>
             <div>
               Metrics may be delayed by up to one hour. Read more about metrics.
             </div>
           </template>
-        </Card>
+        </CoreCard>
+
+        <CoreCard size="md" title="Usage" icon="i-fa6-solid-tag">
+          <CoreCharts variant="bar" :data="data" />
+        </CoreCard>
       </div>
     </NuxtLayout>
   </div>

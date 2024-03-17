@@ -1,4 +1,5 @@
 import { UInput } from "#components";
+import { Teleport } from "vue";
 
 const APISearch = defineComponent({
   props: {

@@ -7,7 +7,3 @@
     </NuxtLayout>
   </div>
 </template>
-
-<script setup lang="ts">
-import APISearch from "../../components/APISearch"
-</script>

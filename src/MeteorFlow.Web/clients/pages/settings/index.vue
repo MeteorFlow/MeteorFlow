@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import Dialog from '../../components/Dialog.vue'
 
 const isOpen = ref(false)
 
@@ -9,12 +8,12 @@ const isOpen = ref(false)
 <template>
   <div>
     <NuxtLayout name="default">
-      <Dialog variants="confirm" v-model="isOpen" title="Confirm" size="lg" icon="i-heroicons-exclamation-triangle">
+      <CoreDialog variants="confirm" v-model="isOpen" title="Confirm" size="lg" icon="i-heroicons-exclamation-triangle">
         <template #activator>
           <UButton label="Open" @click="isOpen = true" />
         </template>
         Modal
-      </Dialog>
+      </CoreDialog>
     </NuxtLayout>
   </div>
 </template>

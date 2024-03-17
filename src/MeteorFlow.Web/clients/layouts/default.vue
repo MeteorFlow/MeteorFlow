@@ -40,7 +40,7 @@ const links = [
 ];
 
 const ui = {
-  wrapper: "relative px-4 w-1/6",
+  wrapper: "relative p-4 w-1/6",
   padding: "px-2.5 py-1.5 ",
 };
 </script>
