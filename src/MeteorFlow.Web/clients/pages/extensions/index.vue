@@ -1,43 +1,56 @@
 <script setup lang="ts">
-const columns = [
-  {
-    key: "id",
-    label: "#",
-  },
-  {
-    key: "quantity",
-    label: "Quantity",
-  },
+const people = [
+  "Wade Cooper",
+  "Arlene Mccoy",
+  "Devon Webb",
+  "Tom Cook",
+  "Tanya Fox",
+  "Hellen Schmidt",
+  "Caroline Schultz",
+  "Mason Heaney",
+  "Claudie Smitham",
+  "Emil Schaefer",
 ];
 
-const items = [
-  {
-    id: 1,
-    quantity: { value: 100, class: "text-right" },
-  },
-  {
-    id: 2,
-    quantity: { value: 30, class: "text-right" },
-  },
-  {
-    id: 3,
-    quantity: { value: 30, class: "text-right" },
-  },
-  {
-    id: 4,
-    quantity: { value: 5, class: "text-right" },
-  },
-];
+const selected = ref("");
+const text = ref("");
+const password = ref("");
 </script>
 
 <template>
   <div>
     <NuxtLayout name="default">
-      <UTable :rows="items" :columns="columns">
-        <template #quantity-data="{ row }">
-          {{ row.quantity.value }}
-        </template>
-      </UTable>
+      <CoreSelect
+        size="md"
+        searchable
+        v-model="selected"
+        :items="people"
+        placeholder="Select people"
+      />
+      <CoreTextField
+        title="Title"
+        size="md"
+        icon="i-heroicons-bell-20-solid"
+      />
+      <CoreTextField
+        title="Title"
+        size="md"
+        variant="search"
+      />
+      <CoreTextField
+        title="Email"
+        size="md"
+        variant="email"
+        v-model="text"
+        required
+      />
+      <CoreTextField
+        title="Password"
+        size="md"
+        variant="password"
+        v-model="password"
+        required
+      />
     </NuxtLayout>
   </div>
 </template>

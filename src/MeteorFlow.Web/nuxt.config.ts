@@ -4,6 +4,9 @@ export default defineNuxtConfig({
   typescript: {
     typeCheck: true
   },
+  experimental: {
+    renderJsonPayloads: false
+  },
   components: {
     global: true,
     dirs: ["~/components"],

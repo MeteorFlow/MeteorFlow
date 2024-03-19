@@ -1,7 +1,6 @@
 <script setup lang="tsx">
-import { UCard } from "#components";
 import type { JSX } from "vue/jsx-runtime";
-import type { CardVariants, Size } from "~/models";
+import type { Size } from "~/models";
 
 const props = defineProps<{
   size?: Size;
