@@ -7,9 +7,13 @@ type Items = string[] | (T & { disabled?: boolean })[];
 const modelValue = defineModel<string | number | T>();
 
 const props = defineProps<{
+  title?: string;
+  description?: string;
+  help?: string;
+  required?: boolean;
+
   items: Items;
   size?: Size;
-  title?: string;
   placeholder?: string;
   multiple?: boolean;
   loading?: boolean;
@@ -28,28 +32,35 @@ const slots = defineSlots<{
 
 const ui = {};
 const searchablePlaceHolder = "Search...";
+
 </script>
 <template>
-  
-  <USelectMenu
-    v-model="modelValue"
-    :size="(props.size === 'full' ? '2xl' : props.size ?? 'md' as any)"
-    :options="props.items"
-    :multiple="props.multiple"
-    :loading="props.loading"
-    :placeholder="props.placeholder"
-    :by="props.itemValue"
-    :optionAttributes="props.itemTitle"
-    :searchAttributes="props.itemSearch"
-    clearSearchOnClose
-    :searchable="props.searchable"
-    :searchPlaceholder="searchablePlaceHolder"
+  <UFormGroup
+    :label="props.title"
+    :description="props.description"
+    :help="props.help"
+    :required="props.required"
   >
-    <template #leading v-if="slots.prepend">
-      <slot name="prepend"></slot>
-    </template>
-    <template #trailing v-if="slots.append">
-      <slot name="append"></slot>
-    </template>
-  </USelectMenu>
+    <USelectMenu
+      v-model="modelValue"
+      :size="(props.size === 'full' ? '2xl' : props.size ?? 'md' as any)"
+      :options="props.items"
+      :multiple="props.multiple"
+      :loading="props.loading"
+      :placeholder="props.placeholder"
+      :by="props.itemValue"
+      :optionAttributes="props.itemTitle"
+      :searchAttributes="props.itemSearch"
+      clearSearchOnClose
+      :searchable="props.searchable"
+      :searchPlaceholder="searchablePlaceHolder"
+    >
+      <template #leading v-if="slots.prepend">
+        <slot name="prepend"></slot>
+      </template>
+      <template #trailing v-if="slots.append">
+        <slot name="append"></slot>
+      </template>
+    </USelectMenu>
+  </UFormGroup>
 </template>

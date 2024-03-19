@@ -15,10 +15,17 @@ const props = defineProps<{
 </script>
 
 <template>
-  <UToggle
-    :on-icon="props.icon"
-    :off-icon="props.iconOff ?? props.icon"
-    v-model="model"
-    :size="(props.size ?? 'md' as any)"
-  />
+    <UFormGroup
+    :label="props.title"
+    :description="props.description"
+    :help="props.help"
+    :required="props.required"
+  >
+    <UToggle
+      :on-icon="props.icon"
+      :off-icon="props.iconOff ?? props.icon"
+      v-model="model"
+      :size="(props.size ?? 'md' as any)"
+    />
+  </UFormGroup>
 </template>
