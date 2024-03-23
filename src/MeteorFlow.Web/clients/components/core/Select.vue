@@ -19,7 +19,7 @@ const props = defineProps<{
   loading?: boolean;
 
   itemValue?: string & keyof T;
-  itemTitle?: keyof T;
+  itemTitle?: keyof T | ((val: Items[number]) => any);
   itemSearch?: (keyof T)[];
 
   searchable?: boolean | ((query: string) => any[] | Promise<any[]>);

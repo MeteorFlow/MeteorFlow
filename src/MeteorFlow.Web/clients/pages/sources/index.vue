@@ -8,12 +8,7 @@ const isOpen = ref(false)
 <template>
   <div>
     <NuxtLayout name="default">
-      <CoreDialog variants="confirm" v-model="isOpen" title="Confirm" size="lg" icon="i-heroicons-exclamation-triangle">
-        <template #activator>
-          <UButton label="Open" @click="isOpen = true" />
-        </template>
-        Modal
-      </CoreDialog>
+      <RtfEditor />
     </NuxtLayout>
   </div>
 </template>
