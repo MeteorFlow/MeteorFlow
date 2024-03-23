@@ -21,6 +21,8 @@ export default defineNuxtConfig({
     ],
     "nuxt-icon",
     "@nuxt/content",
+    "nuxt-tiptap-editor",
+    "~/modules/tiptap"
   ],
   ui: {
     icons: ["heroicons", "fa", "fa6-solid"],
@@ -38,6 +40,11 @@ export default defineNuxtConfig({
       reuseExistingServer: true,
     },
     // ...other options
+  },
+  tiptap: {
+    lowlight: {
+      theme: "github-dark",
+    },
   },
   plugins: [{ src: "~/plugins/chart.client.ts", mode: "client" }],
 });
