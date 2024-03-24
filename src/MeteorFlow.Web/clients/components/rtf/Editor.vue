@@ -1,13 +1,23 @@
 <script setup lang="ts">
+const model = defineModel<string>("", { default: "" });
+
 const editor = useEditor({
-  content: "<p>I'm running Tiptap with Vue.js. 🎉</p>",
+  content: model,
   extensions: [TiptapStarterKit, TiptapUnderline],
 });
+
+watch(
+  () => editor.value,
+  () => {
+    model.value = editor.value?.getHTML() ?? "";
+  },
+  { deep: true, immediate: true }
+);
 </script>
 
 <template>
   <div>
-    <div v-if="editor" class="flex flex-row flex-wrap space-x-2">
+    <div v-if="editor" class="flex flex-row flex-wrap space-x-2 pb-2">
       <RtfBold :editor="editor" />
       <RtfItalic :editor="editor" />
       <RtfStrike :editor="editor" />
@@ -18,6 +28,7 @@ const editor = useEditor({
       <RtfOrderedList :editor="editor" />
       <RtfUndo :editor="editor" />
       <RtfRedo :editor="editor" />
+      <RtfBreak :editor="editor" />
     </div>
     <TiptapEditorContent :editor="editor" class="editor-content" />
   </div>

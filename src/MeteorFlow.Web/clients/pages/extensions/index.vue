@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ValidateFunction, Validation } from '~/models';
+
 const people = [
   "Wade Cooper",
   "Arlene Mccoy",
@@ -11,6 +13,10 @@ const people = [
   "Claudie Smitham",
   "Emil Schaefer",
 ];
+
+const validator = useValidation();
+
+const ruleMin8 = async (value?: string): Promise<Validation> => value && value.length >= 8 ? true : "Minimum 8 characters"; 
 
 const selected = ref("");
 const text = ref("");
@@ -31,6 +37,7 @@ const password = ref("");
         title="Title"
         size="md"
         icon="i-heroicons-bell-20-solid"
+        :rules="[validator.createRules().required(), ruleMin8]"
       />
       <CoreTextField
         title="Title"

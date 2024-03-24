@@ -1,15 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   srcDir: "clients/",
-  typescript: {
-    typeCheck: true
-  },
   experimental: {
-    renderJsonPayloads: false
+    renderJsonPayloads: false,
   },
   components: {
     global: true,
     dirs: ["~/components"],
+  },
+  build: {
+    transpile: ["chart.js", "vue-chartjs", "vue-grid-layout"],
   },
   modules: [
     "@nuxt/ui",
@@ -19,18 +19,12 @@ export default defineNuxtConfig({
         /* module options */
       },
     ],
-    "nuxt-icon",
     "@nuxt/content",
     "nuxt-tiptap-editor",
-    "~/modules/tiptap"
+    "~/modules/tiptap",
   ],
   ui: {
     icons: ["heroicons", "fa", "fa6-solid"],
-  },
-  content: {
-    experimental: {
-      search: true,
-    },
   },
   devtools: {
     // Enable devtools (default: true)
@@ -46,5 +40,8 @@ export default defineNuxtConfig({
       theme: "github-dark",
     },
   },
-  plugins: [{ src: "~/plugins/chart.client.ts", mode: "client" }],
+  plugins: [
+    { src: "~/plugins/chart.client.ts", mode: "client" },
+    { src: "~/plugins/grid.client.ts", mode: "client" },
+  ],
 });

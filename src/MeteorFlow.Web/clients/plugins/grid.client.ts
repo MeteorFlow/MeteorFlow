@@ -1,4 +1,3 @@
-import { defineNuxtPlugin } from '#app'
 // @ts-ignore
 import VueGridLayout from 'vue-grid-layout'
 
