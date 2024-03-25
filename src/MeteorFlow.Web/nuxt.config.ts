@@ -8,9 +8,6 @@ export default defineNuxtConfig({
     global: true,
     dirs: ["~/components"],
   },
-  build: {
-    transpile: ["chart.js", "vue-chartjs", "vue-grid-layout"],
-  },
   modules: [
     "@nuxt/ui",
     [

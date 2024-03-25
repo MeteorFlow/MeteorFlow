@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-const isOpen = ref(false)
+import { ref } from "vue";
 
-const content = ref("")
+const content = ref("");
 
 watch(content, () => {
-  console.log(content.value)
-})
+  console.log("Content", content.value);
+});
 </script>
 
 <template>
@@ -14,7 +13,6 @@ watch(content, () => {
     <NuxtLayout name="default">
       <RtfEditor v-model="content" />
       {{ content }}
-
     </NuxtLayout>
   </div>
 </template>
