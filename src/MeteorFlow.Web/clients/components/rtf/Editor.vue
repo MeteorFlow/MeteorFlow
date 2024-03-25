@@ -1,18 +1,27 @@
 <script setup lang="ts">
 const model = defineModel<string>("", { default: "" });
+const emits = defineEmits<{
+  // <eventName>: <expected arguments>
+  "update:modelValue": [value: string]; // named tuple syntax
+}>();
 
 const editor = useEditor({
   content: model,
   extensions: [TiptapStarterKit, TiptapUnderline],
+  onUpdate({ editor }) {
+    if (editor.getHTML() == "<p></p>") {
+      emits("update:modelValue", "");
+    } else {
+      emits("update:modelValue", editor.getHTML());
+    }
+  },
 });
 
-watch(
-  () => editor.value,
-  () => {
-    model.value = editor.value?.getHTML() ?? "";
-  },
-  { deep: true, immediate: true }
-);
+const ui = {
+  wrapper:
+    "form-textarea relative block w-full dark:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0",
+  rounded: "rounded-md",
+};
 </script>
 
 <template>
@@ -30,34 +39,44 @@ watch(
       <RtfRedo :editor="editor" />
       <RtfBreak :editor="editor" />
     </div>
-    <TiptapEditorContent :editor="editor" class="editor-content" />
+    <TiptapEditorContent
+      :editor="editor"
+      :class="['editor-content', ui.wrapper, ui.rounded]"
+    />
   </div>
 </template>
 
 <style>
+.ProseMirror {
+  min-height: 100px;
+  max-height: 100px;
+  overflow: scroll;
+}
+.ProseMirror:focus {
+  outline: none;
+}
+
 .editor-content ul {
-  list-style: circle;
-  padding-left: 2em;
+  @apply list-disc pl-4;
 }
 
 .editor-content ol {
-  list-style: auto;
-  padding-left: 2em;
+  @apply list-decimal pl-4;
 }
 
 .editor-content h1 {
-  font-size: 1.7em;
+  @apply text-2xl font-bold;
 }
 
 .editor-content h2 {
-  font-size: 1.5em;
+  @apply text-xl font-bold;
 }
 
 .editor-content h3 {
-  font-size: 1.3em;
+  @apply text-lg font-bold;
 }
 
 .editor-content h4 {
-  font-size: 1.17em;
+  @apply text-base font-bold;
 }
 </style>
