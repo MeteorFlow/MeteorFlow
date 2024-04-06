@@ -7,50 +7,50 @@ namespace MeteorFlow.Core.Services.Stations;
 
 public class StationService(IMapper mapper, ICoreDbContext context) : IStationService
 {
-    public async ValueTask<Domain.Tenants.Stations> AddStationAsync(Domain.Tenants.Stations stations)
+    public async ValueTask<Domain.Tenants.Tenants> AddStationAsync(Domain.Tenants.Tenants tenants)
     {
-        if (string.IsNullOrWhiteSpace(stations.Name))
+        if (string.IsNullOrWhiteSpace(tenants.Name))
         {
-            throw new ValidationException($"Invalid: {nameof(Domain.Tenants.Stations.Name)} should not be empty.");
+            throw new ValidationException($"Invalid: {nameof(Domain.Tenants.Tenants.Name)} should not be empty.");
         }
 
-        var entity = context.Stations.Add(mapper.Map<Entities.Tenants.Stations>(stations)).Entity;
+        var entity = context.Tenants.Add(mapper.Map<Entities.Department>(tenants)).Entity;
         await context.SaveChangesAsync();
-        return mapper.Map<Domain.Tenants.Stations>(entity);
+        return mapper.Map<Domain.Tenants.Tenants>(entity);
     }
 
-    public async ValueTask UpdateStationAsync(Domain.Tenants.Stations stations)
+    public async ValueTask UpdateStationAsync(Domain.Tenants.Tenants tenants)
     {
-        var entity = await context.Stations.FirstOrDefaultAsync(s => s.Id == stations.Id);
+        var entity = await context.Tenants.FirstOrDefaultAsync(s => s.Id == tenants.Id);
         if (entity is null)
         {
-            throw new ValidationException($"Invalid: {stations.Id} is not existed.");
+            throw new ValidationException($"Invalid: {tenants.Id} is not existed.");
         }
-        context.Stations.Entry(entity).CurrentValues.SetValues(mapper.Map<Entities.Tenants.Stations>(stations));
+        context.Tenants.Entry(entity).CurrentValues.SetValues(mapper.Map<Entities.Department>(tenants));
         await context.SaveChangesAsync();
     }
 
-    public async ValueTask<ICollection<Domain.Tenants.Stations>> GetStationsAsync()
+    public async ValueTask<ICollection<Domain.Tenants.Tenants>> GetStationsAsync()
     {
-        var entities = await context.Stations.AsNoTracking().ToListAsync();
-        return mapper.Map<IList<Domain.Tenants.Stations>>(entities);
+        var entities = await context.Tenants.AsNoTracking().ToListAsync();
+        return mapper.Map<IList<Domain.Tenants.Tenants>>(entities);
     }
 
-    public async ValueTask<Domain.Tenants.Stations?> GetStationByIdAsync(int stationId)
+    public async ValueTask<Domain.Tenants.Tenants?> GetStationByIdAsync(int stationId)
     {
-        var entity = await context.Stations.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stationId);
-        return mapper.Map<Domain.Tenants.Stations>(entity);
+        var entity = await context.Tenants.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stationId);
+        return mapper.Map<Domain.Tenants.Tenants>(entity);
     }
 
     public async ValueTask RemoveStationAsync(int stationId)
     {
-        var entity = await context.Stations.FirstOrDefaultAsync(s => s.Id == stationId);
+        var entity = await context.Tenants.FirstOrDefaultAsync(s => s.Id == stationId);
         if (entity is null)
         {
             throw new ValidationException($"Invalid: {stationId} is not existed.");
         }
         
-        context.Stations.Remove(entity);
+        context.Tenants.Remove(entity);
         await context.SaveChangesAsync();
     }
 }

@@ -42,11 +42,11 @@ public class StationController(IStationService stationService, ILogger<StationCo
     
         
     [HttpPost]
-    public async ValueTask<IActionResult> AddStation([FromBody] Stations station)
+    public async ValueTask<IActionResult> AddStation([FromBody] Tenants tenant)
     {
         try
         {
-            var result = await stationService.AddStationAsync(station);
+            var result = await stationService.AddStationAsync(tenant);
             return CreatedAtAction(nameof(AddStation), result);
         }
         catch (Exception)
@@ -56,11 +56,11 @@ public class StationController(IStationService stationService, ILogger<StationCo
     }
     
     [HttpPut]
-    public async ValueTask<IActionResult> UpdateStation([FromBody] Stations station)
+    public async ValueTask<IActionResult> UpdateStation([FromBody] Tenants tenant)
     {
         try
         {
-            await stationService.UpdateStationAsync(station);
+            await stationService.UpdateStationAsync(tenant);
             return Ok();
         }
         catch (Exception)

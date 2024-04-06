@@ -3,7 +3,6 @@ using AutoMapper;
 using MeteorFlow.Core.Entities;
 using MeteorFlow.Core.Extensions;
 using MeteorFlow.Domain;
-using Profiles = MeteorFlow.Domain.Profiles;
 
 namespace MeteorFlow.Core.Services.Users;
 
@@ -17,7 +16,7 @@ public class AccountService(IMapper mapper, IAccountContext accountContext) : IA
     public async ValueTask<Accounts> AddAsync(Accounts accounts)
     {
         
-        accounts.Profile ??= new Profiles();
+        accounts.User ??= new Domain.Users();
         var result = await accountContext.CreateAccount(mapper.Map<Account>(accounts));
 
         if (!result.Succeeded)

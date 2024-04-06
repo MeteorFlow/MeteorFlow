@@ -1,5 +1,6 @@
 using AutoMapper;
 using MeteorFlow.Core.Entities;
+using MeteorFlow.Core.Entities.App;
 using MeteorFlow.Core.Extensions;
 using MeteorFlow.Core.Services.AppSettings;
 using MeteorFlow.Test.Utils;
@@ -20,7 +21,7 @@ public class TestAppSettingsService
             var setting = new AppSettings
             {
                 Id = i,
-                ReferenceKey = $"RefKey_{i + 1}",
+                Name = $"RefKey_{i + 1}",
                 Value = $"Value_{i + 1}",
                 Description = $"Description_{i + 1}",
                 Type = $"Type_{i + 1}"
@@ -58,7 +59,7 @@ public class TestAppSettingsService
 
         var service = new AppSettingsService(dbContext, mapper);
 
-        var setting = new Domain.AppSettings
+        var setting = new Domain.App.AppSettings
         {
             Id = Random.Shared.Next(),
             ReferenceKey = "TestKey",

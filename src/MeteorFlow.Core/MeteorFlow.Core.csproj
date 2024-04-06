@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MeteorFlow.Core.Fx\MeteorFlow.Core.Fx.csproj" />
       <ProjectReference Include="..\MeteorFlow.Domain\MeteorFlow.Domain.csproj" />
     </ItemGroup>
 

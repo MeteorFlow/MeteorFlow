@@ -10,6 +10,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Test", "MeteorFlow.Test\MeteorFlow.Test.csproj", "{05856993-600A-4194-89A3-AE14BF24F7C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Fx", "MeteorFlow.Fx\MeteorFlow.Fx.csproj", "{7856D674-F2F7-43F8-96FF-1B02FD714AFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Core.Fx", "MeteorFlow.Core.Fx\MeteorFlow.Core.Fx.csproj", "{E9511B22-A607-4EF1-918E-C0C3FC5915B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeteorFlow.Cloud", "MeteorFlow.Cloud", "{0514B632-862F-4A29-9D11-73BED1DF9FF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Cloud.Api", "MeteorFlow.Cloud\MeteorFlow.Cloud.Api\MeteorFlow.Cloud.Api.csproj", "{ED094704-AC7C-427E-8D11-021DF4BFFDA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Cloud.Auth", "MeteorFlow.Cloud\MeteorFlow.Cloud.Auth\MeteorFlow.Cloud.Auth.csproj", "{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +46,25 @@ Global
 		{05856993-600A-4194-89A3-AE14BF24F7C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05856993-600A-4194-89A3-AE14BF24F7C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05856993-600A-4194-89A3-AE14BF24F7C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7856D674-F2F7-43F8-96FF-1B02FD714AFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7856D674-F2F7-43F8-96FF-1B02FD714AFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7856D674-F2F7-43F8-96FF-1B02FD714AFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7856D674-F2F7-43F8-96FF-1B02FD714AFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9511B22-A607-4EF1-918E-C0C3FC5915B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9511B22-A607-4EF1-918E-C0C3FC5915B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9511B22-A607-4EF1-918E-C0C3FC5915B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9511B22-A607-4EF1-918E-C0C3FC5915B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED094704-AC7C-427E-8D11-021DF4BFFDA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED094704-AC7C-427E-8D11-021DF4BFFDA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED094704-AC7C-427E-8D11-021DF4BFFDA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED094704-AC7C-427E-8D11-021DF4BFFDA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ED094704-AC7C-427E-8D11-021DF4BFFDA4} = {0514B632-862F-4A29-9D11-73BED1DF9FF0}
+		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB} = {0514B632-862F-4A29-9D11-73BED1DF9FF0}
 	EndGlobalSection
 EndGlobal

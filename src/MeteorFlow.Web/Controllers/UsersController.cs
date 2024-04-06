@@ -28,7 +28,7 @@ public class UsersController(ILogger<UsersController> logger, IUsersService user
     }
 
     [HttpPost("update")]
-    public async ValueTask<IActionResult> UpdateUser(ICollection<Profiles> users)
+    public async ValueTask<IActionResult> UpdateUser(ICollection<Users> users)
     {
         try
         {

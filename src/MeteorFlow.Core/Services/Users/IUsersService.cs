@@ -5,10 +5,10 @@ using Domain;
 
 public interface IUsersService
 {
-    ValueTask<ICollection<Profiles>> GetAllUsersAsync();
+    ValueTask<ICollection<Users>> GetAllUsersAsync();
     ValueTask<ICollection<Accounts>> GetAllAccountsAsync();
-    ValueTask<Profiles> GetById(int id);
-    ValueTask<Profiles> GetById(BaseEntity<int> id);
-    ValueTask UpdateAsync(ICollection<Profiles> users);
+    ValueTask<Users> GetById(int id);
+    ValueTask<Users> GetById(BaseEntity<int> id);
+    ValueTask UpdateAsync(ICollection<Users> users);
     ValueTask RemoveAsync(int id);
 }

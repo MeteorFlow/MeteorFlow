@@ -7,20 +7,20 @@ namespace MeteorFlow.Core.Services.AppSettings;
 
 public class AppSettingsService(ICoreDbContext context, IMapper mapper) : IAppSettingsService
 {
-    public async ValueTask<ICollection<Domain.AppSettings>> GetAllAsync()
+    public async ValueTask<ICollection<Domain.App.AppSettings>> GetAllAsync()
     {
         var entities = await context.AppSettings.ToListAsync();
-        return mapper.Map<IList<Domain.AppSettings>>(entities);
+        return mapper.Map<IList<Domain.App.AppSettings>>(entities);
     }
 
-    public async ValueTask<Domain.AppSettings?> GetById(string referenceKey)
+    public async ValueTask<Domain.App.AppSettings?> GetById(string referenceKey)
     {
         var entities = await context.AppSettings.ToListAsync();
-        var result = entities.Find(t => t.ReferenceKey == referenceKey);
-        return mapper.Map<Domain.AppSettings>(result);
+        var result = entities.Find(t => t.Name == referenceKey);
+        return mapper.Map<Domain.App.AppSettings>(result);
     }
 
-    public async ValueTask UpdateAsync(ICollection<Domain.AppSettings> settings)
+    public async ValueTask UpdateAsync(ICollection<Domain.App.AppSettings> settings)
     {
         foreach (var setting in settings)
         {
@@ -31,21 +31,21 @@ public class AppSettingsService(ICoreDbContext context, IMapper mapper) : IAppSe
             {
                 throw new ValidationException($"Invalid: {setting.ReferenceKey} is not existed.");
             }
-            context.AppSettings.Entry(entity).CurrentValues.SetValues(mapper.Map<Entities.AppSettings>(setting));
+            context.AppSettings.Entry(entity).CurrentValues.SetValues(mapper.Map<Entities.App.AppSettings>(setting));
             await context.SaveChangesAsync();
         }
     }
 
-    public async ValueTask<Domain.AppSettings> AddAsync(Domain.AppSettings setting)
+    public async ValueTask<Domain.App.AppSettings> AddAsync(Domain.App.AppSettings setting)
     {
         if (string.IsNullOrWhiteSpace(setting.ReferenceKey))
         {
-            throw new ValidationException($"Invalid: {nameof(Domain.AppSettings.ReferenceKey)} should not be empty.");
+            throw new ValidationException($"Invalid: {nameof(Domain.App.AppSettings.ReferenceKey)} should not be empty.");
         }
 
-        var entity = context.AppSettings.Add(mapper.Map<Entities.AppSettings>(setting)).Entity;
+        var entity = context.AppSettings.Add(mapper.Map<Entities.App.AppSettings>(setting)).Entity;
         await context.SaveChangesAsync();
-        return mapper.Map<Domain.AppSettings>(entity);
+        return mapper.Map<Domain.App.AppSettings>(entity);
     }
 
     public async ValueTask Remove(string id)

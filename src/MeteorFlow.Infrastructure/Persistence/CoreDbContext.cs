@@ -1,6 +1,8 @@
 using MeteorFlow.Core.Entities;
-using MeteorFlow.Core.Entities.Tenants;
+using MeteorFlow.Core.Entities.App;
+using MeteorFlow.Core.Entities.Forms;
 using MeteorFlow.Core.Extensions;
+using MeteorFlow.Core.Fx.Identities;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeteorFlow.Infrastructure.Persistence;
@@ -18,18 +20,15 @@ public class CoreDbContext : DbContext, ICoreDbContext
 
     #region DbSet
 
+    public DbSet<AppDefinitions> AppDefinitions { get; set; }
+    public DbSet<AppInstances> AppInstances { get; set; }
+    public DbSet<AppVersionControls> AppVersionControls { get; set; }
     public DbSet<AppSettings> AppSettings { get; set; }
-    public DbSet<Profiles> Profiles { get; set; }
-    public DbSet<Stations> Stations { get; set; }
-    public DbSet<ObservationElements> ObservationElements { get; set; }
-    public DbSet<ObservationValues> ObservationValues { get; set; }
-    public DbSet<Units> Units { get; set; }
-    public DbSet<Account> Accounts { get; set; }
-    public DbSet<AccountClaim> AccountClaims { get; set; }
-    public DbSet<AccountLogins> AccountLogins { get; set; }
-    public DbSet<AccountTokens> AccountTokens { get; set; }
-    public DbSet<AccountRole> AccountRoles { get; set; }
-    public DbSet<RoleClaims> RoleClaims { get; set; }
+    public DbSet<Users> Users { get; set; }
+    public DbSet<Tenants> Tenants { get; set; }
+    public DbSet<FormBlocks> FormBlocks { get; set; }
+    public DbSet<FormElements> FormElements { get; set; }
+    public DbSet<ElementSchemas> ElementSchemas { get; set; }
     public DbSet<Roles> Roles { get; set; }
 
     #endregion
@@ -43,35 +42,7 @@ public class CoreDbContext : DbContext, ICoreDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AccountClaim>()
-            .HasOne(u => u.Account)
-            .WithMany(u => u.Claims)
-            .HasForeignKey(u => u.UserId);
-        modelBuilder.Entity<RoleClaims>()
-            .HasOne(u => u.Role)
-            .WithMany(u => u.Claims)
-            .HasForeignKey(u => u.RoleId)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<AccountLogins>()
-            .HasOne(u => u.Account)
-            .WithMany(u => u.AccountLogins)
-            .HasForeignKey(u => u.UserId);
-        modelBuilder.Entity<AccountRole>()
-            .HasOne(u => u.Account)
-            .WithMany(u => u.AccountRoles)
-            .HasForeignKey(u => u.UserId);
-        modelBuilder.Entity<AccountRole>()
-            .HasOne(u => u.Role)
-            .WithMany(u => u.Users)
-            .HasForeignKey(u => u.RoleId);
-        modelBuilder.Entity<AccountTokens>()
-            .HasOne(u => u.Account)
-            .WithMany(u => u.AccountTokens)
-            .HasForeignKey(u => u.UserId);
-        modelBuilder.Entity<ObservationElements>()
-            .HasOne(u => u.Parent)            
-            .WithMany()
-            .OnDelete(DeleteBehavior.NoAction);
+
     }
 
     #endregion
