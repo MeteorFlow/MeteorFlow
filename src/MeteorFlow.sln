@@ -12,13 +12,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Test", "MeteorFl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Fx", "MeteorFlow.Fx\MeteorFlow.Fx.csproj", "{7856D674-F2F7-43F8-96FF-1B02FD714AFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Core.Fx", "MeteorFlow.Core.Fx\MeteorFlow.Core.Fx.csproj", "{E9511B22-A607-4EF1-918E-C0C3FC5915B0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeteorFlow.Auth", "MeteorFlow.Auth", "{0514B632-862F-4A29-9D11-73BED1DF9FF0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeteorFlow.Cloud", "MeteorFlow.Cloud", "{0514B632-862F-4A29-9D11-73BED1DF9FF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Auth.Api", "MeteorFlow.Cloud\MeteorFlow.Auth.Api\MeteorFlow.Auth.Api.csproj", "{ED094704-AC7C-427E-8D11-021DF4BFFDA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Cloud.Api", "MeteorFlow.Cloud\MeteorFlow.Cloud.Api\MeteorFlow.Cloud.Api.csproj", "{ED094704-AC7C-427E-8D11-021DF4BFFDA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Auth.Core", "MeteorFlow.Cloud\MeteorFlow.Auth.Core\MeteorFlow.Auth.Core.csproj", "{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Cloud.Auth", "MeteorFlow.Cloud\MeteorFlow.Cloud.Auth\MeteorFlow.Cloud.Auth.csproj", "{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeteorFlow.FormBuilder", "MeteorFlow.FormBuilder", "{7A4FBDA6-2FC3-4DEB-B31D-4DABBAE3AC06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.FormBuilder.Api", "MeteorFlow.FormBuilder.Api\MeteorFlow.FormBuilder.Api.csproj", "{0E3E9DB2-E19A-4526-B880-7ED2F5EEAD70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.FormBuilder.Core", "MeteorFlow.FormBuilder.Core\MeteorFlow.FormBuilder.Core.csproj", "{39AC53E9-E9FC-4BD4-A52F-78128EC61A3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,10 +54,6 @@ Global
 		{7856D674-F2F7-43F8-96FF-1B02FD714AFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7856D674-F2F7-43F8-96FF-1B02FD714AFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7856D674-F2F7-43F8-96FF-1B02FD714AFF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E9511B22-A607-4EF1-918E-C0C3FC5915B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9511B22-A607-4EF1-918E-C0C3FC5915B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9511B22-A607-4EF1-918E-C0C3FC5915B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9511B22-A607-4EF1-918E-C0C3FC5915B0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED094704-AC7C-427E-8D11-021DF4BFFDA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED094704-AC7C-427E-8D11-021DF4BFFDA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED094704-AC7C-427E-8D11-021DF4BFFDA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -62,9 +62,19 @@ Global
 		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E3E9DB2-E19A-4526-B880-7ED2F5EEAD70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E3E9DB2-E19A-4526-B880-7ED2F5EEAD70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E3E9DB2-E19A-4526-B880-7ED2F5EEAD70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E3E9DB2-E19A-4526-B880-7ED2F5EEAD70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39AC53E9-E9FC-4BD4-A52F-78128EC61A3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39AC53E9-E9FC-4BD4-A52F-78128EC61A3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39AC53E9-E9FC-4BD4-A52F-78128EC61A3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39AC53E9-E9FC-4BD4-A52F-78128EC61A3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ED094704-AC7C-427E-8D11-021DF4BFFDA4} = {0514B632-862F-4A29-9D11-73BED1DF9FF0}
 		{E9434171-EA3B-4BC3-91C4-72EE5BCEC0DB} = {0514B632-862F-4A29-9D11-73BED1DF9FF0}
+		{0E3E9DB2-E19A-4526-B880-7ED2F5EEAD70} = {7A4FBDA6-2FC3-4DEB-B31D-4DABBAE3AC06}
+		{39AC53E9-E9FC-4BD4-A52F-78128EC61A3D} = {7A4FBDA6-2FC3-4DEB-B31D-4DABBAE3AC06}
 	EndGlobalSection
 EndGlobal

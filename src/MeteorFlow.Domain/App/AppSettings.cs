@@ -1,14 +1,12 @@
-using MeteorFlow.Fx.Commons;
-using MeteorFlow.Fx.Models;
+using MeteorFlow.Domain.Commons;
+using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.Domain.App;
 
-public class AppSettings : JsonBase<Guid>, IObject
+public class AppSettings : JsonBase<Guid>
 {
     public string Name { get; set; }
     public string Value { get; set; } = String.Empty;
     public string Description { get; set; } = String.Empty;
-
-    public Icon Icon { get; set; }
     public string Type { get; set; } = String.Empty;
 }

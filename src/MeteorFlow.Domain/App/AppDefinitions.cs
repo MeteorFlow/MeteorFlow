@@ -1,6 +1,6 @@
 
-using MeteorFlow.Fx.Commons;
-using MeteorFlow.Fx.Models;
+using MeteorFlow.Domain.Commons;
+using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.Domain.App;
 

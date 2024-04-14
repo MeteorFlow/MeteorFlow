@@ -1,6 +1,5 @@
-using MeteorFlow.Core.Extensions;
-using MeteorFlow.Infrastructure.Extensions;
-using MeteorFlow.Infrastructure.Jwt;
+using MeteorFlow.Core;
+using MeteorFlow.Infrastructure;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,11 +9,9 @@ builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json");
 
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
 
 // Add services to the container.
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddCoreServices();
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
