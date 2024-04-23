@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using MeteorFlow.Fx.Entities;
+﻿using MeteorFlow.Fx.Entities;
 using MeteorFlow.Fx.Repositories;
-using Microsoft.CSharp.RuntimeBinder;
 
 namespace MeteorFlow.Fx.Queries;
 
-public class GetByIdQuery<TEntity, TKey> : IQuery<TEntity>
+public abstract class GetByIdQuery<TEntity, TKey> : IQuery<TEntity>
     where TEntity : Entity<TKey> where TKey : IEquatable<TKey>
 {
     public TKey Id { get; set; }

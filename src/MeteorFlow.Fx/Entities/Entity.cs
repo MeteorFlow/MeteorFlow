@@ -1,6 +1,6 @@
 namespace MeteorFlow.Fx.Entities;
 
-public abstract class Entity<T>: IRecoverable, IHasKey<T> where T: IEquatable<T>
+public abstract class Entity<T>: IRecoverable, IHasKey<T>
 {
     public DateTimeOffset CreatedDate { get; set; }
     public DateTimeOffset? LastModifiedDate { get; set; }

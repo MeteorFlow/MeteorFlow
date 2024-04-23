@@ -1,5 +1,9 @@
+using System.Reflection;
 using MeteorFlow.Core;
+using MeteorFlow.Fx;
 using MeteorFlow.Infrastructure;
+using MeteorFlow.Infrastructure.DateTimes;
+using MeteorFlow.Infrastructure.Repositories;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +15,14 @@ builder.Configuration
 
 
 // Add services to the container.
+builder.Services.AddApplicationServices();
+builder.Services.AddCommandHandlers(Assembly.GetExecutingAssembly());
+builder.Services.AddQueryHandlers(Assembly.GetExecutingAssembly());
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddCoreRepositories();
+builder.Services.AddCoreUow();
 builder.Services.AddCoreServices();
+builder.Services.AddDateTimeProvider();
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>

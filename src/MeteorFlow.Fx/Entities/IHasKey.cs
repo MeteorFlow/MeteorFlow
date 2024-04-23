@@ -1,7 +1,7 @@
 
 namespace MeteorFlow.Fx.Entities;
 
-public interface IHasKey<T> where T : IEquatable<T>
+public interface IHasKey<T>
 { 
     T Id { get; set; }
 }

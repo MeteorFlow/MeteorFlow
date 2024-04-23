@@ -2,5 +2,5 @@ namespace MeteorFlow.Fx.Queries;
 
 public interface IQueryDispatcher
 {
-    Task<TQueryResult> Dispatch<TQueryResult>(IQuery<TQueryResult> query, CancellationToken cancellation = default);
+    Task<TResult> Dispatch<TQuery, TResult>(TQuery query, CancellationToken cancellation = default) where TQuery : IQuery<TResult>;
 }

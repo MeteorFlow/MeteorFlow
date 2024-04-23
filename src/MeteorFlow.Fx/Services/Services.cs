@@ -1,4 +1,3 @@
-using AutoMapper;
 using MeteorFlow.Fx.Entities;
 using MeteorFlow.Fx.Exceptions;
 using MeteorFlow.Fx.Repositories;

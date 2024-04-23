@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Commons\" />
+      <Folder Include="Settings\" />
     </ItemGroup>
 
 </Project>

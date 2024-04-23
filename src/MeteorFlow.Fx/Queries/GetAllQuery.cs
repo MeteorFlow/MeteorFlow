@@ -4,7 +4,7 @@ using MeteorFlow.Fx.Repositories;
 
 namespace MeteorFlow.Fx.Queries;
 
-public class GetAllQuery<TEntity, TKey> : IQuery<List<TEntity>>
+public abstract class GetAllQuery<TEntity, TKey> : IQuery<List<TEntity>>
      where TEntity : Entity<TKey> where TKey : IEquatable<TKey>;
 
 internal class GetEntitiesQueryHandler<TEntity, TKey>(IRepository<TEntity, TKey> repository)

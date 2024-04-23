@@ -4,9 +4,9 @@ namespace MeteorFlow.Fx.Queries;
 
 internal class QueryDispatcher(IServiceProvider serviceProvider) : IQueryDispatcher
 {
-    public Task<TQueryResult> Dispatch<TQueryResult>(IQuery<TQueryResult> query, CancellationToken cancellation = default)
+    public Task<TResult> Dispatch<TQuery, TResult>(TQuery query, CancellationToken cancellation = default) where TQuery : IQuery<TResult>
     {
-        var handler = serviceProvider.GetRequiredService<IQueryHandler<IQuery<TQueryResult>, TQueryResult>>();
+        var handler = serviceProvider.GetRequiredService<IQueryHandler<TQuery, TResult>>();
         return handler.HandleAsync(query, cancellation);
     }
 }

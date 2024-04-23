@@ -19,8 +19,8 @@
     "win:build": "powershell scripts/build.ps1",
     "win:dev": "powershell scripts/dev.ps1",
     "win:clean": "powershell scripts/clean.ps1",
-    "db:update": "npm run db:update --prefix ./src/MeteorFlow.Web",
-    "db:remove": "npm run db:remove --prefix ./src/MeteorFlow.Web",
-    "db:add": "npm run db:add --prefix ./src/MeteorFlow.Web"
+    "db:update": "dotnet ef database update --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj",
+    "db:remove": "dotnet ef migrations remove -f --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj",
+    "db:add": "dotnet ef migrations add --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj"
   }
 }

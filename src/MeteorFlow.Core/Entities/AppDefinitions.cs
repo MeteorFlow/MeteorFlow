@@ -16,7 +16,7 @@ public class AppDefinitions: Entity<Guid>, IEntityObject
     public string Icon { get; set; } = string.Empty;
     
     [ForeignKey(nameof(BaseDefinition))]
-    public Guid BaseDefinitionId { get; set; }
+    public Guid? BaseDefinitionId { get; set; }
     public virtual AppDefinitions? BaseDefinition { get; set; }
 
 }

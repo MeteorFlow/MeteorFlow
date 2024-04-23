@@ -3,7 +3,6 @@ using MeteorFlow.Core;
 using MeteorFlow.Core.Entities;
 using MeteorFlow.Core.Repositories;
 using MeteorFlow.Fx;
-using MeteorFlow.Fx.DateTimes;
 using MeteorFlow.Fx.Repositories;
 using MeteorFlow.Fx.Services;
 using MeteorFlow.Infrastructure.DateTimes;
@@ -75,9 +74,7 @@ public class SettingServiceTests
         using var scope = _serviceProvider.CreateScope();
         var serviceProvider = scope.ServiceProvider;
 
-        var dateTimeProvider = serviceProvider.GetRequiredService<IDateTimeProvider>();
         var mapper = serviceProvider.GetRequiredService<IMapper>();
-        var repository = serviceProvider.GetRequiredService<ISettingRepository>();
         var service = serviceProvider.GetRequiredService<IServices<AppSettings, Guid>>();
 
         var settingToAdd = new Domain.App.AppSettings

@@ -1,6 +1,6 @@
 namespace MeteorFlow.Fx.Commands;
 
-public interface ICommandDispatcher<in TCommand, TCommandResult>: ICommand<TCommandResult>
+public interface ICommandDispatcher
 {
-    Task<TCommandResult> Dispatch(TCommand command, CancellationToken cancellation);
+    Task<TCommandResult> Dispatch<TCommand, TCommandResult>(TCommand command, CancellationToken cancellation = default) where TCommand : ICommand<TCommandResult>;
 }

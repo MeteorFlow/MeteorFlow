@@ -1,6 +1,5 @@
 
-using MeteorFlow.Core.Entities;
 
 namespace MeteorFlow.Core.Repositories;
 
-public interface IDefinitionRepository: ICoreRepository<AppDefinitions>;
+public interface IDefinitionRepository: ICoreRepository<Entities.AppDefinitions>;

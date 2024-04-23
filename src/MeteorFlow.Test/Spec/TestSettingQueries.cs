@@ -1,9 +1,9 @@
-using AutoMapper;
+using System.Reflection;
 using MeteorFlow.Core;
 using MeteorFlow.Core.Entities;
 using MeteorFlow.Core.Repositories;
+using MeteorFlow.Core.Settings.Queries;
 using MeteorFlow.Fx;
-using MeteorFlow.Fx.DateTimes;
 using MeteorFlow.Fx.Queries;
 using MeteorFlow.Fx.Repositories;
 using MeteorFlow.Fx.Services;
@@ -34,7 +34,7 @@ public class TestSettingQueries
         services.AddScoped(typeof(IRepository<,>), typeof(TestRepository<,>) );
         services.AddScoped<ISettingRepository, SettingRepository>();
         services.AddScoped(typeof(IUnitOfWork), provider => provider.GetRequiredService<TestDbContext>());
-        services.AddApplicationHandlers();
+        services.AddCommandHandlers(Assembly.GetExecutingAssembly()).AddQueryHandlers(Assembly.GetExecutingAssembly());
 
         _serviceProvider = services.BuildServiceProvider();
 
@@ -75,25 +75,25 @@ public class TestSettingQueries
         using var scope = _serviceProvider.CreateScope();
         var serviceProvider = scope.ServiceProvider;
 
-        var dateTimeProvider = serviceProvider.GetRequiredService<IDateTimeProvider>();
-        var mapper = serviceProvider.GetRequiredService<IMapper>();
-        var repository = serviceProvider.GetRequiredService<ISettingRepository>();
         var service = serviceProvider.GetRequiredService<IServices<AppSettings, Guid>>();
         var dispatcher = serviceProvider.GetRequiredService<IQueryDispatcher>();
         
         // Act - use handler
         var expected = await service.GetAsync();
-        var result = await dispatcher.Dispatch(new GetAllQuery<AppSettings, Guid>());
+        var result = await dispatcher.Dispatch<GetAllSettings, List<AppSettings>>(new GetAllSettings());
         
         // Assert
-        Assert.AreEqual(expected.Count, result.Count);
-        for (int i = 0; i < expected.Count; i++)
+        Assert.That(result, Has.Count.EqualTo(expected.Count));
+        for (var i = 0; i < expected.Count; i++)
         {
-            Assert.AreEqual(expected[i].Id, result[i].Id);
-            Assert.AreEqual(expected[i].Name, result[i].Name);
-            Assert.AreEqual(expected[i].Value, result[i].Value);
-            Assert.AreEqual(expected[i].Description, result[i].Description);
-            Assert.AreEqual(expected[i].Type, result[i].Type);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result[i].Id, Is.EqualTo(expected[i].Id));
+                Assert.That(result[i].Name, Is.EqualTo(expected[i].Name));
+                Assert.That(result[i].Value, Is.EqualTo(expected[i].Value));
+                Assert.That(result[i].Description, Is.EqualTo(expected[i].Description));
+                Assert.That(result[i].Type, Is.EqualTo(expected[i].Type));
+            });
         }
     }
 }

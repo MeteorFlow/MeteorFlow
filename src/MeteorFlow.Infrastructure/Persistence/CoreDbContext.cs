@@ -33,7 +33,10 @@ public class CoreDbContext : DbContextUnitOfWork<CoreDbContext>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
+        modelBuilder.Entity<AppDefinitions>()
+            .HasOne(c => c.BaseDefinition)
+            .WithMany()
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
     #endregion
