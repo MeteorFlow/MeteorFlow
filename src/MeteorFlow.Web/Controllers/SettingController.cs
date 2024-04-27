@@ -47,7 +47,7 @@ public class SettingController(
     {
         logger.LogInformation("Adding setting with id: {id}", model.Id);
         var setting =await commandDispatcher.Dispatch<AddUpdateSettingCommand, Core.Entities.AppSettings>(new AddUpdateSettingCommand(mapper.Map<Core.Entities.AppSettings>(model)));
-        return Created($"/api/products/{model.Id}", mapper.Map<AppSettings>(setting));
+        return Created($"/api/setting/{model.Id}", mapper.Map<AppSettings>(setting));
     }
     
     [Authorize(AuthorizationPolicyNames.DeleteSettingPolicy)]
