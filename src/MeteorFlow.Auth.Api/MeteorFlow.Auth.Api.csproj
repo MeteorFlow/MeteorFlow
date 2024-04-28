@@ -7,6 +7,7 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <UserSecretsId>aspnet-Meteor.Auth.Api-152E0E0D-C29A-42D8-AC68-A905AA7DE355</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <RootNamespace>Meteor.Auth.Api</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

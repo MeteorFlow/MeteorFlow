@@ -7,6 +7,7 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <UserSecretsId>aspnet-MeteorFlow.FormBuilder.Api-02A6F5A3-C4DB-4B0C-A687-44EB0A4CBED7</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <RootNamespace>MeteorFlow.FormBuilder.Api</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
