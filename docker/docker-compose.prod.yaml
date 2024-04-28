@@ -1,0 +1,42 @@
+name: meteorflow
+
+services:
+  web:
+    build:
+      context: ../src/MeteorFlow.Web
+      dockerfile: Dockerfile.frontend
+    ports:
+      - ${WEB_PORT}:3000
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.2"
+          memory: 50M
+        limits:
+          cpus: "0.5"
+          memory: 200M
+    networks:
+      - meteorflow-network
+
+  backend:
+    build:
+      context: ../
+    environment:
+      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+    ports:
+      - ${API_PORT}:8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.2"
+          memory: 50M
+        limits:
+          cpus: "0.5"
+          memory: 200M
+    networks:
+      - meteorflow-network
+
+networks:
+  meteorflow-network:
+    name: meteorflow-network
+    external: true

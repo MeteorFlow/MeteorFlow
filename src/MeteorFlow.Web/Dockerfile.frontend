@@ -1,0 +1,28 @@
+FROM node:18.20-alpine3.18 AS builder
+WORKDIR /app
+
+RUN apk --no-cache add openssh g++ make python3 git
+
+# copy over package.json files
+COPY package*.json /app/
+
+# install all depencies
+RUN npm ci
+
+COPY nuxt.config.ts tsconfig.json /app/
+COPY clients/ /app/clients
+RUN ls -l
+RUN npm run build
+
+# ========================================================================================================
+
+FROM node:18.20-alpine3.18
+
+WORKDIR /app
+COPY --from=builder /app/.output  .output
+COPY --from=builder /app/.nuxt  .nuxt
+
+ENV HOST 0.0.0.0
+EXPOSE 3000
+
+ENTRYPOINT ["node", ".output/server/index.mjs"]
