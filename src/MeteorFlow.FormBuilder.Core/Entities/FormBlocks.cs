@@ -6,7 +6,7 @@ using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.FormBuilder.Core.Entities;
 
-public class FormBlocks: JsonBase<Guid>
+public class FormBlocks: Entity<Guid>
 {
     [ForeignKey(nameof(Element))]
     public Guid ElementId { get; set; }

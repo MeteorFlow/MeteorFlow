@@ -4,7 +4,7 @@ using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.FormBuilder.Core.Entities;
 
-public class FormElements: JsonBase<Guid>
+public class FormElements: Entity<Guid>
 {
     public required string Renderer { get; set; }
     public string Name { get; set; }

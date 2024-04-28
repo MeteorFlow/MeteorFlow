@@ -2,7 +2,7 @@ using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.FormBuilder.Core.Entities;
 
-public class ElementSchemas: JsonBase<Guid>
+public class ElementSchemas: Entity<Guid>
 {
     public required string Name { get; set; }
     public required string Type { get; set; }

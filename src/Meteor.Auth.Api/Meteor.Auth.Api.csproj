@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
-        <UserSecretsId>aspnet-MeteorFlow.FormBuilder.Api-02A6F5A3-C4DB-4B0C-A687-44EB0A4CBED7</UserSecretsId>
+        <UserSecretsId>aspnet-Meteor.Auth.Api-152E0E0D-C29A-42D8-AC68-A905AA7DE355</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
@@ -22,10 +22,6 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\MeteorFlow.FormBuilder.Core\MeteorFlow.FormBuilder.Core.csproj" />
     </ItemGroup>
 
 </Project>
