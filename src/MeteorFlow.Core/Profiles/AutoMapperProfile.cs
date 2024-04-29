@@ -16,7 +16,7 @@ public class AutoMapperProfile : Profile
         //     .ForMember(dest => dest.Address,
         //         act => act.MapFrom(src => JsonConvert.DeserializeObject<Address>(src.AddressJson)));
         // CreateMap<Domain.Accounts, Entities.Account>()
-        //     .ForMember(dest => dest.ProfileId, act => act.MapFrom(src => src.User.Id));
+        //     .ForMember(dest => dest.ProfileId, act => act.MapFrom(src => src.Users.Id));
         // CreateMap<Entities.Account, Domain.Accounts>();
 
         

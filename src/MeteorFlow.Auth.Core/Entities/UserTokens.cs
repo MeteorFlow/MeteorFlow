@@ -1,12 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using MeteorFlow.Fx.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace MeteorFlow.Auth.Core.Entities;
 
-public class UserTokens : IdentityUserToken<Guid>
+public class UserTokens : Entity<Guid>
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; set; }
-    public User Identity { get; set; }
+    public Guid UserId { get; set; }
+
+    [MaxLength(Int32.MaxValue)]
+    public string LoginProvider { get; set; }
+
+    [MaxLength(Int32.MaxValue)]
+    public string TokenName { get; set; }
+
+    [MaxLength(Int32.MaxValue)]
+    public string TokenValue { get; set; }
+    
     public DateTimeOffset GeneratedTime { get; set; } = DateTimeOffset.Now;
+
 }

@@ -17,9 +17,9 @@ public class AppUserClaimsPrincipleFactory(UserManager<User> userManager, IOptio
         claimsIdentity.AddClaim(new Claim(ClaimTypes.MobilePhone,identity.PhoneNumber));
         // claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, identity.Id.ToString(), ClaimValueTypes.String));
 
-        // claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, identity.Type.ToString()));
+        // claimsIdentity.AddClaim(new Claim(ClaimTypes.Roles, identity.Type.ToString()));
 
-        // claimsIdentity.AddClaim(new Claim(ClaimTypes.Role,RoleManager.GetRoleNameAsync(user.Roles)));
+        // claimsIdentity.AddClaim(new Claim(ClaimTypes.Roles,RoleManager.GetRoleNameAsync(user.Roles)));
 
 
         return claimsIdentity;

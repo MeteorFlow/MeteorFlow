@@ -3,6 +3,7 @@ using MeteorFlow.Auth.Core.Entities;
 using MeteorFlow.Auth.Core.Models;
 using MeteorFlow.Auth.Core.Persistence;
 using MeteorFlow.Auth.Core.Providers;
+using MeteorFlow.Auth.Core.Services;
 using MeteorFlow.Auth.Core.Services.Identity;
 using MeteorFlow.Auth.Core.Services.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,7 +53,7 @@ public static class ServiceCollections
         
         services.AddScoped<IIdentityContext>(provider => provider.GetService<IdentityContext>());
         services.AddScoped<IUserClaimsPrincipalFactory<User>, AppUserClaimsPrincipleFactory>();
-        services.AddScoped<IUserStore<User>, IdentityStore>();
+        services.AddScoped<IUserStore<User>, UserStore>();
 
         services
             .AddIdentityCore<User>(options =>
@@ -68,7 +69,7 @@ public static class ServiceCollections
             })
             .AddRoles<Roles>()
             .AddEntityFrameworkStores<IdentityContext>()
-            .AddUserStore<IdentityStore>()
+            .AddUserStore<UserStore>()
             .AddUserManager<IdentityManager>();
         
         return services;
