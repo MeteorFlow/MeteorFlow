@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.FormBuilder.Core
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeteorFlow.Auth", "MeteorFlow.Auth", "{333E44BD-9BB5-4355-80D6-C1766A3A756D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Auth.Core", "MeteorFlow.Auth.Core\MeteorFlow.Auth.Core.csproj", "{00312409-63AE-49DA-BDF5-5D5C0A5C34F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Auth", "MeteorFlow.Auth\MeteorFlow.Auth.csproj", "{00312409-63AE-49DA-BDF5-5D5C0A5C34F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Auth.Api", "MeteorFlow.Auth.Api\MeteorFlow.Auth.Api.csproj", "{C113CBE6-E474-4D48-BDAC-F0ED3D472940}"
 EndProject
