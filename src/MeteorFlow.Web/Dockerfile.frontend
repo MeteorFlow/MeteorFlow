@@ -1,7 +1,5 @@
-FROM node:18.20-alpine3.18 AS builder
+FROM node:18.20-bookworm-slim AS builder
 WORKDIR /app
-
-RUN apk --no-cache add openssh g++ make python3 git
 
 # copy over package.json files
 COPY package*.json /app/
@@ -16,7 +14,7 @@ RUN npm run build
 
 # ========================================================================================================
 
-FROM node:18.20-alpine3.18
+FROM node:18.20-bookworm-slim
 
 WORKDIR /app
 COPY --from=builder /app/.output  .output
