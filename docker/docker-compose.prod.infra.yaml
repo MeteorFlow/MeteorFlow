@@ -1,0 +1,29 @@
+name: meteorflow
+ 
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Standard
+    networks:
+      - meteorflow-network
+    volumes:
+      - mssql-volume:/var/opt/mssql
+
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6380:6380"
+    networks:
+      - meteorflow-network
+
+volumes:
+  mssql-volume:
+
+networks:
+  meteorflow-network:
+    name: meteorflow-network

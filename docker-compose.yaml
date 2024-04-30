@@ -1,4 +1,3 @@
-version: "3.2"
 services:
 
   Meteor-Enterprise:
@@ -19,6 +18,16 @@ services:
       POSTGRES_USER: "meteor"
       POSTGRES_PASSWORD: "MeteorFlow2024"
       POSTGRES_DB: "core"
+
+  # meteor-db:
+  #   container_name: meteor-core
+  #   image: postgres:latest
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: "meteor"
+  #     POSTGRES_PASSWORD: "MeteorFlow2024"
+  #     POSTGRES_DB: "core"
 
   cache:
     container_name: cache-api
