@@ -31,7 +31,7 @@ services:
           cpus: "0.2"
           memory: 50M
         limits:
-          cpus: "0.5"
+          cpus: "2"
           memory: 200M
     networks:
       - meteorflow-network
