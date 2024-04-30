@@ -1,0 +1,21 @@
+name: Deploy on Raspberry Pi
+
+on:
+  workflow_dispatch:
+
+jobs:
+  redeploy:
+    name: Redeploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull commits and trigger Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.RASPI_HOST }}
+          username: ${{ secrets.RASPI_USERNAME }}
+          key: ${{ secrets.RASPI_SSH_KEY }}
+          script: |
+            cd MeteorFlow
+            git fetch --prune origin
+            git pull
+            docker compose -f docker/docker-compose.prod.yaml up --build -d
