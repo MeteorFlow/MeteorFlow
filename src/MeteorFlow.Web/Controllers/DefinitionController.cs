@@ -1,8 +1,6 @@
 using AutoMapper;
 using MeteorFlow.Core.Definitions.Commands;
 using MeteorFlow.Core.Definitions.Queries;
-using MeteorFlow.Core.Settings.Commands;
-using MeteorFlow.Core.Settings.Queries;
 using MeteorFlow.Domain.App;
 using MeteorFlow.Fx.Commands;
 using MeteorFlow.Fx.Queries;

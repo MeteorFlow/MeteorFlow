@@ -11,4 +11,8 @@
       <ProjectReference Include="..\MeteorFlow.Infrastructure\MeteorFlow.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Elements\" />
+    </ItemGroup>
+
 </Project>

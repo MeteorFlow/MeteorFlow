@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MeteorFlow.Domain.App;
 using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.Core.Entities;
@@ -17,6 +18,8 @@ public class AppDefinitions: Entity<Guid>, IEntityObject
     
     [ForeignKey(nameof(BaseDefinition))]
     public Guid? BaseDefinitionId { get; set; }
+
+    public AppDefinitionTypes DefinitionType { get; set; } = AppDefinitionTypes.System;
     public virtual AppDefinitions? BaseDefinition { get; set; }
 
 }
