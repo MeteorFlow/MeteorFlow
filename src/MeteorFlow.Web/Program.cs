@@ -4,6 +4,9 @@ using MeteorFlow.Fx;
 using MeteorFlow.Infrastructure;
 using MeteorFlow.Infrastructure.DateTimes;
 using MeteorFlow.Infrastructure.Repositories;
+using MeteorFlow.Infrastructure.Web.Authorization.Policies;
+using MeteorFlow.Web.Authorizations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +27,7 @@ builder.Services.AddCoreRepositories();
 builder.Services.AddCoreUow();
 builder.Services.AddCoreServices();
 builder.Services.AddDateTimeProvider();
+builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>

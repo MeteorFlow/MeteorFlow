@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MeteorFlow.FormBuilder.Core\MeteorFlow.FormBuilder.Core.csproj" />
+      <ProjectReference Include="..\MeteorFlow.FormBuilder\MeteorFlow.FormBuilder.csproj" />
     </ItemGroup>
 
 </Project>

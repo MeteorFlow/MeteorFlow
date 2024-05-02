@@ -1,8 +1,8 @@
 using AutoMapper;
 using MeteorFlow.Core.Definitions.Queries;
 using MeteorFlow.Core.Entities;
-using MeteorFlow.FormBuilder.Core.Authorization;
-using MeteorFlow.FormBuilder.Core.Models;
+using MeteorFlow.FormBuilder.Authorization;
+using MeteorFlow.FormBuilder.Models;
 using MeteorFlow.Fx.Commands;
 using MeteorFlow.Fx.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +13,6 @@ namespace MeteorFlow.FormBuilder.Api.Controllers;
 [Microsoft.AspNetCore.Components.Route("api/[controller]")]
 public class FormDefinitionController(
     IQueryDispatcher queryDispatcher,
-    ICommandDispatcher commandDispatcher,
     ILogger<FormDefinitionController> logger,
     IMapper mapper)
     : ControllerBase{

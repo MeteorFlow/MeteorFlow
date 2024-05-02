@@ -1,8 +1,8 @@
 using AutoMapper;
-using MeteorFlow.FormBuilder.Core.Authorization;
-using MeteorFlow.FormBuilder.Core.Blocks.Commands;
-using MeteorFlow.FormBuilder.Core.Blocks.Queries;
-using MeteorFlow.FormBuilder.Core.Models;
+using MeteorFlow.FormBuilder.Authorization;
+using MeteorFlow.FormBuilder.Blocks.Commands;
+using MeteorFlow.FormBuilder.Blocks.Queries;
+using MeteorFlow.FormBuilder.Models;
 using MeteorFlow.Fx.Commands;
 using MeteorFlow.Fx.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +22,7 @@ public class BlockController (
     public async Task<ActionResult<IEnumerable<FormBlocks>>> Get()
     {
         logger.LogInformation("Getting all definitions");
-        var definitionsList = await queryDispatcher.Dispatch<GetAllBlocks, List<Core.Entities.FormBlocks>>(new GetAllBlocks());
+        var definitionsList = await queryDispatcher.Dispatch<GetAllBlocks, List<FormBuilder.Entities.FormBlocks>>(new GetAllBlocks());
         var models = mapper.Map<List<FormDefinitions>>(definitionsList);
         return Ok(models);
     }
@@ -34,7 +34,7 @@ public class BlockController (
     public async Task<ActionResult<FormBlocks>> Get(Guid id)
     {
         logger.LogInformation("Getting setting with id: {id}", id);
-        var settings = await queryDispatcher.Dispatch<GetByIdBlock, Core.Entities.FormBlocks>(new GetByIdBlock { Id = id, ThrowNotFoundIfNull = true });
+        var settings = await queryDispatcher.Dispatch<GetByIdBlock, FormBuilder.Entities.FormBlocks>(new GetByIdBlock { Id = id, ThrowNotFoundIfNull = true });
         return Ok(mapper.Map<FormBlocks>(settings));
     }
     
@@ -45,7 +45,7 @@ public class BlockController (
     public async Task<ActionResult<FormBlocks>> Post([FromBody] FormBlocks model)
     {
         logger.LogInformation("Adding setting with id: {id}", model.Id);
-        var setting = await commandDispatcher.Dispatch<AddUpdateBlockCommand, Core.Entities.FormBlocks>(new AddUpdateBlockCommand(mapper.Map<Core.Entities.FormBlocks>(model)));
+        var setting = await commandDispatcher.Dispatch<AddUpdateBlockCommand, FormBuilder.Entities.FormBlocks>(new AddUpdateBlockCommand(mapper.Map<FormBuilder.Entities.FormBlocks>(model)));
         return Created($"/api/setting/{model.Id}", mapper.Map<FormBlocks>(setting));
     }
     
@@ -57,8 +57,8 @@ public class BlockController (
     public async Task<ActionResult> Delete(Guid id)
     {
         logger.LogInformation("Deleting setting with id: {id}", id);
-        var setting = await queryDispatcher.Dispatch<GetByIdBlock, Core.Entities.FormBlocks>(new GetByIdBlock { Id = id, ThrowNotFoundIfNull = true });
-        await commandDispatcher.Dispatch<DeleteBlockCommand, Core.Entities.FormBlocks>(new DeleteBlockCommand (setting));
+        var setting = await queryDispatcher.Dispatch<GetByIdBlock, FormBuilder.Entities.FormBlocks>(new GetByIdBlock { Id = id, ThrowNotFoundIfNull = true });
+        await commandDispatcher.Dispatch<DeleteBlockCommand, FormBuilder.Entities.FormBlocks>(new DeleteBlockCommand (setting));
         return Ok();
     }
 }
