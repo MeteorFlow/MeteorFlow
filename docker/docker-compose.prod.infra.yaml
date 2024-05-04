@@ -11,6 +11,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-volume:/var/lib/postgresql/data
+    networks:
+      - meteorflow-network
 
   redis:
     image: redis:7.2-alpine
