@@ -10,6 +10,8 @@ public static class ServiceCollections
     public static IServiceCollection AddPersistence(this IServiceCollection services,
         IConfiguration configuration)
     {
+        
+        
         services.AddDbContext<CoreDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(Constant.PersistenceDb),
                 b => b.MigrationsAssembly(typeof(CoreDbContext).Assembly.FullName)), ServiceLifetime.Transient);

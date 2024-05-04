@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MeteorFlow.Auth.Services;
 
-public class RoleStore(IRoleRepository roleRepository) : IRoleStore<Role>
+public class AuthRoleStore(IRoleRepository roleRepository) : IRoleStore<Role>
 {
 
     public void Dispose()

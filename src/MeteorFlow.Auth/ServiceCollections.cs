@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using Role = MeteorFlow.Auth.Entities.Role;
 using User = MeteorFlow.Auth.Entities.User;
@@ -27,7 +28,7 @@ public static class ServiceCollections
         return services;
     }
     
-    private static IServiceCollection AddAuthModule(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddAuthModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IRoleRepository, RoleRepository>();
@@ -59,14 +60,15 @@ public static class ServiceCollections
                 options.Password.RequireUppercase = false;
             })
             .AddRoles<Role>()
-            .AddEntityFrameworkStores<AuthDbContext>()
             .AddUserStore<AuthUserStore>()
+            .AddRoleStore<AuthRoleStore>()
+            .AddDefaultTokenProviders()
             .AddUserManager<AuthUserManager>();
         
         return services;
     }
     
-    private static void ConfigureOptions(IServiceCollection services)
+    private static void ConfigureAuthOptions(this IServiceCollection services)
     {
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
@@ -114,8 +116,8 @@ public static class ServiceCollections
 
         return identityBuilder;
     }
-    
-    private static IServiceCollection AddNativeAuthentication(this IServiceCollection services, IConfiguration configuration)
+
+    public static IServiceCollection AddNativeAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtSettings = configuration
             .GetSection(nameof(JwtSettings))
@@ -133,6 +135,7 @@ public static class ServiceCollections
             })
             .AddJwtBearer(options =>
             {
+                
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -143,14 +146,10 @@ public static class ServiceCollections
                     ValidAudience = jwtSettings.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
                 };
-            });
-
-        return services;
-    }
-    
-    public static IServiceCollection AddAuthorizations(this IServiceCollection services)
-    {
-        
+            })
+            .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"), "AzureAD");
+            
+        services.ConfigureAuthOptions();
         return services;
     }
 }

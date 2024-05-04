@@ -30,10 +30,10 @@ public class UsersController(
 
     [Authorize(AuthorizationPolicyNames.GetUsersPolicy)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Entities.User>>> Get()
+    public async Task<ActionResult<IEnumerable<Domain.User>>> Get()
     {
         var users = await queryDispatcher.Dispatch<GetUsersQuery, List<Entities.User>>(new GetUsersQuery());
-        var model = mapper.Map<List<Entities.User>>(users);
+        var model = mapper.Map<List<Domain.User>>(users);
         return Ok(model);
     }
 
@@ -41,18 +41,18 @@ public class UsersController(
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Entities.User>> Get(Guid id)
+    public async Task<ActionResult<Domain.User>> Get(Guid id)
     {
         var user = await queryDispatcher.Dispatch<GetUserQuery, Entities.User>(new GetUserQuery { Id = id, AsNoTracking = true });
-        var model = mapper.Map<Entities.User>(user);
+        var model = mapper.Map<Domain.User>(user);
         return Ok(model);
     }
 
-    [Authorize(AuthorizationPolicyNames.AddUserPolicy)]
+    // [Authorize(AuthorizationPolicyNames.AddUserPolicy)]
     [HttpPost]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<Entities.User>> Post([FromBody] Domain.User model)
+    public async Task<ActionResult<Domain.User>> Post([FromBody] Domain.User model)
     {
         var result = await userManager.CreateAsync(mapper.Map<Entities.User>(model));
 
