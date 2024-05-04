@@ -23,6 +23,7 @@ services:
       context: ../
     environment:
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - ConnectionStrings__PGConnection=${ConnectionStrings__PGConnection}
     ports:
       - ${API_PORT}:8080
     deploy:
