@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +26,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: ghcr.io/MeteorFlow/meteor-flow-backend
+          tags: |
+            type=raw,value=latest
+
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@v5.3.0
@@ -33,7 +41,7 @@ jobs:
           context: .
           push: true
           platforms: linux/arm64
-          tags: latest
+          tags: ${{ steps.meta.outputs.tags }}
 
   redeploy:
     name: Redeploy
