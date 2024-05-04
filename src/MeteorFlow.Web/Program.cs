@@ -1,6 +1,12 @@
-using MeteorFlow.Core.Extensions;
-using MeteorFlow.Infrastructure.Extensions;
-using MeteorFlow.Infrastructure.Jwt;
+using System.Reflection;
+using MeteorFlow.Core;
+using MeteorFlow.Fx;
+using MeteorFlow.Infrastructure;
+using MeteorFlow.Infrastructure.DateTimes;
+using MeteorFlow.Infrastructure.Repositories;
+using MeteorFlow.Infrastructure.Web.Authorization.Policies;
+using MeteorFlow.Web.Authorizations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,12 +17,17 @@ builder.Configuration
     .AddJsonFile("appsettings.json")
     .AddEnvironmentVariables();
 
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
 
 // Add services to the container.
+builder.Services.AddApplicationServices();
+builder.Services.AddCommandHandlers(Assembly.GetExecutingAssembly());
+builder.Services.AddQueryHandlers(Assembly.GetExecutingAssembly());
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddCoreRepositories();
+builder.Services.AddCoreUow();
 builder.Services.AddCoreServices();
+builder.Services.AddDateTimeProvider();
+builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>

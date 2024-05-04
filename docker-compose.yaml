@@ -1,6 +1,7 @@
 services:
-  sql-server:
-    container_name: sql-server
+
+  Meteor-Enterprise:
+    container_name: meteor-enterprise
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
       - "1433:1433"
@@ -8,6 +9,16 @@ services:
       SA_PASSWORD: "MeteorFlow2024"
       ACCEPT_EULA: "Y"
       
+  meteor-gis:
+    container_name: meteor-gis
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "meteor"
+      POSTGRES_PASSWORD: "MeteorFlow2024"
+      POSTGRES_DB: "core"
+
   # meteor-db:
   #   container_name: meteor-core
   #   image: postgres:latest

@@ -22,240 +22,125 @@ namespace MeteorFlow.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Account", b =>
+            modelBuilder.Entity("MeteorFlow.Core.Entities.AppDefinitions", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("BaseDefinitionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DefinitionType")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<DateTimeOffset?>("DeleteDate")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(32767)
+                        .HasColumnType("character varying(32767)");
 
-                    b.Property<string>("AdditionalPropertiesJson")
+                    b.Property<string>("Icon")
                         .IsRequired()
                         .HasMaxLength(2147483647)
                         .HasColumnType("text");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
+                    b.Property<DateTimeOffset?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<int>("StationId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfileId")
-                        .IsUnique();
-
-                    b.HasIndex("StationId");
-
-                    b.ToTable("Accounts");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountClaim", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AccountClaims");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountLogins", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset>("LoggedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LoginProvider")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderKey")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AccountLogins");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountRefreshTokens", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("AccountRefreshTokens");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedUserRoleDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AccountRoles");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountTokens", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset>("GeneratedTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LoginProvider")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("RowVersion")
+                        .HasColumnType("bytea");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("BaseDefinitionId");
 
-                    b.ToTable("AccountTokens");
+                    b.ToTable("AppDefinitions");
+                });
+
+            modelBuilder.Entity("MeteorFlow.Core.Entities.AppInstances", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeleteDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(32767)
+                        .HasColumnType("character varying(32767)");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .HasColumnType("bytea");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VersionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VersionId");
+
+                    b.ToTable("AppInstances");
                 });
 
             modelBuilder.Entity("MeteorFlow.Core.Entities.AppSettings", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeleteDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("text");
+                        .HasMaxLength(32767)
+                        .HasColumnType("character varying(32767)");
 
-                    b.Property<string>("ReferenceKey")
+                    b.Property<DateTimeOffset?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -272,390 +157,73 @@ namespace MeteorFlow.Infrastructure.Migrations
                     b.ToTable("AppSettings");
                 });
 
-            modelBuilder.Entity("MeteorFlow.Core.Entities.ObservationElements", b =>
+            modelBuilder.Entity("MeteorFlow.Core.Entities.AppVersionControls", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Abbreviation")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double>("MaxValue")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("MinValue")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ParentId")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("Scale")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("UnitId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
-
-                    b.HasIndex("UnitId");
-
-                    b.ToTable("ObservationElements");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.ObservationValues", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("ElementId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset>("ModifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("StationId")
-                        .HasColumnType("integer");
-
-                    b.Property<byte>("Value")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ElementId");
-
-                    b.HasIndex("StationId");
-
-                    b.ToTable("ObservationValues");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Profiles", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AddressJson")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("text");
-
-                    b.Property<string>("AvatarUrl")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Profiles");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.RoleClaims", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("CreatedClaim")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("RoleClaims");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Roles", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("text");
+                    b.Property<Guid>("AppDefinitionId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTimeOffset?>("DeleteDate")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                    b.Property<DateTimeOffset?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Tenants.Stations", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("MajorVersion")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("text");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Stations");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Units", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("MinorVersion")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<int>("PatchVersion")
+                        .HasColumnType("integer");
 
-                    b.Property<double>("ConversionFactor")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Symbol")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<byte[]>("RowVersion")
+                        .HasColumnType("bytea");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Units");
+                    b.HasIndex("AppDefinitionId");
+
+                    b.ToTable("AppVersionControls");
                 });
 
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Account", b =>
+            modelBuilder.Entity("MeteorFlow.Core.Entities.AppDefinitions", b =>
                 {
-                    b.HasOne("MeteorFlow.Core.Entities.Profiles", "Profile")
-                        .WithOne("Account")
-                        .HasForeignKey("MeteorFlow.Core.Entities.Account", "ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MeteorFlow.Core.Entities.Tenants.Stations", "Station")
-                        .WithMany("Accounts")
-                        .HasForeignKey("StationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Profile");
-
-                    b.Navigation("Station");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountClaim", b =>
-                {
-                    b.HasOne("MeteorFlow.Core.Entities.Account", "Account")
-                        .WithMany("Claims")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountLogins", b =>
-                {
-                    b.HasOne("MeteorFlow.Core.Entities.Account", "Account")
-                        .WithMany("AccountLogins")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountRefreshTokens", b =>
-                {
-                    b.HasOne("MeteorFlow.Core.Entities.Account", "Account")
-                        .WithMany("AccountRefreshTokens")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountRole", b =>
-                {
-                    b.HasOne("MeteorFlow.Core.Entities.Roles", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MeteorFlow.Core.Entities.Account", "Account")
-                        .WithMany("AccountRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.AccountTokens", b =>
-                {
-                    b.HasOne("MeteorFlow.Core.Entities.Account", "Account")
-                        .WithMany("AccountTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.ObservationElements", b =>
-                {
-                    b.HasOne("MeteorFlow.Core.Entities.ObservationElements", "Parent")
+                    b.HasOne("MeteorFlow.Core.Entities.AppDefinitions", "BaseDefinition")
                         .WithMany()
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("BaseDefinitionId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("MeteorFlow.Core.Entities.Units", "Unit")
+                    b.Navigation("BaseDefinition");
+                });
+
+            modelBuilder.Entity("MeteorFlow.Core.Entities.AppInstances", b =>
+                {
+                    b.HasOne("MeteorFlow.Core.Entities.AppVersionControls", "AppliedVersion")
                         .WithMany()
-                        .HasForeignKey("UnitId")
+                        .HasForeignKey("VersionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Parent");
-
-                    b.Navigation("Unit");
+                    b.Navigation("AppliedVersion");
                 });
 
-            modelBuilder.Entity("MeteorFlow.Core.Entities.ObservationValues", b =>
+            modelBuilder.Entity("MeteorFlow.Core.Entities.AppVersionControls", b =>
                 {
-                    b.HasOne("MeteorFlow.Core.Entities.ObservationElements", "Element")
+                    b.HasOne("MeteorFlow.Core.Entities.AppDefinitions", "AppDefinition")
                         .WithMany()
-                        .HasForeignKey("ElementId")
+                        .HasForeignKey("AppDefinitionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MeteorFlow.Core.Entities.Tenants.Stations", "Station")
-                        .WithMany()
-                        .HasForeignKey("StationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Element");
-
-                    b.Navigation("Station");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.RoleClaims", b =>
-                {
-                    b.HasOne("MeteorFlow.Core.Entities.Roles", "Role")
-                        .WithMany("Claims")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Account", b =>
-                {
-                    b.Navigation("AccountLogins");
-
-                    b.Navigation("AccountRefreshTokens");
-
-                    b.Navigation("AccountRoles");
-
-                    b.Navigation("AccountTokens");
-
-                    b.Navigation("Claims");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Profiles", b =>
-                {
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Roles", b =>
-                {
-                    b.Navigation("Claims");
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("MeteorFlow.Core.Entities.Tenants.Stations", b =>
-                {
-                    b.Navigation("Accounts");
+                    b.Navigation("AppDefinition");
                 });
 #pragma warning restore 612, 618
         }
