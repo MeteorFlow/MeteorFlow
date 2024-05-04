@@ -33,37 +33,6 @@ builder.Services.AddCoreRepositories();
 builder.Services.AddCoreUow();
 builder.Services.AddCoreServices();
 builder.Services.AddDateTimeProvider();
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
-        options =>
-        {
-            options.LoginPath = new PathString("/auth/login");
-            options.AccessDeniedPath = new PathString("/auth/denied");
-        });
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = appSettings.IdentityServerAuthentication.Provider switch
-        {
-            "OpenIddict" => "OpenIddict",
-            _ => JwtBearerDefaults.AuthenticationScheme
-        };
-    })
-    .AddJwtBearer(options =>
-    {
-        options.Authority = appSettings.IdentityServerAuthentication.Authority;
-        options.Audience = appSettings.IdentityServerAuthentication.ApiName;
-        options.RequireHttpsMetadata = appSettings.IdentityServerAuthentication.RequireHttpsMetadata;
-    });
-    // .AddJwtBearer("OpenIddict", options =>
-    // {
-    //     options.TokenValidationParameters = new TokenValidationParameters
-    //     {
-    //         ValidateAudience = false,
-    //         ValidIssuer = appSettings.IdentityServerAuthentication.OpenIddict.IssuerUri,
-    //         TokenDecryptionKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.TokenDecryptionCertificate.FindCertificate()),
-    //         IssuerSigningKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.IssuerSigningCertificate.FindCertificate()),
-    //     };
-    // });
 builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";

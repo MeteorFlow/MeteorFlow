@@ -19,7 +19,7 @@ public class VersionController(
     IMapper mapper)
     : ControllerBase
 {
-    [Authorize(AuthorizationPolicyNames.GetSettingsPolicy)]
+    // [Authorize(AuthorizationPolicyNames.GetSettingsPolicy)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AppVersionControls>>> Get()
     {

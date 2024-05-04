@@ -19,10 +19,11 @@ services:
   #     - meteorflow-network
 
   backend:
-    build:
-      context: ../
+    # Always use the latest image
+    image: ghcr.io/meteor-flow
     environment:
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - ConnectionStrings__PGConnection=${ConnectionStrings__PGConnection}
     ports:
       - ${API_PORT}:8080
     deploy:
