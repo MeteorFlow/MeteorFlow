@@ -3,7 +3,7 @@ using MeteorFlow.Auth.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
-namespace MeteorFlow.Auth.Providers;
+namespace MeteorFlow.Auth.Services;
 
 public class AppUserClaimsPrincipleFactory(UserManager<User> userManager, IOptions<IdentityOptions> optionsAccessor)
     : UserClaimsPrincipalFactory<User>(userManager, optionsAccessor)

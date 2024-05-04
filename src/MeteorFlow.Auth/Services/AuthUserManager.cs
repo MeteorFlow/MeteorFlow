@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace MeteorFlow.Auth.Providers;
+namespace MeteorFlow.Auth.Services;
 
-public class IdentityManager(
+public class AuthUserManager(
     IUserStore<User> store,
     IOptions<IdentityOptions> optionsAccessor,
     IPasswordHasher<User> passwordHasher,
@@ -14,6 +14,6 @@ public class IdentityManager(
     ILookupNormalizer keyNormalizer,
     IdentityErrorDescriber errors,
     IServiceProvider services,
-    ILogger<IdentityManager> logger)
+    ILogger<AuthUserManager> logger)
     : UserManager<User>(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer,
         errors, services, logger);

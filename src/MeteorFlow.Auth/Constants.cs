@@ -1,4 +1,4 @@
-namespace MeteorFlow.Auth.Models;
+namespace MeteorFlow.Auth;
 
 public static class Constants
 {

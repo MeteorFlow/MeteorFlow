@@ -6,7 +6,7 @@ namespace MeteorFlow.Auth.Repositories;
 
 public class UserRepository : Repository<User, Guid>, IUserRepository
 {
-    public UserRepository(IdentityDbContext dbContext, IDateTimeProvider dateTimeProvider)
+    public UserRepository(AuthDbContext dbContext, IDateTimeProvider dateTimeProvider)
         : base(dbContext, dateTimeProvider)
     {
     }

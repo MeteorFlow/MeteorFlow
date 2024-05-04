@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeteorFlow.Auth.Services;
 
-public class UserStore : IUserStore<User>,
+public class AuthUserStore : IUserStore<User>,
                          IUserPasswordStore<User>,
                          IUserSecurityStampStore<User>,
                          IUserEmailStore<User>,
@@ -20,7 +20,7 @@ public class UserStore : IUserStore<User>,
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
 
-    public UserStore(IUserRepository userRepository)
+    public AuthUserStore(IUserRepository userRepository)
     {
         _unitOfWork = userRepository.UnitOfWork;
         _userRepository = userRepository;

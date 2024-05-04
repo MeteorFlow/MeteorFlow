@@ -6,10 +6,16 @@ using MeteorFlow.Infrastructure.DateTimes;
 using MeteorFlow.Infrastructure.Repositories;
 using MeteorFlow.Infrastructure.Web.Authorization.Policies;
 using MeteorFlow.Web.Authorizations;
-using Microsoft.AspNetCore.Authorization;
+using MeteorFlow.Web.Configurations;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var appSettings = new AppConfig();
+builder.Configuration.Bind(appSettings);
+
 
 // Add configuration from app settings.json
 builder.Configuration
@@ -27,6 +33,37 @@ builder.Services.AddCoreRepositories();
 builder.Services.AddCoreUow();
 builder.Services.AddCoreServices();
 builder.Services.AddDateTimeProvider();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
+        options =>
+        {
+            options.LoginPath = new PathString("/auth/login");
+            options.AccessDeniedPath = new PathString("/auth/denied");
+        });
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = appSettings.IdentityServerAuthentication.Provider switch
+        {
+            "OpenIddict" => "OpenIddict",
+            _ => JwtBearerDefaults.AuthenticationScheme
+        };
+    })
+    .AddJwtBearer(options =>
+    {
+        options.Authority = appSettings.IdentityServerAuthentication.Authority;
+        options.Audience = appSettings.IdentityServerAuthentication.ApiName;
+        options.RequireHttpsMetadata = appSettings.IdentityServerAuthentication.RequireHttpsMetadata;
+    });
+    // .AddJwtBearer("OpenIddict", options =>
+    // {
+    //     options.TokenValidationParameters = new TokenValidationParameters
+    //     {
+    //         ValidateAudience = false,
+    //         ValidIssuer = appSettings.IdentityServerAuthentication.OpenIddict.IssuerUri,
+    //         TokenDecryptionKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.TokenDecryptionCertificate.FindCertificate()),
+    //         IssuerSigningKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.IssuerSigningCertificate.FindCertificate()),
+    //     };
+    // });
 builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";

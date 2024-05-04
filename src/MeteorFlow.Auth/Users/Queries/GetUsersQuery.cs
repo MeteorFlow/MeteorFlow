@@ -5,18 +5,18 @@ using MeteorFlow.Fx.Queries;
 
 namespace MeteorFlow.Auth.Users.Queries;
 
-public class GetUsersQuery : IQuery<List<Role>>
+public class GetUsersQuery : IQuery<List<User>>
 {
     public bool IncludeClaims { get; set; }
     public bool IncludeUserRoles { get; set; }
     public bool AsNoTracking { get; set; }
 }
 
-public class GetRolesQueryHandler(IRoleRepository userRepository) : IQueryHandler<GetRolesQuery, List<Role>>
+public class GetUsersQueryHandler(IUserRepository userRepository) : IQueryHandler<GetUsersQuery, List<User>>
 {
-    public Task<List<Role>> HandleAsync(GetRolesQuery query, CancellationToken cancellationToken = default)
+    public Task<List<User>> HandleAsync(GetUsersQuery query, CancellationToken cancellationToken = default)
     {
-        var role = userRepository.Get(new RoleQueryOptions
+        var role = userRepository.Get(new UserQueryOptions
         {
             IncludeClaims = query.IncludeClaims,
             IncludeUserRoles = query.IncludeUserRoles,

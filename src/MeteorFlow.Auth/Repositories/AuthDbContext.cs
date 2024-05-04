@@ -6,14 +6,10 @@ using Microsoft.EntityFrameworkCore;
 namespace MeteorFlow.Auth.Repositories;
 
 
-public class IdentityDbContext : DbContextUnitOfWork<IdentityDbContext>, IDataProtectionKeyContext
+public class AuthDbContext(DbContextOptions<AuthDbContext> options)
+    : DbContextUnitOfWork<AuthDbContext>(options), IDataProtectionKeyContext
 {
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
-
-    public IdentityDbContext(DbContextOptions<IdentityDbContext> options)
-        : base(options)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

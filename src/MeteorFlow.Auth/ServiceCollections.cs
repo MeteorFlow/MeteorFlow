@@ -1,35 +1,24 @@
+using System.Reflection;
 using System.Text;
-using MeteorFlow.Auth.Entities;
+using MeteorFlow.Auth.Authorization;
 using MeteorFlow.Auth.Models;
-using MeteorFlow.Auth.Providers;
-using MeteorFlow.Auth.Services.Identity;
-using MeteorFlow.Auth.Services.Jwt;
+using MeteorFlow.Auth.PasswordValidators;
+using MeteorFlow.Auth.Repositories;
+using MeteorFlow.Auth.Services;
+using MeteorFlow.Infrastructure.Web.Authorization.Policies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using UserStore = MeteorFlow.Auth.Services.UserStore;
+using Role = MeteorFlow.Auth.Entities.Role;
+using User = MeteorFlow.Auth.Entities.User;
 
 namespace MeteorFlow.Auth;
 
 public static class ServiceCollections
 {
-    public static IServiceCollection AddAuthServices(this IServiceCollection services)
-    {
-        // Configure and register your core services here
-        // services.AddTransient<IMyService, MyService>();
-
-        // You can also configure services using the configuration parameter
-        // var someConfigValue = configuration.GetValue<string>("SomeConfigKey");
-        // services.AddSingleton(new MyConfigService(someConfigValue));
-        services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<IIdentityService, IdentityService>();
-
-        return services;
-    }
 
     public static IServiceCollection AddMeteorFlowAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
@@ -38,8 +27,11 @@ public static class ServiceCollections
         return services;
     }
     
-    private static IServiceCollection AddIdentityContext(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddAuthModule(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<IUserRepository, UserRepository>()
+            .AddScoped<IRoleRepository, RoleRepository>();
+        
         var persistenceKey = configuration.GetConnectionString(Constants.PersistenceDb);
         
         if (persistenceKey is null || persistenceKey == "")
@@ -47,12 +39,12 @@ public static class ServiceCollections
             throw new Exception("PersistenceKey cannot be null");
         }
         
-        services.AddDbContext<IdentityDbContext>(options =>
+        services.AddDbContext<AuthDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(Constants.PersistenceDb),
-                b => b.MigrationsAssembly(typeof(IdentityDbContext).Assembly.FullName)), ServiceLifetime.Transient);
+                b => b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName)), ServiceLifetime.Transient);
         
         services.AddScoped<IUserClaimsPrincipalFactory<User>, AppUserClaimsPrincipleFactory>();
-        services.AddScoped<IUserStore<User>, UserStore>();
+        services.AddScoped<IUserStore<User>, AuthUserStore>();
 
         services
             .AddIdentityCore<User>(options =>
@@ -67,11 +59,60 @@ public static class ServiceCollections
                 options.Password.RequireUppercase = false;
             })
             .AddRoles<Role>()
-            .AddEntityFrameworkStores<IdentityDbContext>()
-            .AddUserStore<UserStore>()
-            .AddUserManager<IdentityManager>();
+            .AddEntityFrameworkStores<AuthDbContext>()
+            .AddUserStore<AuthUserStore>()
+            .AddUserManager<AuthUserManager>();
         
         return services;
+    }
+    
+    private static void ConfigureOptions(IServiceCollection services)
+    {
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(3);
+        });
+
+        services.Configure<EmailConfirmationTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromDays(2);
+        });
+
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.Tokens.EmailConfirmationTokenProvider = "EmailConfirmation";
+
+            // Default Lockout settings.
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+        });
+
+        services.Configure<PasswordHasherOptions>(option =>
+        {
+            // option.IterationCount = 10000;
+            // option.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2;
+        });
+
+        services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
+    }
+    
+    private static IdentityBuilder AddTokenProviders(this IdentityBuilder identityBuilder)
+    {
+        identityBuilder
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<EmailConfirmationTokenProvider<User>>("EmailConfirmation");
+
+        return identityBuilder;
+    }
+
+    private static IdentityBuilder AddPasswordValidators(this IdentityBuilder identityBuilder)
+    {
+        identityBuilder
+            .AddPasswordValidator<WeakPasswordValidator>()
+            .AddPasswordValidator<HistoricalPasswordValidator>();
+
+        return identityBuilder;
     }
     
     private static IServiceCollection AddNativeAuthentication(this IServiceCollection services, IConfiguration configuration)
@@ -82,7 +123,7 @@ public static class ServiceCollections
 
         if (jwtSettings == null) throw new Exception("JwtSettings is null");
 
-        services.AddIdentityContext(configuration);
+        services.AddAuthModule(configuration);
         
         services.AddAuthentication(options =>
             {
@@ -106,9 +147,7 @@ public static class ServiceCollections
 
         return services;
     }
-
-
-
+    
     public static IServiceCollection AddAuthorizations(this IServiceCollection services)
     {
         
