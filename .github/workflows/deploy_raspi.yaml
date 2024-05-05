@@ -58,4 +58,5 @@ jobs:
             cd MeteorFlow
             git fetch --prune origin
             git pull
+            docker compose -f docker/docker-compose.prod.yaml pull
             docker compose -f docker/docker-compose.prod.yaml up -d
