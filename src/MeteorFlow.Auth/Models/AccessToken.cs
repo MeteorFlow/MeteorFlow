@@ -1,4 +1,4 @@
-namespace MeteorFlow.Auth.Entities;
+namespace MeteorFlow.Auth.Models;
 
 public class Token
 {

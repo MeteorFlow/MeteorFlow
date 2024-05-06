@@ -1,60 +1,25 @@
+using System.Reflection;
 using System.Text;
-using MeteorFlow.Auth.Entities;
+using MeteorFlow.Auth.Authorization;
 using MeteorFlow.Auth.Models;
-using MeteorFlow.Auth.Providers;
-using MeteorFlow.Auth.Services.Identity;
-using MeteorFlow.Auth.Services.Jwt;
+using MeteorFlow.Auth.PasswordValidators;
+using MeteorFlow.Auth.Repositories;
+using MeteorFlow.Auth.Services;
+using MeteorFlow.Infrastructure.Web.Authorization.Policies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
-using UserStore = MeteorFlow.Auth.Services.UserStore;
+using Role = MeteorFlow.Auth.Entities.Role;
+using User = MeteorFlow.Auth.Entities.User;
 
 namespace MeteorFlow.Auth;
 
 public static class ServiceCollections
 {
-    public static IServiceCollection AddAuthServices(this IServiceCollection services)
-    {
-        // Configure and register your core services here
-        // services.AddTransient<IMyService, MyService>();
-
-        // You can also configure services using the configuration parameter
-        // var someConfigValue = configuration.GetValue<string>("SomeConfigKey");
-        // services.AddSingleton(new MyConfigService(someConfigValue));
-        return services;
-    }
-
-    public static IServiceCollection AddPersistence(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        // services.AddDbContext<CoreDbContext>(options =>
-        //     options.UseSqlServer(configuration.GetConnectionString(Constant.PersistenceDb),
-        //         b => b.MigrationsAssembly(typeof(CoreDbContext).Assembly.FullName)), ServiceLifetime.Transient);
-
-        services.AddDbContext<CoreDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString(Constant.PgDb),
-                b => b.MigrationsAssembly(typeof(CoreDbContext).Assembly.FullName)), ServiceLifetime.Transient);
-
-        services.AddScoped<ICoreDbContext>(provider => provider.GetService<CoreDbContext>());
-        return services;
-    }
-
-    public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
-    {
-        //Jwt configuration starts here
-        var jwtSettings = configuration
-            .GetSection(nameof(JwtSettings))
-            .Get<JwtSettings>();
-
-        services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<IIdentityService, IdentityService>();
-
-        return services;
-    }
 
     public static IServiceCollection AddMeteorFlowAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
@@ -63,8 +28,11 @@ public static class ServiceCollections
         return services;
     }
     
-    private static IServiceCollection AddIdentityContext(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddAuthModule(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<IUserRepository, UserRepository>()
+            .AddScoped<IRoleRepository, RoleRepository>();
+        
         var persistenceKey = configuration.GetConnectionString(Constants.PersistenceDb);
         
         if (persistenceKey is null || persistenceKey == "")
@@ -72,12 +40,12 @@ public static class ServiceCollections
             throw new Exception("PersistenceKey cannot be null");
         }
         
-        services.AddDbContext<IdentityDbContext>(options =>
+        services.AddDbContext<AuthDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(Constants.PersistenceDb),
-                b => b.MigrationsAssembly(typeof(IdentityDbContext).Assembly.FullName)), ServiceLifetime.Transient);
+                b => b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName)), ServiceLifetime.Transient);
         
         services.AddScoped<IUserClaimsPrincipalFactory<User>, AppUserClaimsPrincipleFactory>();
-        services.AddScoped<IUserStore<User>, UserStore>();
+        services.AddScoped<IUserStore<User>, AuthUserStore>();
 
         services
             .AddIdentityCore<User>(options =>
@@ -92,14 +60,64 @@ public static class ServiceCollections
                 options.Password.RequireUppercase = false;
             })
             .AddRoles<Role>()
-            .AddEntityFrameworkStores<IdentityDbContext>()
-            .AddUserStore<UserStore>()
-            .AddUserManager<IdentityManager>();
+            .AddUserStore<AuthUserStore>()
+            .AddRoleStore<AuthRoleStore>()
+            .AddDefaultTokenProviders()
+            .AddUserManager<AuthUserManager>();
         
         return services;
     }
     
-    private static IServiceCollection AddNativeAuthentication(this IServiceCollection services, IConfiguration configuration)
+    private static void ConfigureAuthOptions(this IServiceCollection services)
+    {
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(3);
+        });
+
+        services.Configure<EmailConfirmationTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromDays(2);
+        });
+
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.Tokens.EmailConfirmationTokenProvider = "EmailConfirmation";
+
+            // Default Lockout settings.
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+        });
+
+        services.Configure<PasswordHasherOptions>(option =>
+        {
+            // option.IterationCount = 10000;
+            // option.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2;
+        });
+
+        services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
+    }
+    
+    private static IdentityBuilder AddTokenProviders(this IdentityBuilder identityBuilder)
+    {
+        identityBuilder
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<EmailConfirmationTokenProvider<User>>("EmailConfirmation");
+
+        return identityBuilder;
+    }
+
+    private static IdentityBuilder AddPasswordValidators(this IdentityBuilder identityBuilder)
+    {
+        identityBuilder
+            .AddPasswordValidator<WeakPasswordValidator>()
+            .AddPasswordValidator<HistoricalPasswordValidator>();
+
+        return identityBuilder;
+    }
+
+    public static IServiceCollection AddNativeAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtSettings = configuration
             .GetSection(nameof(JwtSettings))
@@ -107,7 +125,7 @@ public static class ServiceCollections
 
         if (jwtSettings == null) throw new Exception("JwtSettings is null");
 
-        services.AddIdentityContext(configuration);
+        services.AddAuthModule(configuration);
         
         services.AddAuthentication(options =>
             {
@@ -117,6 +135,7 @@ public static class ServiceCollections
             })
             .AddJwtBearer(options =>
             {
+                
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -127,16 +146,10 @@ public static class ServiceCollections
                     ValidAudience = jwtSettings.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
                 };
-            });
-
-        return services;
-    }
-
-
-
-    public static IServiceCollection AddAuthorizations(this IServiceCollection services)
-    {
-        
+            })
+            .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"), "AzureAD");
+            
+        services.ConfigureAuthOptions();
         return services;
     }
 }

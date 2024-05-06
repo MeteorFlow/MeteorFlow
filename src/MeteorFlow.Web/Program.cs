@@ -6,10 +6,16 @@ using MeteorFlow.Infrastructure.DateTimes;
 using MeteorFlow.Infrastructure.Repositories;
 using MeteorFlow.Infrastructure.Web.Authorization.Policies;
 using MeteorFlow.Web.Authorizations;
-using Microsoft.AspNetCore.Authorization;
+using MeteorFlow.Web.Configurations;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var appSettings = new AppConfig();
+builder.Configuration.Bind(appSettings);
+
 
 // Add configuration from app settings.json
 builder.Configuration

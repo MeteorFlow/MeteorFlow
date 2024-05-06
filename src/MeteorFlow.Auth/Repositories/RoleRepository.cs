@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeteorFlow.Auth.Repositories;
 
-public class RoleRepository(IdentityDbContext dbContext, IDateTimeProvider dateTimeProvider)
+public class RoleRepository(AuthDbContext dbContext, IDateTimeProvider dateTimeProvider)
     : Repository<Role, Guid>(dbContext, dateTimeProvider), IRoleRepository
 {
     public IQueryable<Role> Get(RoleQueryOptions queryOptions)
