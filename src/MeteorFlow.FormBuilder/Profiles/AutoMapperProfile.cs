@@ -9,14 +9,14 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
-        CreateMap<FormDefinitions, Core.Entities.AppDefinitions>();
-        CreateMap<Core.Entities.AppDefinitions, FormDefinitions>()
+        CreateMap<FormDefinition, Core.Entities.AppDefinitions>();
+        CreateMap<Core.Entities.AppDefinitions, FormDefinition>()
             .AfterMap((_, dest) =>
                 JsonConvert.DeserializeObject<AppDefinitions>(JsonConvert.SerializeObject(dest)));
 
-        CreateMap<FormBlocks, Entities.FormBlocks>().ReverseMap();
-        CreateMap<FormElements, Entities.FormElements>().ReverseMap();
-        CreateMap<ElementSchemas, Entities.ElementSchemas>().ReverseMap();
+        CreateMap<FormBlock, Entities.FormBlocks>().ReverseMap();
+        CreateMap<FormElement, Entities.FormElements>().ReverseMap();
+        CreateMap<ElementSchema, Entities.ElementSchemas>().ReverseMap();
         
     }
 }

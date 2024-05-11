@@ -18,14 +18,14 @@ public class FormDefinitionController(
 {
     [Authorize(AuthorizationPolicyNames.GetFormsPolicy)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FormDefinitions>>> Get()
+    public async Task<ActionResult<IEnumerable<FormDefinition>>> Get()
     {
         logger.LogInformation("Getting all definitions");
         var definitionsList = await queryDispatcher.Dispatch<
             GetAllDefinitions,
             List<AppDefinitions>
         >(new GetAllDefinitions());
-        var models = mapper.Map<List<FormDefinitions>>(definitionsList);
+        var models = mapper.Map<List<FormDefinition>>(definitionsList);
         return Ok(models);
     }
 
@@ -33,12 +33,12 @@ public class FormDefinitionController(
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<FormDefinitions>> Get(Guid id)
+    public async Task<ActionResult<FormDefinition>> Get(Guid id)
     {
         logger.LogInformation("Getting setting with id: {id}", id);
         var settings = await queryDispatcher.Dispatch<GetByIdDefinition, AppDefinitions>(
             new GetByIdDefinition { Id = id, ThrowNotFoundIfNull = true }
         );
-        return Ok(mapper.Map<FormDefinitions>(settings));
+        return Ok(mapper.Map<FormDefinition>(settings));
     }
 }
