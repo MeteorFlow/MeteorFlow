@@ -8,18 +8,18 @@ export default defineNuxtConfig({
     global: true,
     dirs: ["~/components"],
   },
-  modules: [
-    "@nuxt/ui",
-    [
-      "@nuxtjs/i18n",
-      {
-        /* module options */
-      },
+  image: {
+    domains: [
+      'https://images.unsplash.com',
+      'https://source.unsplash.com',
     ],
-    "@nuxt/content",
-    "nuxt-tiptap-editor",
-    "~/modules/tiptap",
-  ],
+  },
+  modules: ["@nuxt/ui", [
+    "@nuxtjs/i18n",
+    {
+      /* module options */
+    },
+  ], "@nuxt/content", "nuxt-tiptap-editor", "~/modules/tiptap", "@nuxt/image"],
   ui: {
     icons: ["heroicons", "fa", "fa6-solid"],
   },
@@ -41,4 +41,5 @@ export default defineNuxtConfig({
     { src: "~/plugins/chart.client.ts", mode: "client" },
     { src: "~/plugins/grid.client.ts", mode: "client" },
   ],
+
 });
