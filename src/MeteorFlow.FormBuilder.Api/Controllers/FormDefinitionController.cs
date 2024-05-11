@@ -9,24 +9,26 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeteorFlow.FormBuilder.Api.Controllers;
 
-[Microsoft.AspNetCore.Components.Route("api/[controller]")]
+[Route("api/[controller]")]
 public class FormDefinitionController(
     IQueryDispatcher queryDispatcher,
     ILogger<FormDefinitionController> logger,
-    IMapper mapper)
-    : ControllerBase{
-    
-
+    IMapper mapper
+) : ControllerBase
+{
     [Authorize(AuthorizationPolicyNames.GetFormsPolicy)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FormDefinitions>>> Get()
     {
         logger.LogInformation("Getting all definitions");
-        var definitionsList = await queryDispatcher.Dispatch<GetAllDefinitions, List<AppDefinitions>>(new GetAllDefinitions());
+        var definitionsList = await queryDispatcher.Dispatch<
+            GetAllDefinitions,
+            List<AppDefinitions>
+        >(new GetAllDefinitions());
         var models = mapper.Map<List<FormDefinitions>>(definitionsList);
         return Ok(models);
     }
-    
+
     [Authorize(AuthorizationPolicyNames.GetFormPolicy)]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -34,7 +36,9 @@ public class FormDefinitionController(
     public async Task<ActionResult<FormDefinitions>> Get(Guid id)
     {
         logger.LogInformation("Getting setting with id: {id}", id);
-        var settings = await queryDispatcher.Dispatch<GetByIdDefinition, AppDefinitions>(new GetByIdDefinition { Id = id, ThrowNotFoundIfNull = true });
+        var settings = await queryDispatcher.Dispatch<GetByIdDefinition, AppDefinitions>(
+            new GetByIdDefinition { Id = id, ThrowNotFoundIfNull = true }
+        );
         return Ok(mapper.Map<FormDefinitions>(settings));
     }
 }
