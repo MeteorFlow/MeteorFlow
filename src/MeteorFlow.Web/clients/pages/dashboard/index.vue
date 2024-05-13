@@ -70,6 +70,13 @@ const data = {
     }
   ]
 }
+
+useSeoMeta({
+  title: 'Dashboard | MeteorFlow',
+  ogTitle: 'Data Science with MeteorFlow',
+  description: 'This is my amazing site, let me tell you all about it.',
+  ogDescription: 'This is my amazing site, let me tell you all about it.',
+})
 </script>
 
 <template>
