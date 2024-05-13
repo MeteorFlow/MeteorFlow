@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     },
   ], "@nuxt/content", "nuxt-tiptap-editor", "~/modules/tiptap", "@nuxt/image"],
   ui: {
-    icons: ["heroicons", "fa", "fa6-solid"],
+    icons: ["heroicons", "fa", "fa6-solid", "mdi"],
   },
   devtools: {
     // Enable devtools (default: true)
