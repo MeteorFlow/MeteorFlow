@@ -13,18 +13,11 @@ public class GetRoleQuery : IQuery<Role>
     public bool AsNoTracking { get; set; }
 }
 
-public class GetRoleQueryHandler : IQueryHandler<GetRoleQuery, Role>
+public class GetRoleQueryHandler(IRoleRepository roleRepository) : IQueryHandler<GetRoleQuery, Role>
 {
-    private readonly IRoleRepository _roleRepository;
-
-    public GetRoleQueryHandler(IRoleRepository roleRepository)
-    {
-        _roleRepository = roleRepository;
-    }
-
     public Task<Role> HandleAsync(GetRoleQuery query, CancellationToken cancellationToken = default)
     {
-        var db = _roleRepository.Get(new RoleQueryOptions
+        var db = roleRepository.Get(new RoleQueryOptions
         {
             IncludeClaims = query.IncludeClaims,
             IncludeUserRoles = query.IncludeUserRoles,
@@ -32,6 +25,6 @@ public class GetRoleQueryHandler : IQueryHandler<GetRoleQuery, Role>
             AsNoTracking = query.AsNoTracking,
         });
 
-        return _roleRepository.FirstOrDefaultAsync(db.Where(x => x.Id == query.Id));
+        return roleRepository.FirstOrDefaultAsync(db.Where(x => x.Id == query.Id));
     }
 }

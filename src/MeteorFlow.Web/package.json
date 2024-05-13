@@ -2,8 +2,10 @@
   "name": "meteor",
   "private": true,
   "type": "module",
+  "proxy": "https://localhost:7044",
   "scripts": {
     "build": "nuxt build",
+    "dev:https": "NODE_TLS_REJECT_UNAUTHORIZED=0 nuxt dev --https",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

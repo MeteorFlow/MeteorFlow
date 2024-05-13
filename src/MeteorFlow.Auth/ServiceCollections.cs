@@ -3,6 +3,7 @@ using System.Text;
 using MeteorFlow.Auth.Authorization;
 using MeteorFlow.Auth.Models;
 using MeteorFlow.Auth.PasswordValidators;
+using MeteorFlow.Auth.Profiles;
 using MeteorFlow.Auth.Repositories;
 using MeteorFlow.Auth.Services;
 using MeteorFlow.Infrastructure.Web.Authorization.Policies;
@@ -20,16 +21,9 @@ namespace MeteorFlow.Auth;
 
 public static class ServiceCollections
 {
-
-    public static IServiceCollection AddMeteorFlowAuthentication(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddNativeAuthentication(configuration);
-
-        return services;
-    }
-    
     public static IServiceCollection AddAuthModule(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddAutoMapper(typeof(AutoMapperProfile));
         services.AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IRoleRepository, RoleRepository>();
         

@@ -14,7 +14,7 @@ namespace MeteorFlow.FormBuilder.Api.Controllers;
 public class BlockController(
     IQueryDispatcher queryDispatcher,
     ICommandDispatcher commandDispatcher,
-    ILogger<FormDefinitionController> logger,
+    ILogger<BlockController> logger,
     IMapper mapper
 ) : ControllerBase
 {
