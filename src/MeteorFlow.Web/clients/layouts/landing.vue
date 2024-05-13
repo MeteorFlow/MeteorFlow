@@ -111,7 +111,7 @@ const ui = {
     </div>
     <LandingFooter :links="footerLinks">
       <template #right>
-        <UFormGroup name="email" label="Subscribe to our newsletter" size="lg">
+        <UFormGroup name="email" label="Subscribe to our newsletter" size="xl">
           <UInput type="email" :ui="{ icon: { trailing: { pointer: '' } } }">
             <template #trailing>
               <UButton
