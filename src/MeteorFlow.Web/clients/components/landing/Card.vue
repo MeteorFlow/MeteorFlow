@@ -5,7 +5,7 @@
         <span :class="icon" class="text-3xl"></span> <!-- Adjust text size as needed -->
       </template>
       <template v-else>
-        <NuxtImg :src="icon" alt="" class="h-12 w-12" /> <!-- NuxtImg for better performance and optimization -->
+        <UAvatar :src="icon" alt="Avatar" imgClass="object-cover" size="md" /> <!-- NuxtImg for better performance and optimization -->
       </template>
       <div>
         <h3 class="font-semibold text-lg dark:text-white">{{ title }}</h3>
