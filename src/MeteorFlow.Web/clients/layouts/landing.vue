@@ -18,11 +18,11 @@ const links = [
       to: "/dashboard",
     },
     {
-      label: "Horizontal Navigation",
-      to: "/dashboard",
+      label: "API",
+      to: "/api",
     },
     {
-      label: "Command Palette",
+      label: "Docs",
       to: "/dashboard",
     },
   ],
@@ -106,7 +106,7 @@ const ui = {
         }}</span>
       </template>
     </UHorizontalNavigation>
-    <div class="w-full flex flex-col gap-4 p-4">
+    <div class="w-full flex flex-col">
       <slot></slot>
     </div>
     <LandingFooter :links="footerLinks">
