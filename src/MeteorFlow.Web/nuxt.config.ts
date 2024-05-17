@@ -49,4 +49,7 @@ export default defineNuxtConfig({
     { src: "~/plugins/chart.client.ts", mode: "client" },
     { src: "~/plugins/grid.client.ts", mode: "client" },
   ],
+  colorMode: {
+    preference: "light",
+  },
 });
