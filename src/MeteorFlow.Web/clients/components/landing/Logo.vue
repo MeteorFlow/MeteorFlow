@@ -3,7 +3,7 @@
     <NuxtImg 
       src="/icon.png" 
       alt="MeteorFlow Logo"
-      sizes="40"
+      width="50"
     />
     <span class="text-xl font-bold">MeteorFlow</span>
   </div>
