@@ -35,7 +35,7 @@ public static class ServiceCollections
         }
         
         services.AddDbContext<AuthDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString(Constants.PersistenceDb),
+            options.UseNpgsql(persistenceKey,
                 b => b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName)), ServiceLifetime.Transient);
         
         services.AddScoped<IUserClaimsPrincipalFactory<User>, AppUserClaimsPrincipleFactory>();

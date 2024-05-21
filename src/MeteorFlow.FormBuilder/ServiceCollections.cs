@@ -18,7 +18,7 @@ public static class ServiceCollections
         services.AddApplicationServices().AddDateTimeProvider();
         
         services.AddAutoMapper(typeof(AutoMapperProfile));
-        var persistenceKey = configuration.GetConnectionString(Constants.PgDb);
+        var persistenceKey = configuration.GetConnectionString(Constants.PersistenceDb);
         
         if (persistenceKey is null or "")
         {
@@ -27,10 +27,10 @@ public static class ServiceCollections
         
         services.AddDbContext<FormDbContext>(options =>
             options.UseNpgsql(persistenceKey,
-                b => b.MigrationsAssembly(typeof(FormDbContext).Assembly.FullName)), ServiceLifetime.Transient);
+                b => b.MigrationsAssembly(typeof(FormDbContext).Assembly.FullName))
+                .UseSnakeCaseNamingConvention(), ServiceLifetime.Transient);
 
-        services.AddCoreRepositories()
-            .AddScoped<IBlockRepository, BlockRepository>()
+        services.AddScoped<IBlockRepository, BlockRepository>()
             .AddScoped<IElementRepository, ElementRepository>()
             .AddScoped<ISchemaRepository, SchemaRepository>();
         return services;

@@ -13,7 +13,6 @@ public static class CoreServiceCollections
     {
         services.AddAutoMapper(typeof(AutoMapperProfile));
         services.AddApplicationServices();
-        services.AddCommandHandlers(Assembly.GetExecutingAssembly()).AddQueryHandlers(Assembly.GetExecutingAssembly());
         return services;
     }
 }

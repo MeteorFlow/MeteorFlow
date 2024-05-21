@@ -17,7 +17,17 @@ services:
       POSTGRES_USER: "meteor"
       POSTGRES_PASSWORD: "MeteorFlow2024"
       POSTGRES_DB: "core"
-      
+  
+  meteor-auth:
+    container_name: meteor-auth
+    image: postgres:latest
+    ports:
+      - "5632:5432"
+    environment:
+      POSTGRES_USER: "meteor"
+      POSTGRES_PASSWORD: "MeteorFlow2024"
+      POSTGRES_DB: "auth"
+  
   meteor-form:
     container_name: meteor-form
     image: postgres:latest

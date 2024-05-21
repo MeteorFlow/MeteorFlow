@@ -23,15 +23,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MeteorFlow Form Builder", Version = "v1" });
-    // opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    // {
-    //     In = ParameterLocation.Header,
-    //     Description = "Please enter token",
-    //     Name = "Authorization",
-    //     Type = SecuritySchemeType.Http,
-    //     BearerFormat = "JWT",
-    //     Scheme = "bearer"
-    // });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
 
     // opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     // {

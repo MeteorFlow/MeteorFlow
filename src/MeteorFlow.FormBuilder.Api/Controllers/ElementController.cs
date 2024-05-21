@@ -18,7 +18,7 @@ public class ElementController(
 {
     [Authorize(AuthorizationPolicyNames.GetFormsPolicy)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FormDefinition>>> Get()
+    public async Task<ActionResult<IEnumerable<FormElement>>> Get()
     {
         logger.LogInformation("Getting all elements");
         var results = await queryDispatcher.Dispatch<
