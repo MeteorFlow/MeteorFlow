@@ -23,7 +23,5 @@ public class FormBlocks: Entity<Guid>
     public string Description { get; set; }
     public string Icon { get; set; }
     
-    [ForeignKey(nameof(Version))]
     public Guid VersionId { get; set; }
-    public required AppVersionControls Version { get; set; }
 }

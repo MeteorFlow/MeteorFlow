@@ -27,7 +27,7 @@ public class BlockController(
             GetAllBlocks,
             List<FormBuilder.Entities.FormBlocks>
         >(new GetAllBlocks());
-        var models = mapper.Map<List<FormDefinition>>(definitionsList);
+        var models = mapper.Map<List<FormBlock>>(definitionsList);
         return Ok(models);
     }
 
