@@ -20,7 +20,7 @@ services:
 
   backend:
     # Always use the latest image
-    image: ghcr.io/meteor-flow
+    image: ghcr.io/meteorflow/meteor-flow-backend:latest
     environment:
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
       - ConnectionStrings__PGConnection=${ConnectionStrings__PGConnection}
