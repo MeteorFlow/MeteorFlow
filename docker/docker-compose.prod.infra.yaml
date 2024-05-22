@@ -21,6 +21,33 @@ services:
     networks:
       - meteorflow-network
 
+  minio:
+    image: quay.io/minio/minio:latest
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 200M
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    ports:
+      - 2317:9000
+      - 2318:9001
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_SERVER_URL=https://s3.meteor-flow.com
+      - MINIO_BROWSER_REDIRECT_URL=https://explorer.meteor-flow.com
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+
 volumes:
   mssql-volume:
   postgres-volume:
