@@ -1,0 +1,41 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+option csharp_namespace = "MeteorFlow.Core.Grpc";
+
+package DefinitionPackage;
+
+service Definition {
+  rpc AddDefinition (AddDefinitionRequest) returns (AddDefinitionResponse);
+  rpc GetDefinitions (GetDefinitionsRequest) returns (GetDefinitionsResponse);
+  rpc GetDefinition (GetDefinitionRequest) returns (GetDefinitionResponse);
+}
+
+message GetDefinitionsRequest {}
+
+message GetDefinitionsResponse {
+  repeated DefinitionMessage definitions = 1;
+}
+
+message GetDefinitionRequest {
+  string id = 1;
+}
+
+message GetDefinitionResponse {
+  DefinitionMessage definition = 1;
+}
+
+message AddDefinitionRequest {
+  DefinitionMessage definition = 1;
+}
+
+message AddDefinitionResponse {
+  DefinitionMessage definition = 1;
+}
+
+message DefinitionMessage {
+  string name = 1;
+  string description = 2;
+  string icon = 3;
+  string definitionTypes = 4;
+  DefinitionMessage baseDefinition = 5;
+}

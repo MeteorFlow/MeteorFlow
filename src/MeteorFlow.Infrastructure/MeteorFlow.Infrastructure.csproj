@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <PackageReference Include="Confluent.Kafka" Version="2.3.0" />
+      <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
@@ -37,11 +38,8 @@
 
     <ItemGroup>
       <Folder Include="Caching\" />
-      <Folder Include="Email\" />
-      <Folder Include="Extensions\" />
       <Folder Include="MessageBroker\Kafka\" />
       <Folder Include="Migrations\" />
-      <Folder Include="Storages\" />
       <Folder Include="Web\" />
     </ItemGroup>
 

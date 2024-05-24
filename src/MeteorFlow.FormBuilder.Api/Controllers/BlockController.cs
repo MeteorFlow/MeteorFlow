@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeteorFlow.FormBuilder.Api.Controllers;
 
+[Route("api/[controller]")]
 public class BlockController (
     IQueryDispatcher queryDispatcher,
     ICommandDispatcher commandDispatcher,
@@ -17,7 +18,6 @@ public class BlockController (
     IMapper mapper)
     : ControllerBase
 {
-    [Authorize(AuthorizationPolicyNames.GetFormsPolicy)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FormBlocks>>> Get()
     {
@@ -27,7 +27,6 @@ public class BlockController (
         return Ok(models);
     }
     
-    [Authorize(AuthorizationPolicyNames.GetFormPolicy)]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
