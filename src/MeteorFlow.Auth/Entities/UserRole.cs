@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
+﻿using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.Auth.Entities;
 
-public class UserRole : IdentityUserRole<Guid>
+public class UserRole : Entity<Guid>
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; set; }
-    public User Account { get; set; }
+    public Guid UserId { get; set; }
+
+    public Guid RoleId { get; set; }
+
+    public User User { get; set; }
+
     public Role Role { get; set; }
-    public DateTime CreatedUserRoleDate { get; set; }
 }

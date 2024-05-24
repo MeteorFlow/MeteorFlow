@@ -11,7 +11,6 @@ public static class ServiceCollections
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped(typeof(IServices<,>), typeof(Services<,>));
-        // services.AddCommandHandlers(Assembly.GetExecutingAssembly()).AddQueryHandlers(Assembly.GetExecutingAssembly());
         return services;
     }
 

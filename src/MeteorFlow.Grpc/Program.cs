@@ -3,39 +3,47 @@ using MeteorFlow.Core;
 using MeteorFlow.Fx;
 using MeteorFlow.Grpc.Services;
 using MeteorFlow.Infrastructure;
-using MeteorFlow.Infrastructure.DateTimes;
-using MeteorFlow.Infrastructure.Repositories;
+using MeteorFlow.Infrastructure.Caching;
+using MeteorFlow.Infrastructure.Configurations;
 using MeteorFlow.Infrastructure.Web.Authorization.Policies;
 using MeteorFlow.Web.Authorizations;
-using MeteorFlow.Web.Configurations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-var appSettings = new AppConfig();
-builder.Configuration.Bind(appSettings);
-builder.Services.AddApplicationServices();
-builder.Services.AddCommandHandlers(Assembly.GetExecutingAssembly());
-builder.Services.AddQueryHandlers(Assembly.GetExecutingAssembly());
-builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddCoreRepositories();
-builder.Services.AddCoreUow();
-builder.Services.AddCoreServices();
-builder.Services.AddDateTimeProvider();
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
+var config = new AppConfig();
+builder.Configuration.Bind(config);
+
+// Add services to the container.
+builder.Services.AddCoreModule(config);
+builder.Services.AddCaches(config.Caching);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = config.AuthenticationServer.Authority;
+        options.Audience = config.AuthenticationServer.ApiName;
+        options.RequireHttpsMetadata = config.AuthenticationServer.RequireHttpsMetadata;
+    });
+
 builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 
-const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: myAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000/index.html",
-                    "http://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowedOrigins", b => b
+        .WithOrigins(config.Cors.AllowedOrigins)
+        .AllowAnyMethod()
+        .SetIsOriginAllowed((host) => true)
+        .AllowAnyHeader()
+        .AllowCredentials());
+    options.AddPolicy("AllowHeaders", b =>
+    {
+        b.WithOrigins(config.Cors.AllowedOrigins)
+            .WithHeaders(HeaderNames.ContentType, HeaderNames.Server, HeaderNames.AccessControlAllowHeaders,
+                HeaderNames.AccessControlExposeHeaders, "x-custom-header", "x-path", "x-record-in-use",
+                HeaderNames.ContentDisposition);
+    });
 });
 
 // Add services to the container.

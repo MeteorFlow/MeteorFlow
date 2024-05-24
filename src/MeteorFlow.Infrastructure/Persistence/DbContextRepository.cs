@@ -29,14 +29,14 @@ public class DbContextRepository<TDbContext, TEntity, TKey>(TDbContext dbContext
 
     public async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        entity.CreatedDate = dateTimeProvider.OffsetNow;
+        entity.CreatedDate = dateTimeProvider.OffsetUtcNow;
         var result = await DbSet.AddAsync(entity, cancellationToken);
         return result.Entity;
     }
 
     public Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        entity.LastModifiedDate = dateTimeProvider.OffsetNow;
+        entity.LastModifiedDate = dateTimeProvider.OffsetUtcNow;
         DbSet.Update(entity);
         return Task.FromResult(entity);
     }

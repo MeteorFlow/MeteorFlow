@@ -13,7 +13,6 @@ using Entities = MeteorFlow.Auth.Entities;
 
 namespace Meteor.Auth.Api.Controllers;
 
-[Authorize]
 [Produces("application/json")]
 [Route("api/[controller]")]
 [ApiController]
@@ -28,7 +27,7 @@ public class UsersController(
 {
 
 
-    [Authorize(AuthorizationPolicyNames.GetUsersPolicy)]
+    [Authorize("Bearer")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Domain.User>>> Get()
     {
@@ -164,5 +163,13 @@ public class UsersController(
         }
 
         return Ok();
+    }
+    
+    [HttpPost("{id}/role/{roleName}")]
+    public async Task<ActionResult> AssignRoleAsync([FromBody] Domain.User user, [FromRoute] string roleName)
+    {
+        var result = await userManager.AddToRoleAsync(mapper.Map<Entities.User>(user), roleName);
+        
+        return Ok(result);
     }
 }

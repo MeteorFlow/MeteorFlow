@@ -1,10 +1,13 @@
+using System.Reflection;
 using MeteorFlow.Core;
 using MeteorFlow.Fx;
 using MeteorFlow.Infrastructure.Configurations;
 using MeteorFlow.Infrastructure.DateTimes;
+using MeteorFlow.Infrastructure.Identity;
 using MeteorFlow.Infrastructure.Persistence;
 using MeteorFlow.Infrastructure.Repositories;
 using MeteorFlow.Infrastructure.Web;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -43,6 +46,11 @@ public static class ServiceCollections
             .AddUnitOfWork()
             .AddCoreRepositories()
             .AddApplicationServices();
+        services.AddCommandHandlers(Assembly.GetExecutingAssembly());
+        services.AddQueryHandlers(Assembly.GetExecutingAssembly());
+        
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<ICurrentUser, CurrentWebUser>();
 
         services.AddCoreServices();
         return services;
