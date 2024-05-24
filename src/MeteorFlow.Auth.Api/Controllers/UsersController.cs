@@ -27,7 +27,7 @@ public class UsersController(
 {
 
 
-    [Authorize("Bearer")]
+    [Authorize(AuthorizationPolicyNames.GetUsersPolicy)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Domain.User>>> Get()
     {
@@ -165,11 +165,5 @@ public class UsersController(
         return Ok();
     }
     
-    [HttpPost("{id}/role/{roleName}")]
-    public async Task<ActionResult> AssignRoleAsync([FromBody] Domain.User user, [FromRoute] string roleName)
-    {
-        var result = await userManager.AddToRoleAsync(mapper.Map<Entities.User>(user), roleName);
-        
-        return Ok(result);
-    }
+
 }

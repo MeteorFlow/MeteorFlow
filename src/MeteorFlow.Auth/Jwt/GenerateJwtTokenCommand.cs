@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using MeteorFlow.Auth.Models;
@@ -37,9 +38,10 @@ internal class GenerateJwtTokenCommandHandler(SecurityTokenHandler tokenHandler,
             Claims = claimsPrincipal.Claims.ToDictionary(c => c.Type, c => (object)c.Value),
             Issuer= jwtSettings.Issuer,
             Audience= jwtSettings.Audience,
-            Expires = DateTime.UtcNow.AddHours(1), // Set the token expiration time
+            IssuedAt = DateTime.UtcNow,
+            Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationMinutes), // Set the token expiration time
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-        };
+        }; 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }

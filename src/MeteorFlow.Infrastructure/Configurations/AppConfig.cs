@@ -15,6 +15,8 @@ public class AppConfig
     public AuthenticationServer AuthenticationServer { get; set; }
     
     public OcelotOptions Ocelot { get; set; }
+    
+    public JwtSettings JwtSettings { get; set; }
 }
 
 public class AuthenticationServer
@@ -34,4 +36,14 @@ public class Cors
     public bool AllowAnyOrigin { get; set; }
 
     public string[] AllowedOrigins { get; set; }
+}
+
+public class JwtSettings
+{
+    public required string SecretKey { get; set; }
+    public required string EncryptKey { get; set; }
+    public required string Issuer { get; set; }
+    public required string Audience { get; set; }
+    public int NotBeforeMinutes { get; set; }
+    public int ExpirationMinutes { get; set; }
 }

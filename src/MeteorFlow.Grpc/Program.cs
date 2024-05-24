@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using MeteorFlow.Core;
 using MeteorFlow.Fx;
 using MeteorFlow.Grpc.Services;
@@ -8,6 +9,7 @@ using MeteorFlow.Infrastructure.Configurations;
 using MeteorFlow.Infrastructure.Web.Authorization.Policies;
 using MeteorFlow.Web.Authorizations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 
@@ -19,13 +21,26 @@ builder.Configuration.Bind(config);
 builder.Services.AddCoreModule(config);
 builder.Services.AddCaches(config.Caching);
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.IncludeErrorDetails = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.Authority = config.AuthenticationServer.Authority;
-        options.Audience = config.AuthenticationServer.ApiName;
-        options.RequireHttpsMetadata = config.AuthenticationServer.RequireHttpsMetadata;
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = config.JwtSettings.Issuer,
+        ValidAudience = config.JwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.JwtSettings.SecretKey))
+    };
+});
 
 builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 

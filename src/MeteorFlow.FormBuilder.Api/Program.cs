@@ -1,21 +1,41 @@
 using System.Reflection;
+using System.Text;
 using MeteorFlow.Core;
 using MeteorFlow.FormBuilder;
 using MeteorFlow.Fx;
+using MeteorFlow.Infrastructure.Configurations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// builder.Services
-//     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
-// builder.Services.AddAuthorization();
-builder.Services.AddCoreServices();
+var config = new AppConfig();
+builder.Configuration.Bind(config);
 
 builder.Services.AddCommandHandlers(Assembly.GetExecutingAssembly())
     .AddQueryHandlers(Assembly.GetExecutingAssembly());
 builder.Services.AddFormBuilderModule(builder.Configuration);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.IncludeErrorDetails = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = config.JwtSettings.Issuer,
+        ValidAudience = config.JwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.JwtSettings.SecretKey))
+    };
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
