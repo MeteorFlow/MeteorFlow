@@ -1,13 +1,12 @@
 using MeteorFlow.Core.Entities;
 using MeteorFlow.Fx.Commands;
-using MeteorFlow.Fx.Repositories;
 using MeteorFlow.Fx.Services;
 
 namespace MeteorFlow.Core.VersionControls.Commands;
 
 public class AddUpdateVersionControlCommand(AppVersionControls entity): AddOrUpdateCommand<AppVersionControls, Guid>(entity);
 
-internal class AddUpdateVersionControlCommandHandler(IServices<AppVersionControls, Guid> versionControlService, IUnitOfWork unitOfWork) 
+internal class AddUpdateVersionControlCommandHandler(IServices<AppVersionControls, Guid> versionControlService) 
     : ICommandHandler<AddUpdateVersionControlCommand, AppVersionControls>
 {
     public Task<AppVersionControls> HandleAsync(AddUpdateVersionControlCommand command, CancellationToken cancellationToken = default)

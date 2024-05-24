@@ -22,6 +22,7 @@ public class GlobalExceptionHandlerMiddleware(
         }
         catch (Exception ex)
         {
+            var request = context.Request;
             var response = context.Response;
             response.ContentType = "application/problem+json";
 
@@ -44,6 +45,9 @@ public class GlobalExceptionHandlerMiddleware(
                     problemDetails.Status = (int)HttpStatusCode.BadRequest;
                     problemDetails.Title = "Bad Request";
                     problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1";
+                    break;
+                case UnauthorizedAccessException:
+                    response.Redirect($"/api/auth?returnUrl={request.Path}");
                     break;
                 default:
                     logger.LogError(ex, "[{Ticks}-{ThreadId}]", DateTime.UtcNow.Ticks, Environment.CurrentManagedThreadId);

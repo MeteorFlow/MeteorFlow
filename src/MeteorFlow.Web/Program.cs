@@ -1,21 +1,24 @@
+using System.Net;
 using System.Reflection;
-using MeteorFlow.Core;
-using MeteorFlow.Fx;
 using MeteorFlow.Infrastructure;
-using MeteorFlow.Infrastructure.DateTimes;
-using MeteorFlow.Infrastructure.Repositories;
+using MeteorFlow.Infrastructure.Caching;
+using MeteorFlow.Infrastructure.Configurations;
+using MeteorFlow.Infrastructure.Web;
 using MeteorFlow.Infrastructure.Web.Authorization.Policies;
+using MeteorFlow.Infrastructure.Web.Endpoints;
+using MeteorFlow.Infrastructure.Web.ExceptionHandlers;
+using MeteorFlow.Infrastructure.Web.Middleware;
 using MeteorFlow.Web.Authorizations;
-using MeteorFlow.Web.Configurations;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using Ocelot.Configuration.File;
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-var appSettings = new AppConfig();
-builder.Configuration.Bind(appSettings);
-
+var config = new AppConfig();
+builder.Configuration.Bind(config);
 
 // Add configuration from app settings.json
 builder.Configuration
@@ -23,31 +26,82 @@ builder.Configuration
     .AddJsonFile("appsettings.json")
     .AddEnvironmentVariables();
 
-
 // Add services to the container.
-builder.Services.AddApplicationServices();
-builder.Services.AddCommandHandlers(Assembly.GetExecutingAssembly());
-builder.Services.AddQueryHandlers(Assembly.GetExecutingAssembly());
-builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddCoreRepositories();
-builder.Services.AddCoreUow();
-builder.Services.AddCoreServices();
-builder.Services.AddDateTimeProvider();
+builder.Services.AddCoreModule(config);
+builder.Services.AddCaches(config.Caching);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = config.AuthenticationServer.Authority;
+        options.Audience = config.AuthenticationServer.ApiName;
+        options.RequireHttpsMetadata = config.AuthenticationServer.RequireHttpsMetadata;
+    });
+
 builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 
-const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: myAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000/index.html",
-                    "http://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowedOrigins", b => b
+        .WithOrigins(config.Cors.AllowedOrigins)
+        .AllowAnyMethod()
+        .SetIsOriginAllowed((host) => true)
+        .AllowAnyHeader()
+        .AllowCredentials());
+    options.AddPolicy("AllowHeaders", b =>
+    {
+        b.WithOrigins(config.Cors.AllowedOrigins)
+            .WithHeaders(HeaderNames.ContentType, HeaderNames.Server, HeaderNames.AccessControlAllowHeaders,
+                HeaderNames.AccessControlExposeHeaders, "x-custom-header", "x-path", "x-record-in-use",
+                HeaderNames.ContentDisposition);
+    });
 });
-builder.Services.AddControllers().AddNewtonsoftJson();
+
+// Add controllers
+builder.Services
+    .ConfigRouting()
+    .AddControllers()
+    .AddNewtonsoftJson();
+
+builder.Services.AddOcelot(builder.Configuration);
+builder.Services.PostConfigure<FileConfiguration>(fileConfiguration =>
+{
+    foreach (var route in config.Ocelot.Routes.Select(x => x.Value))
+    {
+        var uri = new Uri(route.Downstream);
+
+        foreach (var pathTemplate in route.UpstreamPathTemplates)
+        {
+            fileConfiguration.Routes.Add(new FileRoute
+            {
+                UpstreamPathTemplate = pathTemplate,
+                DownstreamPathTemplate = pathTemplate,
+                DownstreamScheme = uri.Scheme,
+                DownstreamHostAndPorts = new List<FileHostAndPort>
+                {
+                    new FileHostAndPort { Host = uri.Host, Port = uri.Port }
+                }
+            });
+        }
+    }
+
+    foreach (var route in fileConfiguration.Routes)
+    {
+        if (string.IsNullOrWhiteSpace(route.DownstreamScheme))
+        {
+            route.DownstreamScheme = config?.Ocelot?.DefaultDownstreamScheme;
+        }
+
+        if (string.IsNullOrWhiteSpace(route.DownstreamPathTemplate))
+        {
+            route.DownstreamPathTemplate = route.UpstreamPathTemplate;
+        }
+    }
+});
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
@@ -89,12 +143,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(x => x
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .SetIsOriginAllowed(_ => true) // allow any origin
-    //.WithOrigins("https://localhost:44351")); // Allow only this origin can also have multiple origins separated with comma
-    .AllowCredentials()); // allow credentials
+app.UseCors(config.Cors.AllowAnyOrigin ? "AllowAnyOrigin" : "AllowedOrigins"); // allow credentials
+
+app.UseGlobalExceptionHandlerMiddleware();
+app.UseStatusCodePages(context =>
+{
+    var request = context.HttpContext.Request;
+    var response = context.HttpContext.Response;
+    if (response.StatusCode == (int)HttpStatusCode.Unauthorized)
+    {
+        response.Redirect($"{request.Scheme}://{request.Host}/api/auth?returnUrl={request.Path}"); //redirect to the login page.
+    }
+
+    return Task.CompletedTask;
+});
 
 app.UseHttpsRedirection();
 
@@ -102,5 +164,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseWebSockets();
+await app.UseOcelot();
 
 app.Run();

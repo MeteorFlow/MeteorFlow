@@ -14,41 +14,49 @@ namespace MeteorFlow.FormBuilder.Api.Controllers;
 public class BlockController (
     IQueryDispatcher queryDispatcher,
     ICommandDispatcher commandDispatcher,
-    ILogger<FormDefinitionController> logger,
-    IMapper mapper)
-    : ControllerBase
+    ILogger<BlockController> logger,
+    IMapper mapper
+) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FormBlocks>>> Get()
+    public async Task<ActionResult<IEnumerable<FormBlock>>> Get()
     {
         logger.LogInformation("Getting all definitions");
-        var definitionsList = await queryDispatcher.Dispatch<GetAllBlocks, List<FormBuilder.Entities.FormBlocks>>(new GetAllBlocks());
-        var models = mapper.Map<List<FormDefinitions>>(definitionsList);
+        var definitionsList = await queryDispatcher.Dispatch<
+            GetAllBlocks,
+            List<FormBuilder.Entities.FormBlocks>
+        >(new GetAllBlocks());
+        var models = mapper.Map<List<FormBlock>>(definitionsList);
         return Ok(models);
     }
-    
+
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<FormBlocks>> Get(Guid id)
+    public async Task<ActionResult<FormBlock>> Get(Guid id)
     {
         logger.LogInformation("Getting setting with id: {id}", id);
-        var settings = await queryDispatcher.Dispatch<GetByIdBlock, FormBuilder.Entities.FormBlocks>(new GetByIdBlock { Id = id, ThrowNotFoundIfNull = true });
-        return Ok(mapper.Map<FormBlocks>(settings));
+        var settings = await queryDispatcher.Dispatch<
+            GetByIdBlock,
+            FormBuilder.Entities.FormBlocks
+        >(new GetByIdBlock { Id = id, ThrowNotFoundIfNull = true });
+        return Ok(mapper.Map<FormBlock>(settings));
     }
-    
+
     [Authorize(AuthorizationPolicyNames.AddFormPolicy)]
     [HttpPost]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<FormBlocks>> Post([FromBody] FormBlocks model)
+    public async Task<ActionResult<FormBlock>> Post([FromBody] FormBlock model)
     {
         logger.LogInformation("Adding setting with id: {id}", model.Id);
-        var setting = await commandDispatcher.Dispatch<AddUpdateBlockCommand, FormBuilder.Entities.FormBlocks>(new AddUpdateBlockCommand(mapper.Map<FormBuilder.Entities.FormBlocks>(model)));
-        return Created($"/api/setting/{model.Id}", mapper.Map<FormBlocks>(setting));
+        var setting = await commandDispatcher.Dispatch<
+            AddUpdateBlockCommand,
+            FormBuilder.Entities.FormBlocks
+        >(new AddUpdateBlockCommand(mapper.Map<FormBuilder.Entities.FormBlocks>(model)));
+        return Created($"/api/setting/{model.Id}", mapper.Map<FormBlock>(setting));
     }
-    
-    
+
     [Authorize(AuthorizationPolicyNames.DeleteFormPolicy)]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -56,8 +64,12 @@ public class BlockController (
     public async Task<ActionResult> Delete(Guid id)
     {
         logger.LogInformation("Deleting setting with id: {id}", id);
-        var setting = await queryDispatcher.Dispatch<GetByIdBlock, FormBuilder.Entities.FormBlocks>(new GetByIdBlock { Id = id, ThrowNotFoundIfNull = true });
-        await commandDispatcher.Dispatch<DeleteBlockCommand, FormBuilder.Entities.FormBlocks>(new DeleteBlockCommand (setting));
+        var setting = await queryDispatcher.Dispatch<GetByIdBlock, FormBuilder.Entities.FormBlocks>(
+            new GetByIdBlock { Id = id, ThrowNotFoundIfNull = true }
+        );
+        await commandDispatcher.Dispatch<DeleteBlockCommand, FormBuilder.Entities.FormBlocks>(
+            new DeleteBlockCommand(setting)
+        );
         return Ok();
     }
 }

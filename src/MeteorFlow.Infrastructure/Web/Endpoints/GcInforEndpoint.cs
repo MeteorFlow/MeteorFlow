@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using System;
-using System.Globalization;
 
-namespace ClassifiedAds.Infrastructure.Web.Endpoints;
+namespace MeteorFlow.Infrastructure.Web.Endpoints;
 
 /// <summary>
 /// https://learn.microsoft.com/en-us/dotnet/api/system.gc

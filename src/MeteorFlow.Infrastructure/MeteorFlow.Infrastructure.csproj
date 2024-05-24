@@ -38,9 +38,10 @@
 
     <ItemGroup>
       <Folder Include="Caching\" />
+      <Folder Include="Email\" />
       <Folder Include="MessageBroker\Kafka\" />
       <Folder Include="Migrations\" />
-      <Folder Include="Web\" />
+      <Folder Include="Storages\" />
     </ItemGroup>
 
 

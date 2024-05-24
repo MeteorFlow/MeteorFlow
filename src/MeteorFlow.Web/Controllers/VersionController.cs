@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeteorFlow.Web.Controllers;
 
 [Produces("application/json")]
-[Route("api/[controller]")]
+[Route("api/core/[controller]")]
 public class VersionController(
     IQueryDispatcher queryDispatcher,
     ILogger<SettingController> logger,

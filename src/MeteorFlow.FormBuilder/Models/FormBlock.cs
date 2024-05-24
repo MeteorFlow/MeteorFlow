@@ -3,10 +3,10 @@ using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.FormBuilder.Models;
 
-public class FormBlocks: JsonBase<Guid>, IObject
+public class FormBlock: JsonBase<Guid>, IObject
 {
     public string Name { get; set; }
-    public FormElements Element { get; set; }
+    public FormElement Element { get; set; }
     
     // Display
     public string DisplayName { get; set; }

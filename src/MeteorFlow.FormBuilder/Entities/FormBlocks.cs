@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using MeteorFlow.Domain.App;
-using MeteorFlow.Domain.Commons;
-using MeteorFlow.FormBuilder.Models;
 using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.FormBuilder.Entities;
@@ -25,7 +23,5 @@ public class FormBlocks: Entity<Guid>
     public string Description { get; set; }
     public string Icon { get; set; }
     
-    [ForeignKey(nameof(Version))]
     public Guid VersionId { get; set; }
-    public required AppVersionControls Version { get; set; }
 }

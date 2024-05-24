@@ -9,7 +9,8 @@ public static class RepositoryExtensions
 {
     public static IServiceCollection AddCoreRepositories(this IServiceCollection services)
     {
-        services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>))
+        services
+            .AddScoped(typeof(IRepository<,>), typeof(Repository<,>))
             .AddScoped(typeof(IDefinitionRepository), typeof(DefinitionRepository))
             .AddScoped(typeof(IInstanceRepository), typeof(InstanceRepository))
             .AddScoped(typeof(ISettingRepository), typeof(SettingRepository))
@@ -22,7 +23,7 @@ public static class RepositoryExtensions
         return services;
     }
 
-    public static IServiceCollection AddCoreUow(this IServiceCollection services)
+    public static IServiceCollection AddUnitOfWork(this IServiceCollection services)
     {
         services.AddScoped(typeof(IUnitOfWork), provider => provider.GetRequiredService<CoreDbContext>());
         return services;
