@@ -41,7 +41,7 @@ services:
     # Always use the latest image
     image: ghcr.io/meteorflow/meteor-flow-auth-api:latest
     environment:
-      - ConnectionStrings__DefaultConnection="Host=auth-db; Database=${AUTH_DB_NAME}; Username=${AUTH_DB_USER}; Password=${AUTH_DB_PASSWORD}
+      - ConnectionStrings__DefaultConnection=Host=auth-db; Port=8080; Database=${AUTH_DB_NAME}; Username=${AUTH_DB_USER}; Password=${AUTH_DB_PASSWORD}
     expose:
       - 8080
     deploy:
@@ -59,7 +59,7 @@ services:
     # Always use the latest image
     image: ghcr.io/meteorflow/meteor-flow-form-builder-api:latest
     environment:
-      - ConnectionStrings__DefaultConnection="Host=form-builder-db; Database=${FORM_BUILDER_DB_USER}; Username=${FORM_BUILDER_DB_PASSWORD}; Password=${FORM_BUILDER_DB_NAME}
+      - ConnectionStrings__DefaultConnection=Host=form-builder-db; Port=8080; Database=${FORM_BUILDER_DB_USER}; Username=${FORM_BUILDER_DB_PASSWORD}; Password=${FORM_BUILDER_DB_NAME}
     expose:
       - 8080
     deploy:
