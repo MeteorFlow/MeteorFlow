@@ -18,7 +18,7 @@ services:
   #   networks:
   #     - meteorflow-network
 
-  backend:
+  core-api:
     # Always use the latest image
     image: ghcr.io/meteorflow/meteor-flow-backend:latest
     environment:
@@ -26,6 +26,24 @@ services:
       - ConnectionStrings__PGConnection=${ConnectionStrings__PGConnection}
     ports:
       - ${API_PORT}:8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.2"
+          memory: 50M
+        limits:
+          cpus: "2"
+          memory: 200M
+    networks:
+      - meteorflow-network
+
+  auth-api:
+    # Always use the latest image
+    image: ghcr.io/meteorflow/meteor-flow-auth-api:latest
+    environment:
+      - ConnectionStrings__DefaultConnection="Host=auth-db; Database=${AUTH_DB_NAME}; Username=${AUTH_DB_USER}; Password=${AUTH_DB_PASSWORD}
+    expose:
+      - 8080
     deploy:
       resources:
         reservations:

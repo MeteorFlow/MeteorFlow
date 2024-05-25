@@ -11,7 +11,6 @@ using MeteorFlow.Web.Authorizations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
-using Ocelot.Configuration.File;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -23,6 +22,7 @@ builder.Configuration.Bind(config);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json")
+    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables();
 
 // Add services to the container.
@@ -62,41 +62,7 @@ builder.Services
     .AddControllers()
     .AddNewtonsoftJson();
 
-builder.Services.AddOcelot(builder.Configuration);
-builder.Services.PostConfigure<FileConfiguration>(fileConfiguration =>
-{
-    foreach (var route in config.Ocelot.Routes.Select(x => x.Value))
-    {
-        var uri = new Uri(route.Downstream);
-
-        foreach (var pathTemplate in route.UpstreamPathTemplates)
-        {
-            fileConfiguration.Routes.Add(new FileRoute
-            {
-                UpstreamPathTemplate = pathTemplate,
-                DownstreamPathTemplate = pathTemplate,
-                DownstreamScheme = uri.Scheme,
-                DownstreamHostAndPorts = new List<FileHostAndPort>
-                {
-                    new FileHostAndPort { Host = uri.Host, Port = uri.Port }
-                }
-            });
-        }
-    }
-
-    foreach (var route in fileConfiguration.Routes)
-    {
-        if (string.IsNullOrWhiteSpace(route.DownstreamScheme))
-        {
-            route.DownstreamScheme = config?.Ocelot?.DefaultDownstreamScheme;
-        }
-
-        if (string.IsNullOrWhiteSpace(route.DownstreamPathTemplate))
-        {
-            route.DownstreamPathTemplate = route.UpstreamPathTemplate;
-        }
-    }
-});
+builder.Services.AddOcelot();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
