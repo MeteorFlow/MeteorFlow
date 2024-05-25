@@ -16,7 +16,7 @@ public class AppConfig
     public AuthenticationServer AuthenticationServer { get; set; }
     
     public OcelotOptions Ocelot { get; set; }
-    
+   
     public JwtSettings JwtSettings { get; set; }
     
     public GrpcOptions Grpc { get; set; }

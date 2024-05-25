@@ -28,7 +28,7 @@ public class UsersController(
 {
 
 
-    [Authorize(AuthorizationPolicyNames.GetUsersPolicy)]
+    [Authorize("Bearer")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Domain.User>>> Get()
     {

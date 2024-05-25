@@ -8,6 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 var config = new AppConfig();
 builder.Configuration.Bind(config);
 
+// Add configuration from app settings.json
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
+    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json")
+    .AddEnvironmentVariables();
+    
 builder.Services.AddOcelot(builder.Configuration);
 builder.Services.PostConfigure<FileConfiguration>(fileConfiguration =>
 {
