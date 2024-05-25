@@ -13,6 +13,12 @@ const links = [
     to: "/dashboard",
   },
   {
+    label: "Forms",
+    icon: "i-heroicons-table-cells",
+    to: "/forms",
+    exact: false
+  },
+  {
     label: "API",
     icon: "i-heroicons-code-bracket",
     to: "/api",
