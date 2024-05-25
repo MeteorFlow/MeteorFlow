@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Text;
-using MeteorFlow.Core;
-using MeteorFlow.Fx;
+
 using MeteorFlow.Grpc.Services;
 using MeteorFlow.Infrastructure;
 using MeteorFlow.Infrastructure.Caching;
@@ -42,6 +41,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization();
+
 builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 
 builder.Services.AddCors(options =>
@@ -72,6 +73,9 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseSwagger();
 if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI(c =>
@@ -82,7 +86,6 @@ if (app.Environment.IsDevelopment()) {
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<DefinitionMessageService>();
-app.UseAuthorization();
 app.MapGet("/",
     () =>
         "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");

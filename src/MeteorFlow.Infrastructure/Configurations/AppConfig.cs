@@ -1,4 +1,5 @@
 using MeteorFlow.Infrastructure.Caching;
+using MeteorFlow.Infrastructure.Grpc;
 using MeteorFlow.Web.Configs;
 
 namespace MeteorFlow.Infrastructure.Configurations;
@@ -17,6 +18,8 @@ public class AppConfig
     public OcelotOptions Ocelot { get; set; }
     
     public JwtSettings JwtSettings { get; set; }
+    
+    public GrpcOptions Grpc { get; set; }
 }
 
 public class AuthenticationServer

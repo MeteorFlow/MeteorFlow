@@ -19,8 +19,14 @@
     "win:build": "powershell scripts/build.ps1",
     "win:dev": "powershell scripts/dev.ps1",
     "win:clean": "powershell scripts/clean.ps1",
-    "db:update": "dotnet ef database update --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj",
-    "db:remove": "dotnet ef migrations remove -f --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj",
-    "db:add": "dotnet ef migrations add --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj"
+    "core:update": "dotnet ef database update --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj",
+    "core:remove": "dotnet ef migrations remove -f --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj",
+    "core:add": "dotnet ef migrations add --startup-project ./src/MeteorFlow.Web/MeteorFlow.Web.csproj -p ./src/MeteorFlow.Infrastructure/MeteorFlow.Infrastructure.csproj",
+    "auth:update": "dotnet ef database update --project ./src/MeteorFlow.Auth/MeteorFlow.Auth.csproj --startup-project ./src/MeteorFlow.Auth.Api/MeteorFlow.Auth.Api.csproj",
+    "auth:remove": "dotnet ef migrations remove -f --project ./src/MeteorFlow.Auth/MeteorFlow.Auth.csproj --startup-project ./src/MeteorFlow.Auth.Api/MeteorFlow.Auth.Api.csproj",
+    "auth:add": "dotnet ef migrations add --project ./src/MeteorFlow.Auth/MeteorFlow.Auth.csproj --startup-project ./src/MeteorFlow.Auth.Api/MeteorFlow.Auth.Api.csproj",
+    "form:update": "dotnet ef database update --project ./src/MeteorFlow.FormBuilder/MeteorFlow.FormBuilder.csproj --startup-project ./src/MeteorFlow.FormBuilder.Api/MeteorFlow.FormBuilder.Api.csproj",
+    "form:remove": "dotnet ef migrations remove -f --project ./src/MeteorFlow.FormBuilder/MeteorFlow.FormBuilder.csproj --startup-project ./src/MeteorFlow.FormBuilder.Api/MeteorFlow.FormBuilder.Api.csproj",
+    "form:add": "dotnet ef migrations add --project ./src/MeteorFlow.FormBuilder/MeteorFlow.FormBuilder.csproj --startup-project ./src/MeteorFlow.FormBuilder.Api/MeteorFlow.FormBuilder.Api.csproj"
   }
 }

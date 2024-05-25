@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using MeteorFlow.Core;
 using MeteorFlow.FormBuilder;
+using MeteorFlow.FormBuilder.Api.Configuration;
 using MeteorFlow.Fx;
 using MeteorFlow.Infrastructure.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +16,7 @@ builder.Configuration.Bind(config);
 builder.Services.AddCommandHandlers(Assembly.GetExecutingAssembly())
     .AddQueryHandlers(Assembly.GetExecutingAssembly());
 builder.Services.AddFormBuilderModule(builder.Configuration);
+builder.Services.AddGrpcServices(config.Grpc);
 
 builder.Services.AddAuthentication(options =>
 {
