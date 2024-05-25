@@ -15,6 +15,7 @@ public static class ServiceCollections
 {
     public static IServiceCollection AddFormBuilderModule(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddCoreServices();
         services.AddApplicationServices().AddDateTimeProvider();
         
         services.AddAutoMapper(typeof(AutoMapperProfile));

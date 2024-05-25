@@ -5,7 +5,11 @@ option csharp_namespace = "MeteorFlow.Core.Grpc";
 package DefinitionPackage;
 
 service Definition {
-  rpc AddDefinition (AddDefinitionRequest) returns (AddDefinitionResponse);
+  rpc AddDefinition (AddDefinitionRequest) returns (AddDefinitionResponse){
+    option (google.api.http) = {
+      get: "/v1/definitions"
+    };
+  }
   rpc GetDefinitions (GetDefinitionsRequest) returns (GetDefinitionsResponse);
   rpc GetDefinition (GetDefinitionRequest) returns (GetDefinitionResponse);
 }

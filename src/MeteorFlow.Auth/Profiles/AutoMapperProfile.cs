@@ -24,5 +24,7 @@ public class AutoMapperProfile : Profile
             .ReverseMap()
             // .ForAllOtherMembers(opts => opts.Ignore()); // Uncomment this if you want to ignore unmapped properties
             ;
+        CreateMap<Entities.Role,Models.Role>()
+            .ReverseMap();
     }
 }

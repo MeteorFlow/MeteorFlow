@@ -154,7 +154,7 @@ public static class ServiceCollections
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.SecretKey))
                 };
             });
             // .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"), "AzureAD");

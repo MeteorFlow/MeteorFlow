@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net;
 using System.Reflection;
 using MeteorFlow.Infrastructure;
 using MeteorFlow.Infrastructure.Caching;
@@ -9,6 +10,7 @@ using MeteorFlow.Infrastructure.Web.ExceptionHandlers;
 using MeteorFlow.Infrastructure.Web.Middleware;
 using MeteorFlow.Web.Authorizations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
@@ -29,13 +31,26 @@ builder.Configuration
 builder.Services.AddCoreModule(config);
 builder.Services.AddCaches(config.Caching);
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.IncludeErrorDetails = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.Authority = config.AuthenticationServer.Authority;
-        options.Audience = config.AuthenticationServer.ApiName;
-        options.RequireHttpsMetadata = config.AuthenticationServer.RequireHttpsMetadata;
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = config.JwtSettings.Issuer,
+        ValidAudience = config.JwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.JwtSettings.SecretKey))
+    };
+});
 
 builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
 
@@ -62,7 +77,41 @@ builder.Services
     .AddControllers()
     .AddNewtonsoftJson();
 
-builder.Services.AddOcelot();
+builder.Services.AddOcelot(builder.Configuration);
+builder.Services.PostConfigure<FileConfiguration>(fileConfiguration =>
+{
+    foreach (var route in config.Ocelot.Routes.Select(x => x.Value))
+    {
+        var uri = new Uri(route.Downstream);
+
+        foreach (var pathTemplate in route.UpstreamPathTemplates)
+        {
+            fileConfiguration.Routes.Add(new FileRoute
+            {
+                UpstreamPathTemplate = pathTemplate,
+                DownstreamPathTemplate = pathTemplate,
+                DownstreamScheme = uri.Scheme,
+                DownstreamHostAndPorts = new List<FileHostAndPort>
+                {
+                    new FileHostAndPort { Host = uri.Host, Port = uri.Port }
+                }
+            });
+        }
+    }
+
+    foreach (var route in fileConfiguration.Routes)
+    {
+        if (string.IsNullOrWhiteSpace(route.DownstreamScheme))
+        {
+            route.DownstreamScheme = config?.Ocelot?.DefaultDownstreamScheme;
+        }
+
+        if (string.IsNullOrWhiteSpace(route.DownstreamPathTemplate))
+        {
+            route.DownstreamPathTemplate = route.UpstreamPathTemplate;
+        }
+    }
+});
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
