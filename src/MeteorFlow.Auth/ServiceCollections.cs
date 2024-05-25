@@ -1,12 +1,17 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
 using MeteorFlow.Auth.Authorization;
 using MeteorFlow.Auth.Models;
 using MeteorFlow.Auth.PasswordValidators;
+using MeteorFlow.Auth.Profiles;
 using MeteorFlow.Auth.Repositories;
 using MeteorFlow.Auth.Services;
+using MeteorFlow.Fx;
+using MeteorFlow.Infrastructure.Identity;
 using MeteorFlow.Infrastructure.Web.Authorization.Policies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,18 +25,12 @@ namespace MeteorFlow.Auth;
 
 public static class ServiceCollections
 {
-
-    public static IServiceCollection AddMeteorFlowAuthentication(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddNativeAuthentication(configuration);
-
-        return services;
-    }
-    
     public static IServiceCollection AddAuthModule(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddAutoMapper(typeof(AutoMapperProfile));
         services.AddScoped<IUserRepository, UserRepository>()
-            .AddScoped<IRoleRepository, RoleRepository>();
+            .AddScoped<IRoleRepository, RoleRepository>()
+            .AddScoped<IUserRoleRepository, UserRoleRepository>();
         
         var persistenceKey = configuration.GetConnectionString(Constants.PersistenceDb);
         
@@ -41,11 +40,14 @@ public static class ServiceCollections
         }
         
         services.AddDbContext<AuthDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString(Constants.PersistenceDb),
+            options.UseNpgsql(persistenceKey,
                 b => b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName)), ServiceLifetime.Transient);
         
         services.AddScoped<IUserClaimsPrincipalFactory<User>, AppUserClaimsPrincipleFactory>();
         services.AddScoped<IUserStore<User>, AuthUserStore>();
+        
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<ICurrentUser, CurrentWebUser>();
 
         services
             .AddIdentityCore<User>(options =>
@@ -64,6 +66,12 @@ public static class ServiceCollections
             .AddRoleStore<AuthRoleStore>()
             .AddDefaultTokenProviders()
             .AddUserManager<AuthUserManager>();
+        
+        services.AddTransient<IUserStore<User>, AuthUserStore>();
+        services.AddTransient<IRoleStore<Role>, AuthRoleStore>();
+        
+        services.AddCommandHandlers(Assembly.GetExecutingAssembly());
+        services.AddQueryHandlers(Assembly.GetExecutingAssembly());
         
         return services;
     }
@@ -124,9 +132,11 @@ public static class ServiceCollections
             .Get<JwtSettings>();
 
         if (jwtSettings == null) throw new Exception("JwtSettings is null");
+        
+        services.AddSingleton<SecurityTokenHandler, JwtSecurityTokenHandler>();
 
         services.AddAuthModule(configuration);
-        
+
         services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -135,7 +145,7 @@ public static class ServiceCollections
             })
             .AddJwtBearer(options =>
             {
-                
+                options.IncludeErrorDetails = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -144,10 +154,10 @@ public static class ServiceCollections
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.SecretKey))
                 };
-            })
-            .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"), "AzureAD");
+            });
+            // .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"), "AzureAD");
             
         services.ConfigureAuthOptions();
         return services;

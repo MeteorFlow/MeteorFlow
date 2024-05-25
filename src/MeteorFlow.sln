@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Auth", "MeteorFl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Auth.Api", "MeteorFlow.Auth.Api\MeteorFlow.Auth.Api.csproj", "{C113CBE6-E474-4D48-BDAC-F0ED3D472940}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteorFlow.Grpc", "MeteorFlow.Grpc\MeteorFlow.Grpc.csproj", "{69ED7282-C0F8-43C6-AB12-60335AB3C204}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,10 @@ Global
 		{C113CBE6-E474-4D48-BDAC-F0ED3D472940}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C113CBE6-E474-4D48-BDAC-F0ED3D472940}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C113CBE6-E474-4D48-BDAC-F0ED3D472940}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69ED7282-C0F8-43C6-AB12-60335AB3C204}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69ED7282-C0F8-43C6-AB12-60335AB3C204}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69ED7282-C0F8-43C6-AB12-60335AB3C204}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69ED7282-C0F8-43C6-AB12-60335AB3C204}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0E3E9DB2-E19A-4526-B880-7ED2F5EEAD70} = {7A4FBDA6-2FC3-4DEB-B31D-4DABBAE3AC06}

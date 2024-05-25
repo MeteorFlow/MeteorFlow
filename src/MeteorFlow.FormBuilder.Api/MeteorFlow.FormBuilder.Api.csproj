@@ -11,11 +11,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" NoWarn="NU1605"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.0" NoWarn="NU1605"/>
+        <PackageReference Include="Google.Protobuf" Version="3.26.1" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.62.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.64.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.Identity.Web" Version="2.15.2"/>
-        <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="2.15.2"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 
@@ -27,6 +35,17 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MeteorFlow.FormBuilder\MeteorFlow.FormBuilder.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Protobuf Include="Protos\definition.proto">
+        <GrpcServices>Client</GrpcServices>
+        <Access>Public</Access>
+      </Protobuf>
+      <Protobuf Include="Protos\instance.proto">
+        <GrpcServices>Client</GrpcServices>
+        <Access>Public</Access>
+      </Protobuf>
     </ItemGroup>
 
 </Project>

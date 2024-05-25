@@ -1,64 +1,151 @@
 using MeteorFlow.Auth.Entities;
 using MeteorFlow.Auth.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeteorFlow.Auth.Services;
 
-public class AuthRoleStore(IRoleRepository roleRepository) : IRoleStore<Role>
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class AuthRoleStore : IRoleStore<Role>
 {
+    private readonly IRoleRepository _roleRepository;
+
+    public AuthRoleStore(IRoleRepository roleRepository)
+    {
+        _roleRepository = roleRepository;
+    }
 
     public void Dispose()
     {
-
+        // Dispose of any resources if necessary
     }
 
-    public Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
+    public async Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (role == null)
+        {
+            throw new ArgumentNullException(nameof(role));
+        }
+
+        await _roleRepository.AddAsync(role);
+        return IdentityResult.Success;
     }
 
-    public Task<IdentityResult> DeleteAsync(Role role, CancellationToken cancellationToken)
+    public async Task<IdentityResult> DeleteAsync(Role role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (role == null)
+        {
+            throw new ArgumentNullException(nameof(role));
+        }
+
+        _roleRepository.Delete(role);
+        return IdentityResult.Success;
     }
 
-    public Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+    public async Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (string.IsNullOrWhiteSpace(roleId))
+        {
+            throw new ArgumentException("Invalid role ID", nameof(roleId));
+        }
+
+        return await _roleRepository.Get(new RoleQueryOptions{ IncludeClaims = true }).FirstOrDefaultAsync(x => x.Id == Guid.Parse(roleId), cancellationToken: cancellationToken);
     }
 
-    public Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+    public async Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (string.IsNullOrWhiteSpace(normalizedRoleName))
+        {
+            throw new ArgumentException("Invalid role name", nameof(normalizedRoleName));
+        }
+
+        return await _roleRepository.Get(new RoleQueryOptions{ IncludeClaims = true }).FirstOrDefaultAsync(x => x.NormalizedName == normalizedRoleName, cancellationToken: cancellationToken);
     }
 
     public Task<string> GetNormalizedRoleNameAsync(Role role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (role == null)
+        {
+            throw new ArgumentNullException(nameof(role));
+        }
+
+        return Task.FromResult(role.NormalizedName);
     }
 
     public Task<string> GetRoleIdAsync(Role role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (role == null)
+        {
+            throw new ArgumentNullException(nameof(role));
+        }
+
+        return Task.FromResult(role.Id.ToString());
     }
 
     public Task<string> GetRoleNameAsync(Role role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (role == null)
+        {
+            throw new ArgumentNullException(nameof(role));
+        }
+
+        return Task.FromResult(role.Name);
     }
 
     public Task SetNormalizedRoleNameAsync(Role role, string normalizedName, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (role == null)
+        {
+            throw new ArgumentNullException(nameof(role));
+        }
+
+        role.NormalizedName = normalizedName;
+        return Task.CompletedTask;
     }
 
     public Task SetRoleNameAsync(Role role, string roleName, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (role == null)
+        {
+            throw new ArgumentNullException(nameof(role));
+        }
+
+        role.Name = roleName;
+        return Task.CompletedTask;
     }
 
-    public Task<IdentityResult> UpdateAsync(Role role, CancellationToken cancellationToken)
+    public async Task<IdentityResult> UpdateAsync(Role role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (role == null)
+        {
+            throw new ArgumentNullException(nameof(role));
+        }
+
+        await _roleRepository.UpdateAsync(role);
+        return IdentityResult.Success;
     }
 }

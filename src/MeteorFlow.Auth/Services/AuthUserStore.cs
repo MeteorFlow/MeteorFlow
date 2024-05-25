@@ -7,23 +7,29 @@ using Microsoft.EntityFrameworkCore;
 namespace MeteorFlow.Auth.Services;
 
 public class AuthUserStore : IUserStore<User>,
-                         IUserPasswordStore<User>,
-                         IUserSecurityStampStore<User>,
-                         IUserEmailStore<User>,
-                         IUserPhoneNumberStore<User>,
-                         IUserTwoFactorStore<User>,
-                         IUserLockoutStore<User>,
-                         IUserAuthenticationTokenStore<User>,
-                         IUserAuthenticatorKeyStore<User>,
-                         IUserTwoFactorRecoveryCodeStore<User>
+    IUserPasswordStore<User>,
+    IUserSecurityStampStore<User>,
+    IUserEmailStore<User>,
+    IUserPhoneNumberStore<User>,
+    IUserTwoFactorStore<User>,
+    IUserLockoutStore<User>,
+    IUserAuthenticationTokenStore<User>,
+    IUserAuthenticatorKeyStore<User>,
+    IUserTwoFactorRecoveryCodeStore<User>,
+    IUserRoleStore<User>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly IRoleRepository _roleRepository;
+    private readonly IUserRoleRepository _userRoleRepository;
 
-    public AuthUserStore(IUserRepository userRepository)
+    public AuthUserStore(IUserRepository userRepository, IRoleRepository roleRepository,
+        IUserRoleRepository userRoleRepository)
     {
         _unitOfWork = userRepository.UnitOfWork;
         _userRepository = userRepository;
+        _roleRepository = roleRepository;
+        _userRoleRepository = userRoleRepository;
     }
 
     public void Dispose()
@@ -45,17 +51,20 @@ public class AuthUserStore : IUserStore<User>,
 
     public Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
     {
-        return _userRepository.Get(new UserQueryOptions { IncludeTokens = true }).FirstOrDefaultAsync(x => x.NormalizedEmail == normalizedEmail, cancellationToken: cancellationToken);
+        return _userRepository.Get(new UserQueryOptions { IncludeTokens = true })
+            .FirstOrDefaultAsync(x => x.NormalizedEmail == normalizedEmail, cancellationToken: cancellationToken);
     }
 
     public Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
     {
-        return _userRepository.Get(new UserQueryOptions { IncludeTokens = true }).FirstOrDefaultAsync(x => x.Id == Guid.Parse(userId), cancellationToken: cancellationToken);
+        return _userRepository.Get(new UserQueryOptions { IncludeTokens = true })
+            .FirstOrDefaultAsync(x => x.Id == Guid.Parse(userId), cancellationToken: cancellationToken);
     }
 
     public Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
     {
-        return _userRepository.Get(new UserQueryOptions { IncludeTokens = true }).FirstOrDefaultAsync(x => x.NormalizedUserName == normalizedUserName, cancellationToken: cancellationToken);
+        return _userRepository.Get(new UserQueryOptions { IncludeTokens = true })
+            .FirstOrDefaultAsync(x => x.NormalizedUserName == normalizedUserName, cancellationToken: cancellationToken);
     }
 
     public Task<int> GetAccessFailedCountAsync(User user, CancellationToken cancellationToken)
@@ -231,14 +240,15 @@ public class AuthUserStore : IUserStore<User>,
     public Task<string> GetTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
     {
         var tokenEntity = user.Tokens.SingleOrDefault(
-                l => l.TokenName == name && l.LoginProvider == loginProvider);
+            l => l.TokenName == name && l.LoginProvider == loginProvider);
         return Task.FromResult(tokenEntity?.TokenValue);
     }
 
-    public async Task SetTokenAsync(User user, string loginProvider, string name, string value, CancellationToken cancellationToken)
+    public async Task SetTokenAsync(User user, string loginProvider, string name, string value,
+        CancellationToken cancellationToken)
     {
         var tokenEntity = user.Tokens.SingleOrDefault(
-                l => l.TokenName == name && l.LoginProvider == loginProvider);
+            l => l.TokenName == name && l.LoginProvider == loginProvider);
         if (tokenEntity != null)
         {
             tokenEntity.TokenValue = value;
@@ -257,10 +267,11 @@ public class AuthUserStore : IUserStore<User>,
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task RemoveTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
+    public async Task RemoveTokenAsync(User user, string loginProvider, string name,
+        CancellationToken cancellationToken)
     {
         var tokenEntity = user.Tokens.SingleOrDefault(
-                l => l.TokenName == name && l.LoginProvider == loginProvider);
+            l => l.TokenName == name && l.LoginProvider == loginProvider);
         if (tokenEntity != null)
         {
             user.Tokens.Remove(tokenEntity);
@@ -281,23 +292,150 @@ public class AuthUserStore : IUserStore<User>,
     public Task ReplaceCodesAsync(User user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
     {
         var mergedCodes = string.Join(";", recoveryCodes);
-        return SetTokenAsync(user, AuthenticatorStoreLoginProvider, RecoveryCodeTokenName, mergedCodes, cancellationToken);
+        return SetTokenAsync(user, AuthenticatorStoreLoginProvider, RecoveryCodeTokenName, mergedCodes,
+            cancellationToken);
     }
 
     public async Task<bool> RedeemCodeAsync(User user, string code, CancellationToken cancellationToken)
     {
-        var mergedCodes = await GetTokenAsync(user, AuthenticatorStoreLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? "";
+        var mergedCodes =
+            await GetTokenAsync(user, AuthenticatorStoreLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? "";
         var splitCodes = mergedCodes.Split(';');
         if (!splitCodes.Contains(code)) return false;
         var updatedCodes = new List<string>(splitCodes.Where(s => s != code));
         await ReplaceCodesAsync(user, updatedCodes, cancellationToken);
         return true;
-
     }
 
     public async Task<int> CountCodesAsync(User user, CancellationToken cancellationToken)
     {
-        var mergedCodes = await GetTokenAsync(user, AuthenticatorStoreLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? "";
+        var mergedCodes =
+            await GetTokenAsync(user, AuthenticatorStoreLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? "";
         return mergedCodes.Length > 0 ? mergedCodes.Split(';').Length : 0;
+    }
+
+    private async Task<Role> GetRoleAsync(string roleName, CancellationToken cancellationToken)
+    {
+        return await _roleRepository.Get(new RoleQueryOptions { IncludeClaims = true })
+            .FirstOrDefaultAsync(x => x.NormalizedName == roleName, cancellationToken: cancellationToken);
+    }
+
+    private async Task<Role> GetRoleAsync(Guid roleId, CancellationToken cancellationToken)
+    {
+        return await _roleRepository.Get(new RoleQueryOptions { IncludeClaims = true })
+            .FirstOrDefaultAsync(x => x.Id == roleId, cancellationToken: cancellationToken);
+    }
+
+    public async Task AddToRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (user == null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            throw new ArgumentException("Role name cannot be null or whitespace.", nameof(roleName));
+        }
+
+        var role = await GetRoleAsync(roleName, cancellationToken);
+        if (role == null)
+        {
+            throw new InvalidOperationException("Role not found.");
+        }
+
+        await _userRoleRepository.AddUserRoleAsync(user.Id, role.Id);
+    }
+
+    public async Task RemoveFromRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (user == null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            throw new ArgumentException("Role name cannot be null or whitespace.", nameof(roleName));
+        }
+
+        var role = await GetRoleAsync(roleName, cancellationToken);
+        if (role == null)
+        {
+            throw new InvalidOperationException("Role not found.");
+        }
+
+        await _userRoleRepository.RemoveUserRoleAsync(user.Id, role.Id);
+    }
+
+    public async Task<IList<string>> GetRolesAsync(User user, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (user == null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+
+        var roles = await _userRoleRepository.GetRolesByUserIdAsync(user.Id);
+        return roles.Select(r => r.Name).ToList();
+    }
+
+    public async Task<bool> IsInRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (user == null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            throw new ArgumentException("Role name cannot be null or whitespace.", nameof(roleName));
+        }
+
+        var role = await GetRoleAsync(roleName, cancellationToken);
+        if (role == null)
+        {
+            return false;
+        }
+
+        return await _userRoleRepository.UserHasRoleAsync(user.Id, role.Id);
+    }
+
+    public async Task<IList<User>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            throw new ArgumentException("Role name cannot be null or whitespace.", nameof(roleName));
+        }
+
+        var role = await GetRoleAsync(roleName, cancellationToken);
+        if (role == null)
+        {
+            return new List<User>();
+        }
+
+        var userIds = await _userRoleRepository.GetUserIdsByRoleIdAsync(role.Id);
+        var users = new List<User>();
+
+        foreach (var userId in userIds)
+        {
+            var user = await _userRepository.Get(new UserQueryOptions())
+                .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken: cancellationToken);
+            if (user != null)
+            {
+                users.Add(user);
+            }
+        }
+
+        return users;
     }
 }

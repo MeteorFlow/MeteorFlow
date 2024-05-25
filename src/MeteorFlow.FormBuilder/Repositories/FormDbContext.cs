@@ -1,16 +1,18 @@
 using System.Reflection;
+using MeteorFlow.FormBuilder.Entities;
 using MeteorFlow.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeteorFlow.FormBuilder.Repositories;
 
 
-public class FormDbContext : DbContextUnitOfWork<FormDbContext>
+public class FormDbContext(DbContextOptions<FormDbContext> options) : DbContextUnitOfWork<FormDbContext>(options)
 {
-    public FormDbContext(DbContextOptions<FormDbContext> options)
-        : base(options)
-    {
-    }
+    public DbSet<FormBlocks> FormBlocks { get; set; }
+
+    public DbSet<FormElements> FormElements { get; set; }
+
+    public DbSet<ElementSchemas> ElementSchemas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

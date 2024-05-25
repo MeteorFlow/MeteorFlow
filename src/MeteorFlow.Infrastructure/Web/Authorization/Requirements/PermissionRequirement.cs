@@ -13,7 +13,7 @@ public class PermissionRequirementHandler : AuthorizationHandler<PermissionRequi
     {
         var user = context.User;
 
-        if (!user.Identity.IsAuthenticated)
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
         {
             context.Fail();
             return Task.CompletedTask;

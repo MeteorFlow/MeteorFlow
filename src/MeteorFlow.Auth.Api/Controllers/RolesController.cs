@@ -2,6 +2,7 @@
 using MeteorFlow.Auth.Authorization;
 using MeteorFlow.Auth.Roles.Commands;
 using MeteorFlow.Auth.Roles.Queries;
+using MeteorFlow.Auth.Services;
 using MeteorFlow.Fx.Commands;
 using MeteorFlow.Fx.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +18,7 @@ namespace Meteor.Auth.Api.Controllers;
 [ApiController]
 public class RolesController(
     ILogger<RolesController> logger,
+    AuthUserManager userManager,
     ICommandDispatcher commandDispatcher,
     IQueryDispatcher queryDispatcher,
     IMapper mapper)
@@ -88,5 +90,13 @@ public class RolesController(
         await commandDispatcher.Dispatch<DeleteRoleCommand, Entities.Role>(new DeleteRoleCommand { Role = role });
 
         return Ok();
+    }
+    
+    [HttpPost("{roleName}")]
+    public async Task<ActionResult> AssignRoleAsync([FromBody] Domain.User user, [FromRoute] string roleName)
+    {
+        var result = await userManager.AddToRoleAsync(mapper.Map<Entities.User>(user), roleName);
+        
+        return Ok(result);
     }
 }
