@@ -7,6 +7,12 @@ using MeteorFlow.Infrastructure.Web.Endpoints;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
+    .AddEnvironmentVariables();
+
 var config = new AppConfig();
 builder.Configuration.Bind(config);
 
@@ -18,6 +24,16 @@ builder.Services.AddDateTimeProvider();
 
 builder.Services.AddNativeAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
+builder.Services.ConfigRouting().AddControllers().AddNewtonsoftJson();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedOrigins", b => b
+        .WithOrigins(config.Cors.AllowedOrigins)
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+});
+
 builder.Services.ConfigRouting().AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddCors(options =>
