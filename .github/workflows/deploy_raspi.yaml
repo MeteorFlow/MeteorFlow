@@ -123,7 +123,7 @@ jobs:
 
   redeploy:
     name: Redeploy
-    needs: [build-backend, build-auth-api]
+    needs: [build-backend, build-auth-api, build-form-builder-api]
     runs-on: ubuntu-latest
     steps:
       - name: Pull commits and trigger Docker Compose
