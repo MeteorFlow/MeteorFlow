@@ -55,6 +55,24 @@ services:
     networks:
       - meteorflow-network
 
+  form-builder-api:
+    # Always use the latest image
+    image: ghcr.io/meteorflow/meteor-flow-form-builder-api:latest
+    environment:
+      - ConnectionStrings__DefaultConnection="Host=form-builder-db; Database=${FORM_BUILDER_DB_USER}; Username=${FORM_BUILDER_DB_PASSWORD}; Password=${FORM_BUILDER_DB_NAME}
+    expose:
+      - 8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.2"
+          memory: 50M
+        limits:
+          cpus: "2"
+          memory: 200M
+    networks:
+      - meteorflow-network
+
 networks:
   meteorflow-network:
     name: meteorflow-network

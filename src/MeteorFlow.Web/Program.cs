@@ -1,6 +1,6 @@
 using System.Net;
-using System.Net;
 using System.Reflection;
+using System.Text;
 using MeteorFlow.Infrastructure;
 using MeteorFlow.Infrastructure.Caching;
 using MeteorFlow.Infrastructure.Configurations;
@@ -24,6 +24,7 @@ builder.Configuration.Bind(config);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables();
 
@@ -31,122 +32,107 @@ builder.Configuration
 builder.Services.AddCoreModule(config);
 builder.Services.AddCaches(config.Caching);
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.IncludeErrorDetails = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services
+    .AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = config.JwtSettings.Issuer,
-        ValidAudience = config.JwtSettings.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.JwtSettings.SecretKey))
-    };
-});
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.IncludeErrorDetails = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = config.JwtSettings.Issuer,
+            ValidAudience = config.JwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.ASCII.GetBytes(config.JwtSettings.SecretKey)
+            )
+        };
+    });
 
-builder.Services.AddAuthorizationPolicies(Assembly.GetExecutingAssembly(), AuthorizationPolicyNames.GetPolicyNames());
+builder.Services.AddAuthorizationPolicies(
+    Assembly.GetExecutingAssembly(),
+    AuthorizationPolicyNames.GetPolicyNames()
+);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowedOrigins", b => b
-        .WithOrigins(config.Cors.AllowedOrigins)
-        .AllowAnyMethod()
-        .SetIsOriginAllowed((host) => true)
-        .AllowAnyHeader()
-        .AllowCredentials());
-    options.AddPolicy("AllowHeaders", b =>
-    {
-        b.WithOrigins(config.Cors.AllowedOrigins)
-            .WithHeaders(HeaderNames.ContentType, HeaderNames.Server, HeaderNames.AccessControlAllowHeaders,
-                HeaderNames.AccessControlExposeHeaders, "x-custom-header", "x-path", "x-record-in-use",
-                HeaderNames.ContentDisposition);
-    });
+    options.AddPolicy(
+        "AllowedOrigins",
+        b =>
+            b.WithOrigins(config.Cors.AllowedOrigins)
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((host) => true)
+                .AllowAnyHeader()
+                .AllowCredentials()
+    );
+    options.AddPolicy(
+        "AllowHeaders",
+        b =>
+        {
+            b.WithOrigins(config.Cors.AllowedOrigins)
+                .WithHeaders(
+                    HeaderNames.ContentType,
+                    HeaderNames.Server,
+                    HeaderNames.AccessControlAllowHeaders,
+                    HeaderNames.AccessControlExposeHeaders,
+                    "x-custom-header",
+                    "x-path",
+                    "x-record-in-use",
+                    HeaderNames.ContentDisposition
+                );
+        }
+    );
 });
 
 // Add controllers
-builder.Services
-    .ConfigRouting()
-    .AddControllers()
-    .AddNewtonsoftJson();
+builder.Services.ConfigRouting().AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddOcelot(builder.Configuration);
-builder.Services.PostConfigure<FileConfiguration>(fileConfiguration =>
-{
-    foreach (var route in config.Ocelot.Routes.Select(x => x.Value))
-    {
-        var uri = new Uri(route.Downstream);
-
-        foreach (var pathTemplate in route.UpstreamPathTemplates)
-        {
-            fileConfiguration.Routes.Add(new FileRoute
-            {
-                UpstreamPathTemplate = pathTemplate,
-                DownstreamPathTemplate = pathTemplate,
-                DownstreamScheme = uri.Scheme,
-                DownstreamHostAndPorts = new List<FileHostAndPort>
-                {
-                    new FileHostAndPort { Host = uri.Host, Port = uri.Port }
-                }
-            });
-        }
-    }
-
-    foreach (var route in fileConfiguration.Routes)
-    {
-        if (string.IsNullOrWhiteSpace(route.DownstreamScheme))
-        {
-            route.DownstreamScheme = config?.Ocelot?.DefaultDownstreamScheme;
-        }
-
-        if (string.IsNullOrWhiteSpace(route.DownstreamPathTemplate))
-        {
-            route.DownstreamPathTemplate = route.UpstreamPathTemplate;
-        }
-    }
-});
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MeteorFlow", Version = "v1" });
-    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "bearer"
-    });
-
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    opt.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
+            In = ParameterLocation.Header,
+            Description = "Please enter token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "bearer"
         }
-    });
-});
+    );
 
+    opt.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        }
+    );
+});
 
 var app = builder.Build();
 

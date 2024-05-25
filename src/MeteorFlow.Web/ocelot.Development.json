@@ -1,16 +1,34 @@
 {
   "Routes": [
     {
-      "UpstreamPathTemplate": "/api/core/{everything}",
+      "UpstreamPathTemplate": "/core/{everything}",
       "DownstreamPathTemplate": "/api/core/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7044 }]
+    },
+    {
+      "UpstreamPathTemplate": "/auth/login",
+      "DownstreamPathTemplate": "/api/auth/login",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7119 }]
     },
     {
-      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamPathTemplate": "/auth/register",
+      "DownstreamPathTemplate": "/api/auth/register",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7119 }]
+    },
+    {
+      "UpstreamPathTemplate": "/auth/{everything}",
       "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7119 }]
+    },
+    {
+      "UpstreamPathTemplate": "/form/{everything}",
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7073 }]
     }
   ]
 }
