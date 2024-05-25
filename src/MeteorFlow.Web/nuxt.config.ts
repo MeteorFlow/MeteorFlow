@@ -3,7 +3,7 @@ import fs from 'fs';
 import * as defaults from "./clients/aspnetcore-nuxt";
 export default defineNuxtConfig({
   srcDir: "clients/",
-  devServer: {
+  devServer: process.env.NODE_ENV === 'production' ? {} : {
     https: {
       cert: fs.readFileSync(defaults.certFilePath).toString(),
       key: fs.readFileSync(defaults.keyFilePath).toString()
