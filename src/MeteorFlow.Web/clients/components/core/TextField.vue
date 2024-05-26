@@ -9,6 +9,7 @@ const props = defineProps<{
   description?: string;
   help?: string;
   required?: boolean;
+  disabled?: boolean;
   rules?: ValidateFunction[];
 
   size?: Size;
@@ -75,6 +76,10 @@ watch(modelValue, async () => {
       :color="props.filled ? 'gray' : 'white'"
       :trailing="false"
       :placeholder="state.placeholder"
+      :disabled="disabled"
+      :ui="{
+        base: 'disabled:cursor-default'
+      }"
     />
     <UInputMenu
       v-else
