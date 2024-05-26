@@ -1,18 +1,6 @@
 using System.Net;
-using System.Reflection;
-using System.Text;
-using MeteorFlow.Infrastructure;
-using MeteorFlow.Infrastructure.Caching;
-using MeteorFlow.Infrastructure.Configurations;
-using MeteorFlow.Infrastructure.Web.Authorization.Policies;
-using MeteorFlow.Infrastructure.Web.Endpoints;
-using MeteorFlow.Infrastructure.Web.ExceptionHandlers;
-using MeteorFlow.Infrastructure.Web.Middleware;
-using MeteorFlow.Web.Authorizations;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
-using Microsoft.OpenApi.Models;
+using MeteorFlow.Web.Configurations;
+using Ocelot.Configuration.File;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -27,125 +15,45 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables();
-
-// Add services to the container.
-builder.Services.AddCoreModule(config);
-builder.Services.AddCaches(config.Caching);
-
-builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.IncludeErrorDetails = true;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = config.JwtSettings.Issuer,
-            ValidAudience = config.JwtSettings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.ASCII.GetBytes(config.JwtSettings.SecretKey)
-            )
-        };
-    });
-
-builder.Services.AddAuthorizationPolicies(
-    Assembly.GetExecutingAssembly(),
-    AuthorizationPolicyNames.GetPolicyNames()
-);
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-        "AllowedOrigins",
-        b =>
-            b.WithOrigins(config.Cors.AllowedOrigins)
-                .AllowAnyMethod()
-                .SetIsOriginAllowed((host) => true)
-                .AllowAnyHeader()
-                .AllowCredentials()
-    );
-    options.AddPolicy(
-        "AllowHeaders",
-        b =>
-        {
-            b.WithOrigins(config.Cors.AllowedOrigins)
-                .WithHeaders(
-                    HeaderNames.ContentType,
-                    HeaderNames.Server,
-                    HeaderNames.AccessControlAllowHeaders,
-                    HeaderNames.AccessControlExposeHeaders,
-                    "x-custom-header",
-                    "x-path",
-                    "x-record-in-use",
-                    HeaderNames.ContentDisposition
-                );
-        }
-    );
-});
-
-// Add controllers
-builder.Services.ConfigRouting().AddControllers().AddNewtonsoftJson();
-
+    
 builder.Services.AddOcelot(builder.Configuration);
-
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(opt =>
+builder.Services.PostConfigure<FileConfiguration>(fileConfiguration =>
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MeteorFlow", Version = "v1" });
-    opt.AddSecurityDefinition(
-        "Bearer",
-        new OpenApiSecurityScheme
-        {
-            In = ParameterLocation.Header,
-            Description = "Please enter token",
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            BearerFormat = "JWT",
-            Scheme = "bearer"
-        }
-    );
+    foreach (var route in config.Ocelot.Routes.Select(x => x.Value))
+    {
+        var uri = new Uri(route.Downstream);
 
-    opt.AddSecurityRequirement(
-        new OpenApiSecurityRequirement
+        foreach (var pathTemplate in route.UpstreamPathTemplates)
         {
+            fileConfiguration.Routes.Add(new FileRoute
             {
-                new OpenApiSecurityScheme
+                UpstreamPathTemplate = pathTemplate,
+                DownstreamPathTemplate = pathTemplate,
+                DownstreamScheme = uri.Scheme,
+                DownstreamHostAndPorts = new List<FileHostAndPort>
                 {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                Array.Empty<string>()
-            }
+                    new FileHostAndPort { Host = uri.Host, Port = uri.Port }
+                }
+            });
         }
-    );
+    }
+
+    foreach (var route in fileConfiguration.Routes)
+    {
+        if (string.IsNullOrWhiteSpace(route.DownstreamScheme))
+        {
+            route.DownstreamScheme = config?.Ocelot?.DefaultDownstreamScheme;
+        }
+
+        if (string.IsNullOrWhiteSpace(route.DownstreamPathTemplate))
+        {
+            route.DownstreamPathTemplate = route.UpstreamPathTemplate;
+        }
+    }
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseCors(config.Cors.AllowAnyOrigin ? "AllowAnyOrigin" : "AllowedOrigins"); // allow credentials
-
-app.UseGlobalExceptionHandlerMiddleware();
 app.UseStatusCodePages(context =>
 {
     var request = context.HttpContext.Request;
@@ -157,13 +65,6 @@ app.UseStatusCodePages(context =>
 
     return Task.CompletedTask;
 });
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
 
 app.UseWebSockets();
 await app.UseOcelot();
