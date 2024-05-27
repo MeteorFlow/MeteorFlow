@@ -11,8 +11,4 @@ public class FormElements: Entity<Guid>
     public string Description { get; set; }
     public string Category { get; set; }
     public string Icon { get; set; }
-    
-    [ForeignKey(nameof(Schema))]
-    public Guid SchemaId { get; set; }
-    public ElementSchemas Schema { get; set; }
 }

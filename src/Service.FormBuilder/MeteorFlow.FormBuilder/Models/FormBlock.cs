@@ -7,6 +7,7 @@ public class FormBlock: JsonBase<Guid>, IObject
 {
     public string Name { get; set; }
     public FormElement Element { get; set; }
+    public ElementSchema Schema { get; set; }
     
     // Display
     public string DisplayName { get; set; }
