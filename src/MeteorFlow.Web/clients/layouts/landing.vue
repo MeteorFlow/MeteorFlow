@@ -28,14 +28,15 @@ const links = [
   ],
   [
     {
-      label: "GitHub",
-      icon: "i-mdi-github",
-      to: "https://github.com/meteorflow/meteorflow",
+      label: "Login",
+      icon: "i-fa6-solid-user",
+      to: "/login",
     },
     {
-      label: "Help",
-      icon: "i-heroicons-question-mark-circle",
-    },
+      label: "Signup",
+      icon: "i-fa6-solid-user-plus",
+      to: "/signup",
+    }
   ],
 ];
 
@@ -88,7 +89,7 @@ const footerLinks = [
 ];
 
 const ui = {
-  base: "group relative w-full flex items-center gap-1.5 px-2.5 py-3.5",
+  base: "group relative w-full flex items-center gap-1.5 py-3.5",
   before: "",
   after: "",
 };
@@ -96,7 +97,8 @@ const ui = {
 
 <template>
   <div>
-    <UHorizontalNavigation :links="links" :ui="ui">
+    <div class="container mx-auto">
+      <UHorizontalNavigation :links="links" :ui="ui">
       <template #default="{ link }">
         <div v-if="link.to === landingPath">
           <LandingLogo />
@@ -106,6 +108,8 @@ const ui = {
         }}</span>
       </template>
     </UHorizontalNavigation>
+    </div>
+
     <div class="w-full flex flex-col">
       <slot></slot>
     </div>
