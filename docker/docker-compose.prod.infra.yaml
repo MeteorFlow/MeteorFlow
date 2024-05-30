@@ -64,6 +64,27 @@ services:
     networks:
       - meteorflow-network
 
+  core-db:
+    image: postgres:15.6-alpine3.19
+    expose:
+      - 5432
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 100M
+        limits:
+          cpus: '1'
+          memory: 200M
+    environment:
+      POSTGRES_USER: ${CORE_DB_USER}
+      POSTGRES_PASSWORD: ${CORE_DB_PASSWORD}
+      POSTGRES_DB: ${CORE_DB_NAME}
+    volumes:
+      - core-db-volume:/var/lib/postgresql/data
+    networks:
+      - meteorflow-network
+
   redis:
     image: redis:7.2-alpine
     ports:
@@ -103,6 +124,7 @@ volumes:
   postgres-volume:
   auth-db-volume:
   form-builder-db-volume:
+  core-db-volume:
 
 networks:
   meteorflow-network:

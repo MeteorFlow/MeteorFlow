@@ -18,12 +18,12 @@ services:
   #   networks:
   #     - meteorflow-network
 
-  core-api:
+  gateway-api:
     # Always use the latest image
     image: ghcr.io/meteorflow/meteor-flow-backend:latest
+    pull_policy: always
     environment:
-      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
-      - ConnectionStrings__PGConnection=${ConnectionStrings__PGConnection}
+      - ConnectionStrings__Postgres=${ConnectionStrings__PGConnection}
     ports:
       - ${API_PORT}:8080
     deploy:
@@ -40,8 +40,9 @@ services:
   auth-api:
     # Always use the latest image
     image: ghcr.io/meteorflow/meteor-flow-auth-api:latest
+    pull_policy: always
     environment:
-      - ConnectionStrings__DefaultConnection=Host=auth-db; Port=8080; Database=${AUTH_DB_NAME}; Username=${AUTH_DB_USER}; Password=${AUTH_DB_PASSWORD}
+      - ConnectionStrings__Postgres=Host=auth-db; Port=5432; Database=${AUTH_DB_NAME}; Username=${AUTH_DB_USER}; Password=${AUTH_DB_PASSWORD}
     expose:
       - 8080
     deploy:
@@ -58,8 +59,28 @@ services:
   form-builder-api:
     # Always use the latest image
     image: ghcr.io/meteorflow/meteor-flow-form-builder-api:latest
+    pull_policy: always
     environment:
-      - ConnectionStrings__DefaultConnection=Host=form-builder-db; Port=8080; Database=${FORM_BUILDER_DB_USER}; Username=${FORM_BUILDER_DB_PASSWORD}; Password=${FORM_BUILDER_DB_NAME}
+      - ConnectionStrings__Postgres=Host=form-builder-db; Port=5432; Database=${FORM_BUILDER_DB_USER}; Username=${FORM_BUILDER_DB_PASSWORD}; Password=${FORM_BUILDER_DB_NAME}
+    expose:
+      - 8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.2"
+          memory: 50M
+        limits:
+          cpus: "2"
+          memory: 200M
+    networks:
+      - meteorflow-network
+
+  core-api:
+    # Always use the latest image
+    image: ghcr.io/meteorflow/meteor-flow-core-api:latest
+    pull_policy: always
+    environment:
+      - ConnectionStrings__Postgres=Host=core-db; Port=5432; Database=${CORE_DB_USER}; Username=${CORE_DB_PASSWORD}; Password=${CORE_DB_NAME}
     expose:
       - 8080
     deploy:

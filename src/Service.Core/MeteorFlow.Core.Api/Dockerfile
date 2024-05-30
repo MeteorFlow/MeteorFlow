@@ -1,23 +1,20 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+﻿FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS publish
+ARG configuration=Release
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Service.Core/MeteorFlow.Core.Api/MeteorFlow.Core.Api.csproj", "Service.Core/MeteorFlow.Core.Api/"]
-RUN dotnet restore "Service.Core/MeteorFlow.Core.Api/MeteorFlow.Core.Api.csproj"
-COPY . .
-WORKDIR "/src/Service.Core/MeteorFlow.Core.Api"
-RUN dotnet build "MeteorFlow.Core.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY src .
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "MeteorFlow.Core.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+ARG TARGETOS TARGETARCH
+RUN dotnet publish Service.Core/MeteorFlow.Core.Api \
+    -c $configuration --os=$TARGETOS --arch=$TARGETARCH --property:PublishDir=/src/published
 
-FROM base AS final
+# =====================================================================================
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy-chiseled AS runtime
+USER app
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MeteorFlow.Core.Api.dll"]
+COPY --from=publish /src/published .
+
+EXPOSE 8080
+
+ENTRYPOINT [ "dotnet", "MeteorFlow.Core.Api.dll" ]
