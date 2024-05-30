@@ -5,7 +5,7 @@ WORKDIR /src
 COPY src .
 
 ARG TARGETOS TARGETARCH
-RUN dotnet publish MeteorFlow.Auth.Api -c $configuration --os=$TARGETOS --arch=$TARGETARCH --property:PublishDir=/src/published
+RUN dotnet publish Service.Auth/MeteorFlow.Auth.Api -c $configuration --os=$TARGETOS --arch=$TARGETARCH --property:PublishDir=/src/published
 
 # =====================================================================================
 

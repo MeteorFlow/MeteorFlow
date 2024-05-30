@@ -5,7 +5,8 @@ WORKDIR /src
 COPY src .
 
 ARG TARGETOS TARGETARCH
-RUN dotnet publish MeteorFlow.FormBuilder.Api -c $configuration --os=$TARGETOS --arch=$TARGETARCH --property:PublishDir=/src/published
+RUN dotnet publish Service.FormBuilder/MeteorFlow.FormBuilder.Api \
+    -c $configuration --os=$TARGETOS --arch=$TARGETARCH --property:PublishDir=/src/published
 
 # =====================================================================================
 
