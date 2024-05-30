@@ -120,21 +120,3 @@ jobs:
           push: true
           platforms: linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
-
-  redeploy:
-    name: Redeploy
-    needs: [build-backend, build-auth-api, build-form-builder-api]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull commits and trigger Docker Compose
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.RASPI_HOST }}
-          username: ${{ secrets.RASPI_USERNAME }}
-          key: ${{ secrets.RASPI_SSH_KEY }}
-          script: |
-            cd MeteorFlow
-            git fetch --prune origin
-            git pull
-            docker compose -f docker/docker-compose.prod.yaml pull
-            docker compose -f docker/docker-compose.prod.yaml up -d
