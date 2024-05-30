@@ -9,25 +9,25 @@
     {
       "UpstreamPathTemplate": "/auth/login",
       "DownstreamPathTemplate": "/api/auth/login",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "auth-api", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/auth/register",
       "DownstreamPathTemplate": "/api/auth/register",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "auth-api", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/auth/{everything}",
       "DownstreamPathTemplate": "/api/auth/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "auth-api", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/form/{everything}",
       "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "form-builder-api", "Port": 8080 }]
     }
   ]
