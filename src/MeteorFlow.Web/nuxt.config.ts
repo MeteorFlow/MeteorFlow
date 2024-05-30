@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     // Public keys that are exposed to the client
     public: {
       apiUrl: process.env.NODE_ENV === 'production' 
-        ? 'https://api.meteorflow.com' // Your .NET Core API base URL
+        ? 'https://api.meteor-flow.com' // Your .NET Core API base URL
         : 'https://localhost:7044'
     }
   },
