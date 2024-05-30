@@ -9,6 +9,14 @@ export default defineNuxtConfig({
       key: fs.readFileSync(defaults.keyFilePath).toString()
     }
   },
+  runtimeConfig: {
+    // Public keys that are exposed to the client
+    public: {
+      apiUrl: process.env.NODE_ENV === 'production' 
+        ? 'https://api.meteorflow.com' // Your .NET Core API base URL
+        : 'https://localhost:7044'
+    }
+  },
   experimental: {
     renderJsonPayloads: false,
   },

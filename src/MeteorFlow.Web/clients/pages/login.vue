@@ -1,11 +1,18 @@
 <script setup lang="ts">
+import { useHttps } from '~/composables/useHttps';
+
+const session = useUserSession();
+
 useSeoMeta({
   title: "Login",
 });
 
+console.log(session.token.value);
+
+
 const fields = [
   {
-    name: "email",
+    name: "name",
     type: "text",
     label: "Email",
     placeholder: "Enter your email",
@@ -32,15 +39,41 @@ const providers = [
     label: "Continue with GitHub",
     icon: "i-simple-icons-github",
     color: "white" as const,
-    click: () => {
-      console.log("Redirect to GitHub");
-    },
+    click: handleGitHubAuth,
   },
 ];
 
-function onSubmit(data: any) {
-  console.log("Submitted", data);
+async function onSubmit(data: any) {
+  const { data: response, error } = await useHttps<string>('/auth/login', {
+    method: 'POST',
+    body: data,
+    default: () => "",
+  });
+
+  if (!error.value) {
+    // Handle successful login
+    session.setSession(response.value, { userName: data.name });
+  } else {
+    // Handle login error
+    console.error('Login failed');
+  }
 }
+
+async function handleGitHubAuth() {
+  const { data: response, error } = useHttps('/auth/github-callback', {
+    method: 'GET',
+    default: () => null,
+  });
+
+  if (!error.value) {
+    // Handle GitHub auth success
+    console.log('GitHub auth successful');
+  } else {
+    // Handle GitHub auth error
+    console.error('GitHub auth failed');
+  }
+}
+
 </script>
 
 <!-- eslint-disable vue/multiline-html-element-content-newline -->

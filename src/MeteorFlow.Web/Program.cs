@@ -1,12 +1,11 @@
 using System.Net;
 using MeteorFlow.Web.Configurations;
-using Ocelot.Configuration.File;
+using Microsoft.Net.Http.Headers;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-var config = new AppConfig();
-builder.Configuration.Bind(config);
+
 
 // Add configuration from app settings.json
 builder.Configuration
@@ -15,42 +14,40 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables();
+var config = new AppConfig();
+builder.Configuration.Bind(config);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowedOrigins",
+        b =>
+            b.WithOrigins(config.Cors.AllowedOrigins)
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((host) => true)
+                .AllowAnyHeader()
+                .AllowCredentials()
+    );
+    options.AddPolicy(
+        "AllowHeaders",
+        b =>
+        {
+            b.WithOrigins(config.Cors.AllowedOrigins)
+                .WithHeaders(
+                    HeaderNames.ContentType,
+                    HeaderNames.Server,
+                    HeaderNames.AccessControlAllowHeaders,
+                    HeaderNames.AccessControlExposeHeaders,
+                    "x-custom-header",
+                    "x-path",
+                    "x-record-in-use",
+                    HeaderNames.ContentDisposition
+                );
+        }
+    );
+});
     
 builder.Services.AddOcelot(builder.Configuration);
-builder.Services.PostConfigure<FileConfiguration>(fileConfiguration =>
-{
-    foreach (var route in config.Ocelot.Routes.Select(x => x.Value))
-    {
-        var uri = new Uri(route.Downstream);
-
-        foreach (var pathTemplate in route.UpstreamPathTemplates)
-        {
-            fileConfiguration.Routes.Add(new FileRoute
-            {
-                UpstreamPathTemplate = pathTemplate,
-                DownstreamPathTemplate = pathTemplate,
-                DownstreamScheme = uri.Scheme,
-                DownstreamHostAndPorts = new List<FileHostAndPort>
-                {
-                    new FileHostAndPort { Host = uri.Host, Port = uri.Port }
-                }
-            });
-        }
-    }
-
-    foreach (var route in fileConfiguration.Routes)
-    {
-        if (string.IsNullOrWhiteSpace(route.DownstreamScheme))
-        {
-            route.DownstreamScheme = config?.Ocelot?.DefaultDownstreamScheme;
-        }
-
-        if (string.IsNullOrWhiteSpace(route.DownstreamPathTemplate))
-        {
-            route.DownstreamPathTemplate = route.UpstreamPathTemplate;
-        }
-    }
-});
 
 var app = builder.Build();
 
@@ -65,6 +62,8 @@ app.UseStatusCodePages(context =>
 
     return Task.CompletedTask;
 });
+
+app.UseCors("AllowedOrigins");
 
 app.UseWebSockets();
 await app.UseOcelot();

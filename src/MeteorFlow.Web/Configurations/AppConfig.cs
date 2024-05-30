@@ -1,3 +1,5 @@
+using Ocelot.Configuration.File;
+
 namespace MeteorFlow.Web.Configurations;
 
 public class AppConfig
@@ -9,8 +11,7 @@ public class AppConfig
     public Cors Cors { get; set; }
     
     public AuthenticationServer AuthenticationServer { get; set; }
-    
-    public OcelotOptions Ocelot { get; set; }
+    public ICollection<FileRoute> Routes { get; set; }
     
     public JwtSettings JwtSettings { get; set; }
 }

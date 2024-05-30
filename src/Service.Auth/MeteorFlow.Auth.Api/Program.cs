@@ -1,9 +1,15 @@
+using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
+using Meteor.Auth.Api.Configuration;
 using MeteorFlow.Auth;
-using MeteorFlow.Infrastructure.Configurations;
 using MeteorFlow.Infrastructure.Web.Endpoints;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +19,7 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables();
 
-var config = new AppConfig();
+var config = new AuthConfig();
 builder.Configuration.Bind(config);
 
 builder.Services.AddAuthModule(config);
@@ -21,7 +27,7 @@ builder.Services.AddNativeAuthentication(builder.Configuration);
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = "oidc";
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
@@ -37,7 +43,57 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = config.JwtSettings.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.JwtSettings.SecretKey))
         };
-    });
+        options.Events = new JwtBearerEvents
+        {
+            // Get the token from either the authorization header or authentication cookie
+            OnMessageReceived = context =>
+            {
+                string? authCookie = context.Request.Cookies["access_token"];
+                string? authHeader = context.Request.Headers[HeaderNames.Authorization];
+
+                // Token will be taken from Authorization header or if header is not set from authentication cookie.
+                if (!string.IsNullOrEmpty(authCookie))
+                {
+                    context.Token = authCookie;
+                }
+                return Task.CompletedTask;
+            }
+        };
+    })
+    .AddCookie("Cookies")
+    .AddOAuth("GitHub", options =>
+    {
+        options.ClientId = config.Github.ClientId;
+        options.ClientSecret = config.Github.ClientSecret;
+        options.CallbackPath = new PathString("/api/auth/github-callback");
+
+        options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+        options.TokenEndpoint = "https://github.com/login/oauth/access_token";
+        options.UserInformationEndpoint = "https://api.github.com/user";
+
+        options.SaveTokens = true;
+
+        options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+        options.ClaimActions.MapJsonKey(ClaimTypes.Name, "login");
+        options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+
+        options.Events = new OAuthEvents
+        {
+            OnCreatingTicket = async context =>
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+
+                var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
+                response.EnsureSuccessStatusCode();
+
+                var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement;
+
+                context.RunClaimActions(user);
+            }
+        };
+    });;
 
 builder.Services.AddAuthorization();
 builder.Services.ConfigRouting().AddControllers().AddNewtonsoftJson();

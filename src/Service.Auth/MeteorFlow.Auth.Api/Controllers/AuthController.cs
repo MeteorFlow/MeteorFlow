@@ -1,13 +1,14 @@
+using System.Security.Claims;
 using AutoMapper;
-using MeteorFlow.Application.Commands;
 using MeteorFlow.Application.Handlers;
 using MeteorFlow.Auth.Jwt;
 using MeteorFlow.Auth.Models;
 using MeteorFlow.Auth.Services;
-using MeteorFlow.Infrastructure.Identity;
+using MeteorFlow.Auth.Users.Commands;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Domain = MeteorFlow.Auth.Models;
 using Entities = MeteorFlow.Auth.Entities;
 
 namespace Meteor.Auth.Api.Controllers;
@@ -19,24 +20,14 @@ public class AuthController(
     ILogger<AuthController> logger,
     ICommandDispatcher commandDispatcher,
     IMapper mapper,
-    AuthUserManager userManager, ICurrentUser currentUser): ControllerBase
+    AuthUserManager userManager): ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
     [Route("")]
-    public IActionResult Login([FromQuery] string returnUrl)
+    public IActionResult RedirectRoute([FromQuery] string returnUrl = "/")
     {
-        if (User.Identity is not null && User.Identity.IsAuthenticated)
-        {
-            
-            return Redirect(returnUrl);
-
-        }
-
-        var response = HttpContext.Response;
-        var request = HttpContext.Request;
-        return Redirect($"{request.Scheme}://localhost:3000");
-            
+        return Challenge(new AuthenticationProperties { RedirectUri = returnUrl }, "GitHub");   
     }
     [HttpPost]
     [AllowAnonymous]
@@ -62,10 +53,56 @@ public class AuthController(
 
         var token = await commandDispatcher.Dispatch<GenerateJwtTokenCommand, string>(new GenerateJwtTokenCommand
             { User = user});
-        var text = currentUser.IsAuthenticated ? "" : " not";
-        logger.LogInformation($"User is{text} authenticated");
 
         return Ok(token);
+    }
+    
+    [HttpGet("github-callback")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GitHubCallback([FromQuery] string code, string state)
+    {
+        var result = await HttpContext.AuthenticateAsync("GitHub");
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(); // Handle error scenario
+        }
+        // Get the GitHub user details
+        var userId = result.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId is not null)
+        {
+            var command = new SaveUserCommand
+            {
+                UserId = new Guid(userId),
+                UserName = result.Principal.FindFirst(ClaimTypes.Name)?.Value,
+                Email = result.Principal.FindFirst(ClaimTypes.Email)?.Value
+            };
+            
+            await commandDispatcher.Dispatch<SaveUserCommand, Entities.User>(command);
+        }
+        
+        return RedirectRoute(HttpContext.Request.GetEncodedUrl());
+    }
+    
+    [HttpPost]
+    [Authorize]
+    [Route("refresh")]
+    public async Task<IActionResult> Refresh()
+    {
+        var user = await userManager.GetUserAsync(User);
+        var token = await commandDispatcher.Dispatch<GenerateJwtTokenCommand, string>(new GenerateJwtTokenCommand
+        {
+            User = user
+        });
+        return Ok(token);
+    }
+    
+    [HttpPost]
+    [Authorize]
+    [Route("logout")]
+    public IActionResult Logout()
+    {
+        return Ok();
     }
     
     [HttpPost]
@@ -73,7 +110,7 @@ public class AuthController(
     [Route("register")]
     public async Task<IActionResult> Register(RegisterInfo info)
     {
-        var user = new Domain.User
+        var user = new User
         {
             UserName = info.UserName,
             NormalizedUserName = info.UserName.ToUpper(),

@@ -1,4 +1,5 @@
 {
+  "DefaultDownstreamScheme": "https",
   "Routes": [
     {
       "UpstreamPathTemplate": "/core/{everything}",
@@ -10,7 +11,8 @@
       "UpstreamPathTemplate": "/auth/login",
       "DownstreamPathTemplate": "/api/auth/login",
       "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7119 }]
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7119 }],
+      "UpstreamHttpMethod": [ "Post" ]
     },
     {
       "UpstreamPathTemplate": "/auth/register",
