@@ -1,13 +1,102 @@
 <script setup lang="ts">
+import { useFormStore } from "~/stores/useFormStore";
 
-const formId = useRoute().params.id
+const store = useFormStore();
+const route = useRoute();
+const actions = store.actions;
+const { formDefinition, errorMsg, selectedFormBlocks: formBlocks } = storeToRefs(store);
 
+if (errorMsg.value) {
+  console.error(errorMsg.value);
+}
+actions.setSelectedVersionId(route.params.id as string);
+console.log(formBlocks.value, formDefinition.value);
+
+const onDragOver = (event: DragEvent) => {
+  const target = event.target as HTMLDivElement;
+  target.classList.add("dragOver");
+};
+const onDragLeave = (event: DragEvent) => {
+  event.preventDefault();
+  const target = event.target as HTMLDivElement;
+  target.classList.remove("dragOver");
+};
+const onDrop = (event: DragEvent, destIndex: number | undefined) => {
+  destIndex = destIndex || 0;
+  console.log(destIndex);
+  const target = event.target as HTMLDivElement;
+  target.classList.remove("dragOver");
+
+  const { index } = JSON.parse(event.dataTransfer?.getData("value") || "");
+
+  if (formDefinition) {
+    const newBlockList = formBlocks.value;
+    const element = newBlockList[index];
+
+    newBlockList.splice(index, 1);
+    newBlockList.splice(
+      destIndex > index ? destIndex - 1 : destIndex,
+      0,
+      element
+    );
+
+    // formDefinition.value.formBlocks = newBlockList;
+  }
+};
+
+const submitFormDefinition = async () => {
+  await navigateTo("/forms");
+};
 </script>
 
 <template>
   <div>
     <NuxtLayout name="default">
-      <FormItem :id="(formId as string)"></FormItem>
+      <div class="flex justify-between">
+        <h1 class="text-2xl">Form Definition Details</h1>
+        <UButton icon="i-heroicons-clipboard" @click="submitFormDefinition"
+          >Save</UButton
+        >
+      </div>
+      <UDivider />
+      <div>
+        <h2 class="text-xl">
+          {{ formDefinition?.name }}
+        </h2>
+      </div>
+
+      <div class="flex flex-col gap-0">
+        <div v-for="(block, index) in formBlocks" :key="block.id">
+          <DragdropDroppableItem
+            :onDragOver="onDragOver"
+            :onDragLeave="onDragLeave"
+            :onDrop="(event) => onDrop(event as DragEvent, index)"
+            class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
+          >
+            <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
+            Drop here
+          </DragdropDroppableItem>
+
+          <DragdropDraggableItem
+            :transferData="{ id: block.id, index: index }"
+            :onDragStart="(event: DragEvent) => (event.target as HTMLDivElement).classList.add('itemDragged')"
+            :onDragEnd="(event: DragEvent) => (event.target as HTMLDivElement).classList.remove('itemDragged')"
+            class="border-2 border-transparent p-1 hover:border-2 hover:border-green-500"
+          >
+            <CoreFormBlockRenderer mode="editing" :block="block" />
+          </DragdropDraggableItem>
+        </div>
+
+        <DragdropDroppableItem
+          :onDragOver="onDragOver"
+          :onDragLeave="onDragLeave"
+          :onDrop="(event) => {onDrop(event as DragEvent, formBlocks.length)}"
+          class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
+        >
+          <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
+          Drop here
+        </DragdropDroppableItem>
+      </div>
     </NuxtLayout>
   </div>
 </template>

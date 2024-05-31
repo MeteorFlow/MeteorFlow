@@ -30,7 +30,9 @@ export interface ElementSchema {
   autocomplete: boolean;
 }
 
-export enum InputType {
+
+
+enum InputType {
   Undefined = 0,
   Static,
   Text,
