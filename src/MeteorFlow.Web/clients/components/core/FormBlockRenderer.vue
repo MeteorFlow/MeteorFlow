@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { FormBlock } from "~/models/FormDefinition";
-import { InputType } from "~/models/FormDefinition";
+import type { FormBlock, InputType } from '~/models/Forms';
+
 
 const props = defineProps<{
   block: FormBlock;

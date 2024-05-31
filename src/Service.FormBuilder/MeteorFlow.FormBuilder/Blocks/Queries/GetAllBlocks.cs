@@ -3,13 +3,17 @@ using MeteorFlow.Application.Queries;
 
 namespace MeteorFlow.FormBuilder.Blocks.Queries;
 
-public class GetAllBlocks : GetAllQuery<Entities.FormBlocks, Guid>;
+public class GetAllBlocks : GetAllQuery<Entities.FormBlocks, Guid>
+{
+    public Guid VersionId { get; set; }
+}
 
 internal class GetAllBlocksHandler(IServices<Entities.FormBlocks, Guid> service) 
     : IQueryHandler<GetAllBlocks, List<Entities.FormBlocks>>
 {
-    public Task<List<Entities.FormBlocks>> HandleAsync(GetAllBlocks query, CancellationToken cancellationToken = default)
+    public async Task<List<Entities.FormBlocks>> HandleAsync(GetAllBlocks query, CancellationToken cancellationToken = default)
     {
-        return service.GetAsync(cancellationToken);
+        var result = await service.GetAsync(cancellationToken);
+        return result.Where(f => f.VersionId == query.VersionId).ToList();
     }
 }

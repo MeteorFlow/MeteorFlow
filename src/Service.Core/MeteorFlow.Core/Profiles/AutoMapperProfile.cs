@@ -1,6 +1,10 @@
 using AutoMapper;
-using MeteorFlow.Core.Entities;
+using MeteorFlow.Domain.App;
 using Newtonsoft.Json;
+using AppDefinitions = MeteorFlow.Core.Entities.AppDefinitions;
+using AppInstances = MeteorFlow.Core.Entities.AppInstances;
+using AppSettings = MeteorFlow.Core.Entities.AppSettings;
+using AppVersionControls = MeteorFlow.Core.Entities.AppVersionControls;
 
 namespace MeteorFlow.Core.Profiles;
 
