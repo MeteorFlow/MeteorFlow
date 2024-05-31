@@ -20,14 +20,17 @@ public class BlockController (
 ) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FormBlock>>> Get()
+    public async Task<ActionResult<IEnumerable<FormBlock>>> GetByVersion([FromQuery] Guid versionId)
     {
-        logger.LogInformation("Getting all definitions");
-        var definitionsList = await queryDispatcher.Dispatch<
+        logger.LogInformation("Getting all block by definition id");
+        var result = await queryDispatcher.Dispatch<
             GetAllBlocks,
-            List<FormBuilder.Entities.FormBlocks>
-        >(new GetAllBlocks());
-        var models = mapper.Map<List<FormBlock>>(definitionsList);
+            List<Entities.FormBlocks>
+        >(new GetAllBlocks
+        {
+            VersionId = versionId
+        });
+        var models = mapper.Map<List<FormBlock>>(result);
         return Ok(models);
     }
 

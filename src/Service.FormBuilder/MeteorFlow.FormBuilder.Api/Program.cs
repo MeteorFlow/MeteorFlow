@@ -3,6 +3,7 @@ using System.Text;
 using MeteorFlow.FormBuilder;
 using MeteorFlow.FormBuilder.Api.Configuration;
 using MeteorFlow.Infrastructure.Configurations;
+using MeteorFlow.Infrastructure.Web.Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -44,7 +45,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddControllers();
+builder.Services.ConfigRouting().AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {

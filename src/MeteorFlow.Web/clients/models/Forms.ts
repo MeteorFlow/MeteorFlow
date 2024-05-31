@@ -1,9 +1,11 @@
-export interface FormDefinition {
-  id: string;
-  name: string;
-  isDefault: boolean;
-  formBlocks: Array<FormBlock>;
-}
+// export interface FormDefinition {
+//   id: string;
+//   name: string;
+//   description: string;
+//   baseDefinition: FormDefinition;
+//   isDefault: boolean;
+//   formBlocks: Array<FormBlock>;
+// }
 
 export interface FormBlock {
   id: string;
@@ -28,7 +30,9 @@ export interface ElementSchema {
   autocomplete: boolean;
 }
 
-export enum InputType {
+
+
+enum InputType {
   Undefined = 0,
   Static,
   Text,

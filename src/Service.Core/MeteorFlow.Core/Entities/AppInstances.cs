@@ -20,5 +20,4 @@ public class AppInstances: Entity<Guid>, IEntityObject
     public Guid VersionId { get; set; }
     public virtual required AppVersionControls AppliedVersion { get; set; }
     
-    public Guid TenantId { get; set; }
 }

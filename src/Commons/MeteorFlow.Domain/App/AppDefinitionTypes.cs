@@ -2,8 +2,9 @@ namespace MeteorFlow.Domain.App;
 
 public enum AppDefinitionTypes
 {
-    System,
+    None,
     Form,
     Email,
     Document,
+    System,
 }

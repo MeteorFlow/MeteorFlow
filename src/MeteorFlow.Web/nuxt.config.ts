@@ -35,7 +35,7 @@ export default defineNuxtConfig({
     {
       /* module options */
     },
-  ], "@nuxt/content", "nuxt-tiptap-editor", "~/modules/tiptap", "@nuxt/image"],
+  ], "@nuxt/content", "nuxt-tiptap-editor", "~/modules/tiptap", "@nuxt/image", "@pinia/nuxt"],
   ui: {
     icons: ["heroicons", "fa", "fa6-solid", "mdi", "simple-icons"],
   },
@@ -53,8 +53,12 @@ export default defineNuxtConfig({
       theme: "github-dark",
     },
   },
+  pinia: {
+    storesDirs: ['./stores/**'],
+  },
   plugins: [
     { src: "~/plugins/chart.client.ts", mode: "client" },
     { src: "~/plugins/grid.client.ts", mode: "client" },
   ],
+  ssr: false,
 });

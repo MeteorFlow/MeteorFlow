@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { FormDefinitions } from "~/data/FormDefinitions";
+import { useFormStore } from "~/stores/useFormStore";
 
+const store = useFormStore();
 const route = useRoute();
-const formDefinition = ref(FormDefinitions.find((form) => form.id == route.params.id));
-if (formDefinition === undefined) {
-  await navigateTo("/forms");
+const actions = store.actions;
+const { formDefinition, errorMsg, selectedFormBlocks: formBlocks } = storeToRefs(store);
+
+if (errorMsg.value) {
+  console.error(errorMsg.value);
 }
+actions.setSelectedVersionId(route.params.id as string);
+console.log(formBlocks.value, formDefinition.value);
 
 const onDragOver = (event: DragEvent) => {
   const target = event.target as HTMLDivElement;
@@ -24,14 +29,18 @@ const onDrop = (event: DragEvent, destIndex: number | undefined) => {
 
   const { index } = JSON.parse(event.dataTransfer?.getData("value") || "");
 
-  if (formDefinition.value !== undefined) {
-    const newBlockList = formDefinition.value.formBlocks;
+  if (formDefinition) {
+    const newBlockList = formBlocks.value;
     const element = newBlockList[index];
 
     newBlockList.splice(index, 1);
-    newBlockList.splice(destIndex > index ? destIndex - 1 : destIndex, 0, element);
+    newBlockList.splice(
+      destIndex > index ? destIndex - 1 : destIndex,
+      0,
+      element
+    );
 
-    formDefinition.value.formBlocks = newBlockList;
+    // formDefinition.value.formBlocks = newBlockList;
   }
 };
 
@@ -45,7 +54,9 @@ const submitFormDefinition = async () => {
     <NuxtLayout name="default">
       <div class="flex justify-between">
         <h1 class="text-2xl">Form Definition Details</h1>
-        <UButton icon="i-heroicons-clipboard" @click="submitFormDefinition">Save</UButton>
+        <UButton icon="i-heroicons-clipboard" @click="submitFormDefinition"
+          >Save</UButton
+        >
       </div>
       <UDivider />
       <div>
@@ -55,7 +66,7 @@ const submitFormDefinition = async () => {
       </div>
 
       <div class="flex flex-col gap-0">
-        <div v-for="[index, block] in formDefinition?.formBlocks.entries()" :key="block.id">
+        <div v-for="(block, index) in formBlocks" :key="block.id">
           <DragdropDroppableItem
             :onDragOver="onDragOver"
             :onDragLeave="onDragLeave"
@@ -79,7 +90,7 @@ const submitFormDefinition = async () => {
         <DragdropDroppableItem
           :onDragOver="onDragOver"
           :onDragLeave="onDragLeave"
-          :onDrop="(event) => {onDrop(event as DragEvent, formDefinition?.formBlocks.length)}"
+          :onDrop="(event) => {onDrop(event as DragEvent, formBlocks.length)}"
           class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
         >
           <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>

@@ -26,10 +26,35 @@ public class CoreDbContext(DbContextOptions<CoreDbContext> options) : DbContextU
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AppDefinitions>()
-            .HasOne(c => c.BaseDefinition)
-            .WithMany()
-            .OnDelete(DeleteBehavior.NoAction);
+        {
+            modelBuilder.Entity<AppDefinitions>()
+                .HasOne(ad => ad.BaseDefinition)
+                .WithMany(ad => ad.SubDefinitions)
+                .HasForeignKey(ad => ad.BaseDefinitionId);
+
+            modelBuilder.Entity<AppDefinitions>()
+                .HasMany(ad => ad.AppVersionControls)
+                .WithOne(avc => avc.AppDefinition)
+                .HasForeignKey(avc => avc.AppDefinitionId);
+
+            modelBuilder.Entity<AppVersionControls>()
+                .HasMany(avc => avc.AppInstances)
+                .WithOne(ai => ai.AppliedVersion)
+                .HasForeignKey(ai => ai.VersionId);
+
+            // Adding indexes
+            modelBuilder.Entity<AppDefinitions>()
+                .HasIndex(ad => ad.BaseDefinitionId)
+                .HasDatabaseName("ix_app_definitions_base_definition_id");
+
+            modelBuilder.Entity<AppVersionControls>()
+                .HasIndex(avc => avc.AppDefinitionId)
+                .HasDatabaseName("ix_app_version_controls_app_definition_id");
+
+            modelBuilder.Entity<AppInstances>()
+                .HasIndex(ai => ai.VersionId)
+                .HasDatabaseName("ix_app_instances_version_id");
+        }
     }
 
     #endregion

@@ -18,15 +18,20 @@ public class DefinitionController(
     IMapper mapper)
     : ControllerBase
 {
-    [Authorize(AuthorizationPolicyNames.GetSettingsPolicy)]
+    // [Authorize(AuthorizationPolicyNames.GetSettingsPolicy)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppDefinitions>>> Get()
+    public async Task<ActionResult<IEnumerable<AppDefinitions>>> Get([FromQuery] AppDefinitionTypes type)
     {
         logger.LogInformation("Getting all settings");
-        var settings = await queryDispatcher.Dispatch<GetAllDefinitions, List<Core.Entities.AppDefinitions>>(new GetAllDefinitions());
-        return Ok(mapper.Map<List<AppDefinitions>>(settings));
+        var settings = await queryDispatcher.Dispatch<GetAllDefinitions, List<Core.Entities.AppDefinitions>>(
+            new GetAllDefinitions
+            {
+                Type = type,
+                IncludeVersion = true
+            });
+        return Ok(mapper.Map<IList<AppDefinitions>>(settings));
     }
-    
+
     [Authorize(AuthorizationPolicyNames.GetSettingPolicy)]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -34,10 +39,12 @@ public class DefinitionController(
     public async Task<ActionResult<AppDefinitions>> Get(Guid id)
     {
         logger.LogInformation("Getting setting with id: {id}", id);
-        var settings = await queryDispatcher.Dispatch<GetByIdDefinition, Core.Entities.AppDefinitions>(new GetByIdDefinition { Id = id, ThrowNotFoundIfNull = true });
+        var settings =
+            await queryDispatcher.Dispatch<GetByIdDefinition, Core.Entities.AppDefinitions>(new GetByIdDefinition
+                { Id = id, ThrowNotFoundIfNull = true });
         return Ok(mapper.Map<AppDefinitions>(settings));
     }
-    
+
     [Authorize(AuthorizationPolicyNames.AddSettingPolicy)]
     [HttpPost]
     [Consumes("application/json")]
@@ -45,10 +52,12 @@ public class DefinitionController(
     public async Task<ActionResult<AppDefinitions>> Post([FromBody] AppDefinitions model)
     {
         logger.LogInformation("Adding setting with id: {id}", model.Id);
-        var setting = await commandDispatcher.Dispatch<AddUpdateDefinitionCommand, Core.Entities.AppDefinitions>(new AddUpdateDefinitionCommand(mapper.Map<Core.Entities.AppDefinitions>(model)));
+        var setting =
+            await commandDispatcher.Dispatch<AddUpdateDefinitionCommand, Core.Entities.AppDefinitions>(
+                new AddUpdateDefinitionCommand(mapper.Map<Core.Entities.AppDefinitions>(model)));
         return Created($"/api/setting/{model.Id}", mapper.Map<AppDefinitions>(setting));
     }
-    
+
     [Authorize(AuthorizationPolicyNames.DeleteSettingPolicy)]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -56,8 +65,11 @@ public class DefinitionController(
     public async Task<ActionResult> Delete(Guid id)
     {
         logger.LogInformation("Deleting setting with id: {id}", id);
-        var setting = await queryDispatcher.Dispatch<GetByIdDefinition, Core.Entities.AppDefinitions>(new GetByIdDefinition { Id = id, ThrowNotFoundIfNull = true });
-        await commandDispatcher.Dispatch<DeleteDefinitionCommand, Core.Entities.AppDefinitions>(new DeleteDefinitionCommand (setting));
+        var setting =
+            await queryDispatcher.Dispatch<GetByIdDefinition, Core.Entities.AppDefinitions>(new GetByIdDefinition
+                { Id = id, ThrowNotFoundIfNull = true });
+        await commandDispatcher.Dispatch<DeleteDefinitionCommand, Core.Entities.AppDefinitions>(
+            new DeleteDefinitionCommand(setting));
         return Ok();
     }
 }

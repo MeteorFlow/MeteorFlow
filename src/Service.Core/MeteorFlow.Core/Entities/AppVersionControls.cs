@@ -11,6 +11,7 @@ public class AppVersionControls: Entity<Guid>, IVersionControl
     public int PatchVersion { get; set; }
     
     [ForeignKey(nameof(AppDefinition))]
-    public Guid AppDefinitionId { get; set; }
+    public Guid AppDefinitionId { get; set; }   
     public virtual required AppDefinitions AppDefinition { get; set; }
+    public virtual ICollection<AppInstances> AppInstances { get; set; } = new List<AppInstances>();
 }
