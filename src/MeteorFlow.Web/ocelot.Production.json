@@ -4,7 +4,7 @@
       "UpstreamPathTemplate": "/core/{everything}",
       "DownstreamPathTemplate": "/api/core/{everything}",
       "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [{ "Host": "core-api", "Port": 7044 }]
+      "DownstreamHostAndPorts": [{ "Host": "core-api", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/auth/login",
