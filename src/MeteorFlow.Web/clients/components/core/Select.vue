@@ -18,6 +18,8 @@ const props = defineProps<{
   multiple?: boolean;
   loading?: boolean;
 
+  disabled?: boolean;
+
   itemValue?: string & keyof T;
   itemTitle?: keyof T | ((val: Items[number]) => any);
   itemSearch?: (keyof T)[];
@@ -54,6 +56,7 @@ const searchablePlaceHolder = "Search...";
       clearSearchOnClose
       :searchable="props.searchable"
       :searchPlaceholder="searchablePlaceHolder"
+      :disabled="disabled"
     >
       <template #leading v-if="slots.prepend">
         <slot name="prepend"></slot>

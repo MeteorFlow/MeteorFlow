@@ -47,7 +47,7 @@ public class BlockController (
         return Ok(mapper.Map<FormBlock>(settings));
     }
 
-    [Authorize(AuthorizationPolicyNames.AddFormPolicy)]
+    // [Authorize(AuthorizationPolicyNames.AddFormPolicy)]
     [HttpPost]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]

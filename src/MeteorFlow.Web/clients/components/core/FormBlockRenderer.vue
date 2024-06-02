@@ -1,31 +1,29 @@
 <script setup lang="ts">
-import type { FormBlock } from '~/models/Forms';
+import type { FormBlock } from "~/models/Forms";
 
-enum InputType {
-  Undefined = 0,
-  Static,
-  Text,
-  Select,
-  Choice,
-  Slider,
-  Button,
-  Object,
-}
+
 
 const props = defineProps<{
   block: FormBlock;
   mode: "editing" | "rendering";
 }>();
+
+const modelValue = defineModel();
+
+const valueBind = {
+  title: props.block.displayName,
+  description: props.block.name,
+  require: props.block.schema.required,
+  disabled: props.mode === "editing",
+};
 </script>
 
 <template>
   <div>
-    <label>{{ props.block.displayName }}</label>
-    <div v-if="props.block.element.schema.inputType === InputType.Text">
-      <CoreTextField :disabled="props.mode === 'editing' || props.block.extraConfig?.disabled" config class="disabled:cursor-pointer"></CoreTextField>
-    </div>
-    <div v-else-if="props.block.element.schema.inputType === InputType.Select">
-      <CoreSelect :items="['123', '456']"></CoreSelect>
-    </div>
+    <component
+      :is="props.block.element.renderer"
+      v-bind="valueBind"
+      v-model="modelValue"
+    ></component>
   </div>
 </template>

@@ -1,38 +1,32 @@
-import type { Definition } from "~/models/Definition";
-import type { FormBlock } from "~/models/Forms";
+import { DefinitionTypes, type Definition } from "~/models/Definition";
+import { InputType, type FormBlock, type FormElement } from "~/models/Forms";
 
 export const useFormStore = defineStore("form", () => {
-  const selectedVersionId = ref<string | null>(null);
-  const errorMsg = ref<string | null>(null);
-  const selectedFormBlocks = ref<FormBlock[]>([]);
-  const formsBlocks = {} as Record<string, FormBlock[]>;
-  const formDefinitions = ref<Definition[]>([]);
+  const { value: state } = useState(() => ({
+    seletedVersionId: null as string | null,
+    selectedFormBlocks: [] as FormBlock[],
+    formDefinitions: [] as Definition[],
+    errorMsg: null as string | null,
+    formsBlocks: {} as Record<string, FormBlock[]>,
+  }));
 
   const actions = {
-    setSelectedVersionId: (id: string) => {
-      selectedVersionId.value = id;
-    },
     loadForms: async () => {
-      if (formDefinitions.value?.length > 0) {
-        return formDefinitions.value;
-      }
-      const { data, error } = await useAsyncData(
-        "form",
-        () => useNuxtApp().$https<Definition[]>("/core/definition?type=1", {
-          method: "GET"
-        }),
+      const { data, error } = await useHttps<Definition[]>(
+        `/core/definition/?type=1`,
         {
+          method: "GET",
           default: () => [],
         }
       );
 
       if (error.value) {
-        errorMsg.value = error.value?.statusMessage ?? null;
+        state.errorMsg = error.value?.statusMessage ?? null;
         console.error(error.value);
         return null;
       }
 
-      formDefinitions.value = data.value.map(
+      state.formDefinitions = data.value.map(
         (form) =>
           ({
             ...form,
@@ -40,36 +34,74 @@ export const useFormStore = defineStore("form", () => {
           } as Definition)
       );
 
-      for (const form of data.value) {
+      for (const form of state.formDefinitions) {
         await actions.loadFormBlocks(form.latestVersionId);
       }
 
-      console.log("value", formsBlocks.value);
+      return data.value;
+    },
+
+    addForm: async (form: Definition) => {
+      form.definitionType = DefinitionTypes.Form;
+      const { data, error } = await useHttps<Definition>(`/core/definition`, {
+        method: "POST",
+        body: form,
+        default: () => ({} as Definition),
+      });
+
+      if (error.value || !data.value) {
+        state.errorMsg = error.value?.statusMessage ?? null;
+        return null;
+      }
+
+      state.formDefinitions.push(data.value);
 
       return data.value;
     },
+
     loadFormBlocks: async (id?: string) => {
       if (!id) {
         return null;
       }
-      const { data: blocks, error } = await useAsyncData(
-        "formBlocks",
-        () => useNuxtApp().$https<FormBlock[]>(`/form/block?versionId=${id}`, {
-          method: "GET",
-        }),
+
+      if (state.formsBlocks[id]) {
+        return state.formsBlocks[id];
+      }
+
+      const { data: blocks, error } = await useHttps<FormBlock[]>(
+        `/form/block/?versionId=${id}`,
         {
+          method: "GET",
           default: () => [],
         }
       );
 
       if (error.value) {
-        errorMsg.value = error.value?.statusMessage ?? null;
+        state.errorMsg = error.value?.statusMessage ?? null;
         return null;
       }
 
-      selectedFormBlocks.value = blocks.value;
-      formsBlocks[id] = blocks.value
+      state.selectedFormBlocks = blocks.value;
+      state.formsBlocks[id] = blocks.value;
       return blocks.value;
+    },
+    addBlock: async (block: FormBlock) => {
+      const { data, error } = await useHttps<FormBlock>(`/form/block`, {
+        method: "POST",
+        body: block,
+        default: () => ({} as FormBlock),
+      });
+
+      if (error.value || !data.value) {
+        state.errorMsg = error.value?.statusMessage ?? null;
+        return null;
+      }
+
+      if (state.formsBlocks[data.value.versionId]) {
+        state.formsBlocks[data.value.versionId].push(data.value);
+      }
+
+      return state.formsBlocks[data.value.versionId];
     },
     deleteForm: async (id: string) => {
       const { error } = await useHttps(`/core/definition/${id}`, {
@@ -77,41 +109,62 @@ export const useFormStore = defineStore("form", () => {
         default: () => null,
       });
       if (error) {
-        errorMsg.value = error.value?.statusMessage ?? null;
+        state.errorMsg = error.value?.statusMessage ?? null;
         return null;
       }
 
-      formDefinitions.value = formDefinitions.value.filter(
+      state.formDefinitions = state.formDefinitions.filter(
         (form) => form.id !== id
       );
     },
   };
 
-  const formBlocks = computed(() => {
-    console.log(selectedVersionId.value ?? "")
-    return formsBlocks[selectedVersionId.value ?? ""] ?? []
-  });
-
-  const formDefinition = computed(
-    () =>
-      formDefinitions.value.find(
-        (form) => form.id === selectedVersionId.value
-      ) ?? null
-  );
+  const getters = {
+    get formDefinition() {
+      return (
+        state.formDefinitions.find(
+          (form) => form.id === state.seletedVersionId
+        ) ?? null
+      );
+    },
+    defaultBlock(element: FormElement) {
+      // Generate default data for form block
+      if (!state.seletedVersionId) {
+        return null;
+      }
+      const defaultBlock: FormBlock = {
+        name: "Text",
+        displayName: "",
+        versionId: state.seletedVersionId,
+        element,
+        schema: {
+          inputType: InputType.Undefined,
+          searchable: false,
+          required: false,
+          readOnly: false,
+          autocomplete: false
+        }
+      };
+      return defaultBlock;
+    },
+  };
 
   onBeforeMount(async () => {
     await actions.loadForms();
   });
 
-  watch(selectedVersionId, async () => {
-    if (selectedVersionId.value) await actions.loadFormBlocks(selectedVersionId.value);
-  })
+  watch(
+    () => state.seletedVersionId,
+    async () => {
+      if (state.seletedVersionId)
+        await actions.loadFormBlocks(state.seletedVersionId);
+    },
+    { immediate: true }
+  );
 
   return {
+    state,
     actions,
-    formDefinitions,
-    selectedFormBlocks,
-    formDefinition,
-    errorMsg,
+    get: getters,
   };
 });

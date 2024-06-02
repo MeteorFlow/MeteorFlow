@@ -150,6 +150,11 @@ builder.Services.AddSwaggerGen(opt =>
 
 var app = builder.Build();
 
+app.UseReDoc(c => {
+    c.DocumentTitle = "REDOC API Documentation";
+    c.SpecUrl = "/swagger/v1/swagger.json";
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 

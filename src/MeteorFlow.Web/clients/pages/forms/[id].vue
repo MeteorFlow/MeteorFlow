@@ -1,26 +1,25 @@
 <script setup lang="ts">
+import type { FormBlock } from "~/models/Forms";
 import { useFormStore } from "~/stores/useFormStore";
 
 const store = useFormStore();
 const route = useRoute();
-const actions = store.actions;
-const { formDefinition, errorMsg, selectedFormBlocks: formBlocks } = storeToRefs(store);
+const { state } = storeToRefs(store);
 
-if (errorMsg.value) {
-  console.error(errorMsg.value);
-}
-actions.setSelectedVersionId(route.params.id as string);
-console.log(formBlocks.value, formDefinition.value);
+const id = computed(() => route.params.id as string);
 
-const onDragOver = (event: DragEvent) => {
-  const target = event.target as HTMLDivElement;
-  target.classList.add("dragOver");
-};
-const onDragLeave = (event: DragEvent) => {
-  event.preventDefault();
-  const target = event.target as HTMLDivElement;
-  target.classList.remove("dragOver");
-};
+const formDefinition = computed(
+  () =>
+    state.value.formDefinitions.find(
+      (form) => form.latestVersionId === id.value
+    ) ?? null
+);
+
+const formBlocks = computed(() => {
+  return state.value.formsBlocks[id.value] ?? [];
+});
+
+
 const onDrop = (event: DragEvent, destIndex: number | undefined) => {
   destIndex = destIndex || 0;
   console.log(destIndex);
@@ -39,9 +38,13 @@ const onDrop = (event: DragEvent, destIndex: number | undefined) => {
       0,
       element
     );
-
-    // formDefinition.value.formBlocks = newBlockList;
+    state.value.formsBlocks[id.value] = newBlockList; // update from store
   }
+};
+
+const addNewBlock = () => {
+  // const newBlock: FormBlock = {};
+  // state.value.formsBlocks[id.value] = [...formBlocks.value, newBlock];
 };
 
 const submitFormDefinition = async () => {
@@ -53,49 +56,41 @@ const submitFormDefinition = async () => {
   <div>
     <NuxtLayout name="default">
       <div class="flex justify-between">
-        <h1 class="text-2xl">Form Definition Details</h1>
-        <UButton icon="i-heroicons-clipboard" @click="submitFormDefinition"
+        <h1 class="text-2xl">Editing {{ formDefinition?.name }}</h1>
+        <UButton
+          icon="i-heroicons-clipboard"
+          class="dark:text-white bg-primary hover:bg-transparent"
+          @click="submitFormDefinition"
           >Save</UButton
         >
       </div>
       <UDivider />
-      <div>
-        <h2 class="text-xl">
-          {{ formDefinition?.name }}
-        </h2>
-      </div>
 
       <div class="flex flex-col gap-0">
         <div v-for="(block, index) in formBlocks" :key="block.id">
-          <DragdropDroppableItem
-            :onDragOver="onDragOver"
-            :onDragLeave="onDragLeave"
-            :onDrop="(event) => onDrop(event as DragEvent, index)"
+          <CoreDropItem
+            @drop="(event) => onDrop(event as DragEvent, index)"
             class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
           >
             <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
-            Drop here
-          </DragdropDroppableItem>
-
-          <DragdropDraggableItem
-            :transferData="{ id: block.id, index: index }"
-            :onDragStart="(event: DragEvent) => (event.target as HTMLDivElement).classList.add('itemDragged')"
-            :onDragEnd="(event: DragEvent) => (event.target as HTMLDivElement).classList.remove('itemDragged')"
-            class="border-2 border-transparent p-1 hover:border-2 hover:border-green-500"
+            <span>Drop here</span>
+          </CoreDropItem>
+          <CoreDragItem
+            :transferData="{ id: block.id, index }"
+            class="border-2 border-transparent p-1 hover:border-2 hover:border-primary"
           >
             <CoreFormBlockRenderer mode="editing" :block="block" />
-          </DragdropDraggableItem>
+          </CoreDragItem>
         </div>
-
-        <DragdropDroppableItem
-          :onDragOver="onDragOver"
-          :onDragLeave="onDragLeave"
-          :onDrop="(event) => {onDrop(event as DragEvent, formBlocks.length)}"
-          class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
-        >
-          <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
-          Drop here
-        </DragdropDroppableItem>
+        <div class="pl-2 pt-4">
+          <UButton
+            icon="i-heroicons-plus"
+            class="dark:text-white bg-primary hover:bg-transparent"
+            @click="addNewBlock"
+          >
+            Add Block
+          </UButton>
+        </div>
       </div>
     </NuxtLayout>
   </div>

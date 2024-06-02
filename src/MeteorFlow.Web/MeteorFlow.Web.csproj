@@ -21,6 +21,7 @@
         </PackageReference>
         <PackageReference Include="Ocelot" Version="23.2.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.6.2" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="wwwroot\" />

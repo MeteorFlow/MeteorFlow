@@ -7,7 +7,8 @@ const isOpeningDeleteModal = ref(false);
 const store = useFormStore();
 const actions = store.actions;
 
-const { formDefinitions, errorMsg } = storeToRefs(store);
+const { state } = storeToRefs(store);
+
 
 const deleteTemplate = () => {
   if (!deletingTemplateId.value) return;
@@ -21,20 +22,23 @@ const deleteTemplate = () => {
   <div>
     <NuxtLayout>
       <div class="flex justify-between">
-        <h1 class="text-2xl">Form Definitions</h1>
-        <UButton icon="i-heroicons-plus"> Create new template </UButton>
+        <h1 class="text-2xl">Form Templates</h1>
+        <UButton icon="i-heroicons-plus" class="dark:text-white bg-primary hover:bg-transparent"> Create new template </UButton>
       </div>
 
-      <ul v-if="!errorMsg" class="w-full flex flex-col gap-4">
+      <ul v-if="!state.errorMsg" class="w-full flex flex-col gap-4">
         <li
-          v-for="template in formDefinitions"
+          v-for="template in state.formDefinitions"
           :key="template.id"
-          class="p-2 rounded-lg border-2 flex hover:bg-gray-50"
+          class="p-2 rounded-lg border-2 flex"
+          @click="() => {
+            state.seletedVersionId = template.latestVersionId;
+          }"
         >
           <div class="flex items-center flex-grow gap-1">
             <UButton icon="i-heroicons-star" color="yellow" variant="ghost" />
 
-            <ULink :to="`/forms/${template.latestVersionId}`" class="flex-grow">
+            <ULink :to="`/forms/${template.latestVersionId}`" class="flex-grow" >
               {{ template.name }}
             </ULink>
           </div>
@@ -57,7 +61,7 @@ const deleteTemplate = () => {
         icon="i-heroicons-exclamation-triangle"
         variants="warning"
       >
-        Are you sure you want to delete this ID
+        Are you sure you want to delete this template?
         <template #actions>
           <div class="flex flex-row-reverse gap-1">
             <UButton @click="" color="red" label="Delete"></UButton>
