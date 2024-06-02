@@ -12,15 +12,15 @@ export interface FormBlock {
   name: string;
   element: FormElement;
   displayName: string;
-  extraConfig?: {[k: string]: any};
+  extraConfig?: { [k: string]: any };
   schema: ElementSchema;
   versionId: string;
 }
 
 export interface FormElement {
-  displayName: string;
+  name: string;
   description: string;
-  icon: string;
+  icon?: string;
   renderer: string;
 }
 

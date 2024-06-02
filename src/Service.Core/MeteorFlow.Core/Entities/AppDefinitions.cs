@@ -14,7 +14,7 @@ public class AppDefinitions: Entity<Guid>, IEntityObject
     public string Description { get; set; }  = string.Empty;
     
     [MaxLength(Utils.MaxMetadataLength)]
-    public string Icon { get; set; } = string.Empty;
+    public string? Icon { get; set; }
     
     [ForeignKey(nameof(BaseDefinition))]
     public Guid? BaseDefinitionId { get; set; }

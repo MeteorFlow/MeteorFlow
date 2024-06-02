@@ -8,6 +8,9 @@ const props = defineProps<{
   mode: "editing" | "rendering";
 }>();
 
+console.log("called", props.block.element);
+
+
 const modelValue = defineModel();
 
 const valueBind = {
@@ -21,6 +24,7 @@ const valueBind = {
 <template>
   <div>
     <component
+      :v-show="block.id"
       :is="props.block.element.renderer"
       v-bind="valueBind"
       v-model="modelValue"

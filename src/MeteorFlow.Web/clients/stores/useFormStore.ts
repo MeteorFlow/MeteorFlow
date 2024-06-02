@@ -7,8 +7,10 @@ export const useFormStore = defineStore("form", () => {
     selectedFormBlocks: [] as FormBlock[],
     formDefinitions: [] as Definition[],
     errorMsg: null as string | null,
-    formsBlocks: {} as Record<string, FormBlock[]>,
+    formElements: {} as Record<string, FormElement[]>,
   }));
+
+  const formsBlocks = ref<Record<string, FormBlock[]>>({}) 
 
   const actions = {
     loadForms: async () => {
@@ -40,7 +42,6 @@ export const useFormStore = defineStore("form", () => {
 
       return data.value;
     },
-
     addForm: async (form: Definition) => {
       form.definitionType = DefinitionTypes.Form;
       const { data, error } = await useHttps<Definition>(`/core/definition`, {
@@ -58,14 +59,13 @@ export const useFormStore = defineStore("form", () => {
 
       return data.value;
     },
-
     loadFormBlocks: async (id?: string) => {
       if (!id) {
         return null;
       }
 
-      if (state.formsBlocks[id]) {
-        return state.formsBlocks[id];
+      if (formsBlocks.value[id]) {
+        return formsBlocks.value[id];
       }
 
       const { data: blocks, error } = await useHttps<FormBlock[]>(
@@ -82,7 +82,7 @@ export const useFormStore = defineStore("form", () => {
       }
 
       state.selectedFormBlocks = blocks.value;
-      state.formsBlocks[id] = blocks.value;
+      formsBlocks.value[id] = blocks.value;
       return blocks.value;
     },
     addBlock: async (block: FormBlock) => {
@@ -97,11 +97,14 @@ export const useFormStore = defineStore("form", () => {
         return null;
       }
 
-      if (state.formsBlocks[data.value.versionId]) {
-        state.formsBlocks[data.value.versionId].push(data.value);
+      if (formsBlocks.value[data.value.versionId]) {
+        console.log("daf", {...data.value})
+        formsBlocks.value[data.value.versionId].push({...data.value});
       }
 
-      return state.formsBlocks[data.value.versionId];
+      console.log("data.value", formsBlocks.value[data.value.versionId][formsBlocks.value[data.value.versionId].length - 1]);
+
+      return formsBlocks.value[data.value.versionId];
     },
     deleteForm: async (id: string) => {
       const { error } = await useHttps(`/core/definition/${id}`, {
@@ -134,7 +137,7 @@ export const useFormStore = defineStore("form", () => {
       }
       const defaultBlock: FormBlock = {
         name: "Text",
-        displayName: "",
+        displayName: "Text Input",
         versionId: state.seletedVersionId,
         element,
         schema: {
@@ -164,6 +167,7 @@ export const useFormStore = defineStore("form", () => {
 
   return {
     state,
+    formsBlocks,
     actions,
     get: getters,
   };

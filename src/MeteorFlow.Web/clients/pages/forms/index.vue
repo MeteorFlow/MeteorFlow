@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DefinitionTypes, type Definition } from "~/models/Definition";
 import { useFormStore } from "~/stores/useFormStore";
 
 const deletingTemplateId = ref<string | null>(null);
@@ -16,6 +17,17 @@ const deleteTemplate = () => {
     .deleteForm(deletingTemplateId.value)
     .then(() => (isOpeningDeleteModal.value = false));
 };
+
+const createTemplate = () => {
+  const data: Definition = {
+    name: "New Form",
+    description: "Description",
+    appVersionControls:[BaseVersion],
+    definitionType: DefinitionTypes.Form
+  };
+  console.log("called", data);
+  actions.addForm(data);
+};
 </script>
 
 <template>
@@ -23,7 +35,7 @@ const deleteTemplate = () => {
     <NuxtLayout>
       <div class="flex justify-between">
         <h1 class="text-2xl">Form Templates</h1>
-        <UButton icon="i-heroicons-plus" class="dark:text-white bg-primary hover:bg-transparent"> Create new template </UButton>
+        <UButton @click="createTemplate" icon="i-heroicons-plus" class="dark:text-white bg-primary hover:bg-transparent"> Create new template </UButton>
       </div>
 
       <ul v-if="!state.errorMsg" class="w-full flex flex-col gap-4">
@@ -32,7 +44,7 @@ const deleteTemplate = () => {
           :key="template.id"
           class="p-2 rounded-lg border-2 flex"
           @click="() => {
-            state.seletedVersionId = template.latestVersionId;
+            state.seletedVersionId = template.latestVersionId ?? '';
           }"
         >
           <div class="flex items-center flex-grow gap-1">

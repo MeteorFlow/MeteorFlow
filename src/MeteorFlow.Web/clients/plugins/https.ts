@@ -11,10 +11,14 @@ export default defineNuxtPlugin(() => {
         const headers = options.headers ||= {}
         if (Array.isArray(headers)) {
           headers.push(['Authorization', `Bearer ${token.value}`])
+          // add Content-Type application/json
+          headers.push(['Content-Type', 'application/json'])
         } else if (headers instanceof Headers) {
           headers.set('Authorization', `Bearer ${token.value}`)
+          headers.set('Content-Type', 'application/json')
         } else {
           headers.Authorization = `Bearer ${token.value}`
+          headers['Content-Type'] = 'application/json'
         }
       }
     },

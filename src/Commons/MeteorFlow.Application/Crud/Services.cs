@@ -25,6 +25,10 @@ public class Services<TEntity, TKey>(IRepository<TEntity, TKey> repository) : IS
 
     public async Task<TEntity> AddOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
+        if (entity.Id.Equals(default))
+        {
+            return await AddAsync(entity, cancellationToken);
+        }
         var data = await GetByIdAsync(entity.Id, cancellationToken);
         if (data is null)
         {

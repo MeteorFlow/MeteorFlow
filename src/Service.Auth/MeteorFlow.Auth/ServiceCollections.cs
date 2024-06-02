@@ -54,7 +54,6 @@ public static class ServiceCollections
         
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<ICurrentUser, CurrentWebUser>();
-        services.AddScoped<ICurrentUser, AnonymousUser>();
 
         services
             .AddIdentityCore<User>(options =>

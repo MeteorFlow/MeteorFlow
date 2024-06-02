@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { FormBlock } from "~/models/Forms";
+import type { FormBlock, FormElement } from "~/models/Forms";
 import { useFormStore } from "~/stores/useFormStore";
 
 const store = useFormStore();
+const { actions, get } = store;
 const route = useRoute();
-const { state } = storeToRefs(store);
+const { state, formsBlocks } = storeToRefs(store);
 
 const id = computed(() => route.params.id as string);
 
@@ -15,21 +16,19 @@ const formDefinition = computed(
     ) ?? null
 );
 
-const formBlocks = computed(() => {
-  return state.value.formsBlocks[id.value] ?? [];
+
+onBeforeMount(async () => {
+  await actions.loadFormBlocks(id.value);
 });
+
 
 
 const onDrop = (event: DragEvent, destIndex: number | undefined) => {
   destIndex = destIndex || 0;
-  console.log(destIndex);
-  const target = event.target as HTMLDivElement;
-  target.classList.remove("dragOver");
-
   const { index } = JSON.parse(event.dataTransfer?.getData("value") || "");
 
   if (formDefinition) {
-    const newBlockList = formBlocks.value;
+    const newBlockList = formsBlocks.value[id.value];
     const element = newBlockList[index];
 
     newBlockList.splice(index, 1);
@@ -38,13 +37,18 @@ const onDrop = (event: DragEvent, destIndex: number | undefined) => {
       0,
       element
     );
-    state.value.formsBlocks[id.value] = newBlockList; // update from store
+    formsBlocks.value[id.value] = newBlockList; // update from store
   }
 };
 
-const addNewBlock = () => {
-  // const newBlock: FormBlock = {};
-  // state.value.formsBlocks[id.value] = [...formBlocks.value, newBlock];
+const addNewBlock = (value: FormElement) => {
+  state.value.seletedVersionId = id.value;
+  const block = get.defaultBlock(value);
+
+  if (!block) {
+    return;
+  }
+  actions.addBlock(block);
 };
 
 const submitFormDefinition = async () => {
@@ -66,30 +70,29 @@ const submitFormDefinition = async () => {
       </div>
       <UDivider />
 
-      <div class="flex flex-col gap-0">
-        <div v-for="(block, index) in formBlocks" :key="block.id">
-          <CoreDropItem
-            @drop="(event) => onDrop(event as DragEvent, index)"
-            class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
-          >
-            <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
-            <span>Drop here</span>
-          </CoreDropItem>
-          <CoreDragItem
-            :transferData="{ id: block.id, index }"
-            class="border-2 border-transparent p-1 hover:border-2 hover:border-primary"
-          >
-            <CoreFormBlockRenderer mode="editing" :block="block" />
-          </CoreDragItem>
+      <div class="grid grid-cols-3 h-full overflow-hidden gap-4">
+        <div class="flex-shrink-0 overflow-auto">
+          <FormLeftPanel @click:add="addNewBlock" />
         </div>
-        <div class="pl-2 pt-4">
-          <UButton
-            icon="i-heroicons-plus"
-            class="dark:text-white bg-primary hover:bg-transparent"
-            @click="addNewBlock"
-          >
-            Add Block
-          </UButton>
+        <div class="flex flex-col overflow-auto max-h-full">
+          <div v-for="(block, index) in formsBlocks[id]" :key="block.id">
+            <CoreDropItem
+              @drop="(event) => onDrop(event as DragEvent, index)"
+              class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
+            >
+              <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
+              <span>Drop here</span>
+            </CoreDropItem>
+            <CoreDragItem
+              :transferData="{ id: block.id, index }"
+              class="border-2 border-transparent p-1 hover:border-2 hover:border-primary"
+            >
+              <CoreFormBlockRenderer mode="editing" :block="block" />
+            </CoreDragItem>
+          </div>
+        </div>
+        <div class="flex-shrink-0 overflow-auto">
+          <FormRightPanel  />
         </div>
       </div>
     </NuxtLayout>
