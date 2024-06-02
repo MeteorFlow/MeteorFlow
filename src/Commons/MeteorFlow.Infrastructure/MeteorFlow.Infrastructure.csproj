@@ -4,6 +4,13 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>MeteorFlow.Infrastructure</RootNamespace>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>MeteorFlow.Fx</Title>
+        <Description>MeteorFlow is a cloud-based platform designed to streamline your work with weather data. This package includes necessary Infrastructures to develop extensions for MeteorFlow</Description>
+        <Copyright>MIT License</Copyright>
+        <PackageIcon>icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/MeteorFlow/MeteorFlow</RepositoryUrl>
+        <PackageTags>0.6.1</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
@@ -39,6 +46,13 @@
     <ItemGroup>
       <Folder Include="Caching\" />
       <Folder Include="MessageBroker\Kafka\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="icon.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
     </ItemGroup>
 
 

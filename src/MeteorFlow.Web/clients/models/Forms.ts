@@ -8,18 +8,20 @@
 // }
 
 export interface FormBlock {
-  id: string;
+  id?: string;
   name: string;
-  element: FormElementType;
+  element: FormElement;
   displayName: string;
-  extraConfig?: {[k: string]: any};
+  extraConfig?: { [k: string]: any };
+  schema: ElementSchema;
+  versionId: string;
 }
 
-export interface FormElementType {
-  displayName: string;
+export interface FormElement {
+  name: string;
   description: string;
-  icon: string;
-  schema: ElementSchema;
+  icon?: string;
+  renderer: string;
 }
 
 export interface ElementSchema {
@@ -30,9 +32,7 @@ export interface ElementSchema {
   autocomplete: boolean;
 }
 
-
-
-enum InputType {
+export enum InputType {
   Undefined = 0,
   Static,
   Text,

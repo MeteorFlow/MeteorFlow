@@ -52,13 +52,16 @@ public class DefinitionController(
     public async Task<ActionResult<AppDefinitions>> Post([FromBody] AppDefinitions model)
     {
         logger.LogInformation("Adding setting with id: {id}", model.Id);
+
+        // model.TenantId = HttpContext.
+
         var setting =
             await commandDispatcher.Dispatch<AddUpdateDefinitionCommand, Core.Entities.AppDefinitions>(
                 new AddUpdateDefinitionCommand(mapper.Map<Core.Entities.AppDefinitions>(model)));
         return Created($"/api/setting/{model.Id}", mapper.Map<AppDefinitions>(setting));
     }
 
-    [Authorize(AuthorizationPolicyNames.DeleteSettingPolicy)]
+    // [Authorize(AuthorizationPolicyNames.DeleteSettingPolicy)]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

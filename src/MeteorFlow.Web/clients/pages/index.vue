@@ -112,11 +112,12 @@ const heroBackground = img("/particles.png");
           <p class="mt-4 text-gray-400">
             Join the MeteorFlow community and start your journey today.
           </p>
-          <button
-            class="mt-8 px-8 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
+          <UButton
+            class="mt-8 px-8 py-3 bg-primary dark:text-white rounded-lg shadow hover:bg-transparent"
+            @click="() => navigateTo('/signup')"
           >
             Get Started
-          </button>
+          </UButton>
         </div>
       </div>
     </NuxtLayout>

@@ -16,7 +16,7 @@ public class ElementController(
     IMapper mapper
 ) : ControllerBase
 {
-    [Authorize(AuthorizationPolicyNames.GetFormsPolicy)]
+    // [Authorize(AuthorizationPolicyNames.GetFormsPolicy)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FormElement>>> Get()
     {

@@ -27,6 +27,7 @@ public static class CoreServicesCollection
         services.AddQueryHandlers(Assembly.GetExecutingAssembly());
         
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        // services.AddScoped<ICurrentUser, AnonymousUser>();
         services.AddScoped<ICurrentUser, CurrentWebUser>();
 
         services.AddCrudService();

@@ -19,4 +19,5 @@ public class FormBlock: JsonBase<Guid>, IObject
     // Others
     public string Description { get; set; }
     public Icon Icon { get; set; }
+    public Guid VersionId { get; set; }
 }

@@ -9,5 +9,4 @@ public class FormElement: JsonBase<Guid>
     public string Description { get; set; }
     public string Category { get; set; }
     public string Icon { get; set; }
-    public ElementSchema Schema { get; set; }
 }

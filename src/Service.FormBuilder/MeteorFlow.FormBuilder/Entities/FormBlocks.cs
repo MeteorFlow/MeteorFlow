@@ -8,11 +8,12 @@ public class FormBlocks: Entity<Guid>
 {
     [ForeignKey(nameof(Element))]
     public Guid ElementId { get; set; }
-    public FormElements Element { get; set; }
+
+    public virtual FormElements Element { get; set; }
     
     [ForeignKey(nameof(Schema))]
     public Guid SchemaId { get; set; }
-    public ElementSchemas Schema { get; set; }
+    public virtual ElementSchemas Schema { get; set; }
     public int Order { get; set; }
     
     // Display

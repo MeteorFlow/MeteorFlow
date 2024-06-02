@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using MeteorFlow.Domain.Commons;
 using MeteorFlow.Fx.Entities;
 
 namespace MeteorFlow.FormBuilder.Entities;

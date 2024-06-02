@@ -1,36 +1,34 @@
 <script setup lang="ts">
+import type { FormBlock, FormElement } from "~/models/Forms";
 import { useFormStore } from "~/stores/useFormStore";
 
 const store = useFormStore();
+const { actions, get } = store;
 const route = useRoute();
-const actions = store.actions;
-const { formDefinition, errorMsg, selectedFormBlocks: formBlocks } = storeToRefs(store);
+const { state, formsBlocks } = storeToRefs(store);
 
-if (errorMsg.value) {
-  console.error(errorMsg.value);
-}
-actions.setSelectedVersionId(route.params.id as string);
-console.log(formBlocks.value, formDefinition.value);
+const id = computed(() => route.params.id as string);
 
-const onDragOver = (event: DragEvent) => {
-  const target = event.target as HTMLDivElement;
-  target.classList.add("dragOver");
-};
-const onDragLeave = (event: DragEvent) => {
-  event.preventDefault();
-  const target = event.target as HTMLDivElement;
-  target.classList.remove("dragOver");
-};
+const formDefinition = computed(
+  () =>
+    state.value.formDefinitions.find(
+      (form) => form.latestVersionId === id.value
+    ) ?? null
+);
+
+
+onBeforeMount(async () => {
+  await actions.loadFormBlocks(id.value);
+});
+
+
+
 const onDrop = (event: DragEvent, destIndex: number | undefined) => {
   destIndex = destIndex || 0;
-  console.log(destIndex);
-  const target = event.target as HTMLDivElement;
-  target.classList.remove("dragOver");
-
   const { index } = JSON.parse(event.dataTransfer?.getData("value") || "");
 
   if (formDefinition) {
-    const newBlockList = formBlocks.value;
+    const newBlockList = formsBlocks.value[id.value];
     const element = newBlockList[index];
 
     newBlockList.splice(index, 1);
@@ -39,9 +37,18 @@ const onDrop = (event: DragEvent, destIndex: number | undefined) => {
       0,
       element
     );
-
-    // formDefinition.value.formBlocks = newBlockList;
+    formsBlocks.value[id.value] = newBlockList; // update from store
   }
+};
+
+const addNewBlock = (value: FormElement) => {
+  state.value.seletedVersionId = id.value;
+  const block = get.defaultBlock(value);
+
+  if (!block) {
+    return;
+  }
+  actions.addBlock(block);
 };
 
 const submitFormDefinition = async () => {
@@ -53,49 +60,40 @@ const submitFormDefinition = async () => {
   <div>
     <NuxtLayout name="default">
       <div class="flex justify-between">
-        <h1 class="text-2xl">Form Definition Details</h1>
-        <UButton icon="i-heroicons-clipboard" @click="submitFormDefinition"
+        <h1 class="text-2xl">Editing {{ formDefinition?.name }}</h1>
+        <UButton
+          icon="i-heroicons-clipboard"
+          class="dark:text-white bg-primary hover:bg-transparent"
+          @click="submitFormDefinition"
           >Save</UButton
         >
       </div>
       <UDivider />
-      <div>
-        <h2 class="text-xl">
-          {{ formDefinition?.name }}
-        </h2>
-      </div>
 
-      <div class="flex flex-col gap-0">
-        <div v-for="(block, index) in formBlocks" :key="block.id">
-          <DragdropDroppableItem
-            :onDragOver="onDragOver"
-            :onDragLeave="onDragLeave"
-            :onDrop="(event) => onDrop(event as DragEvent, index)"
-            class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
-          >
-            <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
-            Drop here
-          </DragdropDroppableItem>
-
-          <DragdropDraggableItem
-            :transferData="{ id: block.id, index: index }"
-            :onDragStart="(event: DragEvent) => (event.target as HTMLDivElement).classList.add('itemDragged')"
-            :onDragEnd="(event: DragEvent) => (event.target as HTMLDivElement).classList.remove('itemDragged')"
-            class="border-2 border-transparent p-1 hover:border-2 hover:border-green-500"
-          >
-            <CoreFormBlockRenderer mode="editing" :block="block" />
-          </DragdropDraggableItem>
+      <div class="grid grid-cols-3 h-full overflow-hidden gap-4">
+        <div class="flex-shrink-0 overflow-auto">
+          <FormLeftPanel @click:add="addNewBlock" />
         </div>
-
-        <DragdropDroppableItem
-          :onDragOver="onDragOver"
-          :onDragLeave="onDragLeave"
-          :onDrop="(event) => {onDrop(event as DragEvent, formBlocks.length)}"
-          class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
-        >
-          <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
-          Drop here
-        </DragdropDroppableItem>
+        <div class="flex flex-col overflow-auto max-h-full">
+          <div v-for="(block, index) in formsBlocks[id]" :key="block.id">
+            <CoreDropItem
+              @drop="(event) => onDrop(event as DragEvent, index)"
+              class="border-2 my-px rounded border-dashed opacity-0 flex-shrink-0 flex items-center justify-center"
+            >
+              <UIcon name="i-heroicons-plus" class="h-5 w-5"></UIcon>
+              <span>Drop here</span>
+            </CoreDropItem>
+            <CoreDragItem
+              :transferData="{ id: block.id, index }"
+              class="border-2 border-transparent p-1 hover:border-2 hover:border-primary"
+            >
+              <CoreFormBlockRenderer mode="editing" :block="block" />
+            </CoreDragItem>
+          </div>
+        </div>
+        <div class="flex-shrink-0 overflow-auto">
+          <FormRightPanel  />
+        </div>
       </div>
     </NuxtLayout>
   </div>

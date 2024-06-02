@@ -29,6 +29,11 @@ public class Services<TEntity, TKey>(IRepository<TEntity, TKey> repository) : IS
         {
             return await AddAsync(entity, cancellationToken);
         }
+        var data = await GetByIdAsync(entity.Id, cancellationToken);
+        if (data is null)
+        {
+            return await AddAsync(entity, cancellationToken);
+        }
 
         return await UpdateAsync(entity, cancellationToken);
     }
