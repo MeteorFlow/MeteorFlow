@@ -61,7 +61,7 @@ public class DefinitionController(
         return Created($"/api/setting/{model.Id}", mapper.Map<AppDefinitions>(setting));
     }
 
-    // [Authorize(AuthorizationPolicyNames.DeleteSettingPolicy)]
+    [Authorize(AuthorizationPolicyNames.DeleteSettingPolicy)]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -73,6 +73,6 @@ public class DefinitionController(
                 { Id = id, ThrowNotFoundIfNull = true });
         await commandDispatcher.Dispatch<DeleteDefinitionCommand, Core.Entities.AppDefinitions>(
             new DeleteDefinitionCommand(setting));
-        return Ok();
+        return Ok("deleted");
     }
 }

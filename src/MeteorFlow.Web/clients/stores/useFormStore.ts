@@ -97,14 +97,13 @@ export const useFormStore = defineStore("form", () => {
         return null;
       }
 
-      if (formsBlocks.value[data.value.versionId]) {
-        console.log("daf", {...data.value})
-        formsBlocks.value[data.value.versionId].push({...data.value});
+      if (formsBlocks.value[block.versionId]) {
+        formsBlocks.value[block.versionId].push({...data.value});
       }
 
-      console.log("data.value", formsBlocks.value[data.value.versionId][formsBlocks.value[data.value.versionId].length - 1]);
+      console.log("data.value", formsBlocks.value[block.versionId][formsBlocks.value[block.versionId].length - 1]);
 
-      return formsBlocks.value[data.value.versionId];
+      return formsBlocks.value[block.versionId];
     },
     deleteForm: async (id: string) => {
       const { error } = await useHttps(`/core/definition/${id}`, {
@@ -116,9 +115,12 @@ export const useFormStore = defineStore("form", () => {
         return null;
       }
 
-      state.formDefinitions = state.formDefinitions.filter(
-        (form) => form.id !== id
+      state.formDefinitions.splice(
+        state.formDefinitions.findIndex((form) => form.id === id),
+        1
       );
+
+      return state.formDefinitions;
     },
   };
 
@@ -155,15 +157,6 @@ export const useFormStore = defineStore("form", () => {
   onBeforeMount(async () => {
     await actions.loadForms();
   });
-
-  watch(
-    () => state.seletedVersionId,
-    async () => {
-      if (state.seletedVersionId)
-        await actions.loadFormBlocks(state.seletedVersionId);
-    },
-    { immediate: true }
-  );
 
   return {
     state,

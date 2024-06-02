@@ -87,7 +87,7 @@ const submitFormDefinition = async () => {
               :transferData="{ id: block.id, index }"
               class="border-2 border-transparent p-1 hover:border-2 hover:border-primary"
             >
-              <CoreFormBlockRenderer mode="editing" :block="block" />
+              <CoreFormBlockRenderer v-show="block.element" mode="editing" :block="block" />
             </CoreDragItem>
           </div>
         </div>
