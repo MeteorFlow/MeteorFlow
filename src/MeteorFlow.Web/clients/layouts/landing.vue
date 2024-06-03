@@ -19,7 +19,7 @@ const links = [
     },
     {
       label: "API",
-      to: "/api",
+      to: "/dashboard",
     },
     {
       label: "Docs",

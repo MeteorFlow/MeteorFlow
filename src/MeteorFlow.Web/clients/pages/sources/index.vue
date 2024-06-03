@@ -1,18 +1,24 @@
-<script setup lang="ts">
-import { ref } from "vue";
 
-const content = ref("");
+<script setup>
+import { ref } from 'vue';
 
-watch(content, () => {
-  console.log("Content", content.value);
-});
+const treeStructure = ref([
+  {
+    label: 'Root',
+    isOpen: true,
+    children: [
+      { label: 'Child 1', children: [{ label: 'Grandchild 1' }] },
+      { label: 'Child 2' }
+    ],
+  },
+]);
 </script>
+
 
 <template>
   <div>
     <NuxtLayout name="default">
-      <RtfEditor v-model="content" />
-      {{ content }}
+      <TreeView :tree-data="treeStructure" />
     </NuxtLayout>
   </div>
 </template>

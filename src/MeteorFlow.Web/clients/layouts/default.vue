@@ -19,9 +19,9 @@ const links = [
     exact: false
   },
   {
-    label: "API",
-    icon: "i-heroicons-code-bracket",
-    to: "/api",
+    label: "Email",
+    icon: "i-fa6-solid-envelope",
+    to: "/email",
   },
   {
     label: "Integration",
@@ -32,11 +32,6 @@ const links = [
     label: "Extensions",
     icon: "i-fa6-solid-puzzle-piece",
     to: "/extensions",
-  },
-  {
-    label: "Settings",
-    icon: "i-fa6-solid-gear",
-    to: "/settings",
   },
   {
     label: "Sources",

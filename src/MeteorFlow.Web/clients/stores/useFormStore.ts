@@ -101,8 +101,6 @@ export const useFormStore = defineStore("form", () => {
         formsBlocks.value[block.versionId].push({...data.value});
       }
 
-      console.log("data.value", formsBlocks.value[block.versionId][formsBlocks.value[block.versionId].length - 1]);
-
       return formsBlocks.value[block.versionId];
     },
     deleteForm: async (id: string) => {
