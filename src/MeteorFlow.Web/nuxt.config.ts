@@ -15,7 +15,7 @@ export default defineNuxtConfig({
       apiUrl: process.env.NODE_ENV === 'production' 
         ? 'https://api.meteor-flow.com' // Your .NET Core API base URL
         : 'https://localhost:7044',
-      airflow: 'http://your-airflow-url/api/v1',
+      airflow: 'http://etl.meteor-flow.com/api/v1',
     }
   },
   experimental: {
