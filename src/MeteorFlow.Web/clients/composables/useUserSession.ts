@@ -1,14 +1,15 @@
 import { ref, computed } from 'vue';
 import type { User } from '~/models/User';
+import {jwtDecode} from 'jwt-decode';
 
 const token = ref<string | null>(null);
-const user = ref<User| null>(null);
+const user = ref<User | null>(null);
 
 export function useUserSession() {
   const setSession = (jwtToken: string, userInfo: User) => {
     token.value = jwtToken;
     user.value = userInfo;
-    if (process.browser){
+    if (process.browser) {
       localStorage.setItem('authToken', jwtToken);
       localStorage.setItem('user', JSON.stringify(userInfo));
     }
@@ -17,7 +18,7 @@ export function useUserSession() {
   const clearSession = () => {
     token.value = null;
     user.value = null;
-    if (process.browser){
+    if (process.browser) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
     }
@@ -33,12 +34,23 @@ export function useUserSession() {
     }
   };
 
+  const isTokenValid = () => {
+    if (!token.value) return false;
+    try {
+      const decodedToken = jwtDecode<{ exp: number }>(token.value);
+      return decodedToken.exp * 1000 > Date.now();
+    } catch (e) {
+      return false;
+    }
+  };
+
   loadSession();
 
   return {
     token: computed(() => token.value),
     user: computed(() => user.value),
     setSession,
-    clearSession
+    clearSession,
+    isTokenValid
   };
 }

@@ -3,7 +3,7 @@
     <div :class="ui.base">
       <div v-if="icon" :class="icon" class="text-3xl"></div>
       <h2 class="text-xl font-semibold">{{ title }}</h2>
-      
+
       <slot name="description"></slot>
 
       <div v-for="(field, index) in fields" :key="index" class="pt-4 w-full">
@@ -23,16 +23,19 @@
           :options="field.options"
         />
       </div>
-      
+
       <div v-if="$slots['password-hint']" class="block pt-4">
         <slot name="password-hint"></slot>
       </div>
-      
-      <button :type="submitButton.type" :class="submitButtonClass">
-        <span>{{ submitButtonText }}</span>
-        <i :class="submitButton.trailingIcon"></i>
-      </button>
-      
+
+      <UButton
+        :type="submitButton.type"
+        :class="submitButtonClass"
+        :label="submitButtonText"
+        :icon="submitButton.trailingIcon"
+        trailing
+      />
+
       <div v-if="providers && providers.length" class="w-full">
         <div class="relative flex py-4 items-center">
           <div class="flex-grow border-t border-gray-500"></div>
@@ -40,10 +43,17 @@
           <div class="flex-grow border-t border-gray-500"></div>
         </div>
         <div class="flex flex-col gap-2">
-          <button v-for="(provider, index) in providers" :key="index" @click="provider.onClick" :class="providerButtonClass">
-            <i :class="provider.icon" class="mr-2"></i>
-            {{ provider.label }}
-          </button>
+          <UButton
+            v-for="(provider, index) in providers"
+            :key="index"
+            @click="provider.onClick"
+            :loading="provider.loading"
+            :class="providerButtonClass"
+            :icon="provider.icon"
+            :label="provider.label"
+            :color="provider.color"
+            trailing
+          />
         </div>
       </div>
 
@@ -55,7 +65,7 @@
 </template>
 
 <script setup>
-import TextField from './core/TextField.vue';
+import TextField from "./core/TextField.vue";
 
 const props = defineProps({
   fields: {
@@ -78,7 +88,7 @@ const props = defineProps({
   align: {
     type: String,
     required: false,
-    default: 'top',
+    default: "top",
   },
   icon: {
     type: String,
@@ -88,52 +98,57 @@ const props = defineProps({
     type: Object,
     required: false,
     default: () => ({
-      base: '',
-      footer: '',
+      base: "",
+      footer: "",
     }),
   },
   submitButton: {
     type: Object,
     required: false,
     default: () => ({
-      type: 'submit',
-      class: '',
-      trailingIcon: '',
+      type: "submit",
+      class: "",
+      trailingIcon: "",
     }),
   },
 });
 
-const emit = defineEmits(['submit']);
+const emit = defineEmits(["submit"]);
 
 const formData = reactive(
   props.fields.reduce((acc, field) => {
-    acc[field.name] = field.value || '';
+    acc[field.name] = field.value || "";
     return acc;
   }, {})
 );
 
-const submitButtonText = computed(() => props.submitButton.text || 'Continue');
+const submitButtonText = computed(() => props.submitButton.text || "Continue");
 
-const submitButtonClass = computed(() => props.submitButton.class || 'bg-primary text-white py-2 px-4 rounded flex items-center justify-center mt-4 w-full');
+const submitButtonClass = computed(
+  () =>
+    props.submitButton.class ||
+    "bg-primary text-white py-2 px-4 rounded flex items-center justify-center mt-4 w-full"
+);
 
 const handleSubmit = () => {
   if (props.validate(formData)) {
-    emit('submit', formData);
+    emit("submit", formData);
   }
 };
 
 const formClass = computed(() => {
   switch (props.align) {
-    case 'top':
-      return 'flex flex-col items-center';
-    case 'center':
-      return 'flex flex-col items-center justify-center h-full';
+    case "top":
+      return "flex flex-col items-center";
+    case "center":
+      return "flex flex-col items-center justify-center h-full";
     default:
-      return 'flex flex-col items-center';
+      return "flex flex-col items-center";
   }
 });
 
-const providerButtonClass = 'flex items-center justify-center bg-gray-100 text-black py-2 px-4 rounded w-full';
+const providerButtonClass =
+  "flex items-center justify-center bg-gray-100 text-black py-2 px-4 rounded w-full";
 </script>
 
 <style scoped>

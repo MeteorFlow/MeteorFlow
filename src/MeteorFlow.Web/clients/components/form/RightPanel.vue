@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import type { Definition } from '~/models/Definition';
+
+
+defineProps<{
+  definition?: Definition
+}>();
 
 const formName = ref("MyForm");
-const previewWidth = ref(432);
-const isFullWidth = ref(false);
-const isNesting = ref(false);
 const liveValidation = ref("Default");
 const size = ref("Default");
 const columns = ref("Default");
@@ -30,18 +32,7 @@ const floatPlaceholdersOptions = ["Default", "On", "Off"];
         placeholder="Enter form name"
       />
 
-      <div class="mb-2 flex items-center">
-        <CoreSwitch
-          v-model="isNesting"
-          icon="i-heroicons-check"
-          title="Nesting"
-        />
-      </div>
-    </div>
 
-    <!-- Submission Section -->
-    <div>
-      <h2 class="text-lg font-bold mb-2">Submission</h2>
     </div>
 
     <!-- Validation Section -->
@@ -52,19 +43,6 @@ const floatPlaceholdersOptions = ["Default", "On", "Off"];
         :items="liveValidationOptions"
         v-model="liveValidation"
       />
-    </div>
-
-    <!-- Layout Section -->
-    <div>
-      <h2 class="text-lg font-bold mb-2">Layout</h2>
-      <CoreSelect title="Size" :items="sizeOptions" v-model="size" />
-      <CoreSelect title="Columns" :items="columnsOptions" v-model="columns" />
-      <div class="flex items-center mb-2">
-        <label for="default-column-widths" class="block text-sm flex-grow"
-          >Default column widths</label
-        >
-        <CoreSwitch v-model="defaultColumnWidths" icon="i-heroicons-check" />
-      </div>
     </div>
 
     <!-- Additional Options -->

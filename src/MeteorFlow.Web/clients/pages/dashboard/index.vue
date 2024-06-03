@@ -1,27 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useFetch } from '#app';
+definePageMeta({
+  middleware: process.client ? 'auth' : undefined
+  // or middleware: 'auth'
+})
+
 import type { TableColumn } from "~/models";
 import type { DAG, DAGRun, Metrics } from '~/models/airflow';
 
-const InfraSettings = [
-  {
-    title: "Region",
-    val: "Asia Pacific (Singapore)",
-  },
-  {
-    title: "Default compute size",
-    val: "0.25 CU",
-  },
-  {
-    title: "History retention",
-    val: "7 days",
-  },
-  {
-    title: "Postgres version",
-    val: "15",
-  },
-];
 
 const headers = [
   {

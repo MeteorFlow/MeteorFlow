@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: process.client ? 'auth' : undefined
+  // or middleware: 'auth'
+})
 
 const isOpen = ref(false)
 

@@ -56,7 +56,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+definePageMeta({
+  middleware: process.client ? 'auth' : undefined
+  // or middleware: 'auth'
+})
 
 const form = ref({
   recipient: '',

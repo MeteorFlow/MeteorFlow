@@ -1,6 +1,12 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: process.client ? 'auth' : undefined
+  // or middleware: 'auth'
+})
+
 import { DefinitionTypes, type Definition } from "~/models/Definition";
 import { useFormStore } from "~/stores/useFormStore";
+
 
 const deletingTemplateId = ref<string | null>(null);
 const isOpeningDeleteModal = ref(false);

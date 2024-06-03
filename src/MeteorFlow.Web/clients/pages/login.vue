@@ -7,7 +7,6 @@ useSeoMeta({
   title: "Login",
 });
 
-console.log(session.token.value);
 
 
 const fields = [
@@ -53,6 +52,8 @@ async function onSubmit(data: any) {
   if (!error.value) {
     // Handle successful login
     session.setSession(response.value, { userName: data.name });
+    console.log('Login successful');
+    navigateTo('/dashboard');
   } else {
     // Handle login error
     console.error('Login failed');
@@ -87,6 +88,7 @@ async function handleGitHubAuth() {
         :providers="providers"
         title="Welcome back"
         icon="i-heroicons-lock-closed"
+      
         :ui="{ base: 'text-center', footer: 'text-center' }"
         :submit-button="{ trailingIcon: 'i-heroicons-arrow-right-20-solid' }"
         @submit="onSubmit"

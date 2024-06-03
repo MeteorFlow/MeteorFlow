@@ -1,6 +1,10 @@
 
 <script setup>
-import { ref } from 'vue';
+definePageMeta({
+  middleware: process.client ? 'auth' : undefined
+  // or middleware: 'auth'
+})
+
 
 const treeStructure = ref([
   {

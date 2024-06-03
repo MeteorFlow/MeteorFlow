@@ -1,12 +1,12 @@
-const API_URL = 'http://your-airflow-url/api/v1';
+const config = useRuntimeConfig();
 
 const airflowService = {
   async getDAGs() {
-    return await $fetch(`${API_URL}/dags`);
+    return await $fetch(`${config.public.airflow}/dags`);
   },
 
   async getDAGRuns(dagId: string) {
-    return await $fetch(`${API_URL}/dags/${dagId}/dagRuns`);
+    return await $fetch(`${config.public.airflow}/dags/${dagId}/dagRuns`);
   },
 };
 

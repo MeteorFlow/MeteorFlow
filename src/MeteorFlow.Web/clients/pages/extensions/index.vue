@@ -1,4 +1,9 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: process.client ? 'auth' : undefined
+  // or middleware: 'auth'
+})
+
 import type { ValidateFunction, Validation } from '~/models';
 
 const people = [

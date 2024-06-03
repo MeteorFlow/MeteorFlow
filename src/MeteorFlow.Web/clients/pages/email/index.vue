@@ -17,7 +17,10 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+definePageMeta({
+  middleware: process.client ? 'auth' : undefined
+  // or middleware: 'auth'
+})
 
 const templates = ref([
   { id: 1, title: "Welcome Email", content: "Hello, welcome to our service!" },
