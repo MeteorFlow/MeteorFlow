@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmit" :class="formClass">
+  <div :class="formClass">
     <div :class="ui.base">
       <div v-if="icon" :class="icon" class="text-3xl"></div>
       <h2 class="text-xl font-semibold">{{ title }}</h2>
@@ -34,6 +34,7 @@
         :label="submitButtonText"
         :icon="submitButton.trailingIcon"
         trailing
+        @click="handleSubmit"
       />
 
       <div v-if="providers && providers.length" class="w-full">
@@ -61,7 +62,7 @@
         <slot name="footer"></slot>
       </div>
     </div>
-  </form>
+  </div>
 </template>
 
 <script setup>

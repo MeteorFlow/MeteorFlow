@@ -23,7 +23,7 @@ const links = [
     },
     {
       label: "Source",
-      to: "/source",
+      to: "/sources",
     },
   ],
   [

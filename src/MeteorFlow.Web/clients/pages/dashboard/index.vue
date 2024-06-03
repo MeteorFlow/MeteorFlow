@@ -32,18 +32,18 @@ const data = {
 }
 
 // Fetch DAGs
-const { data: dags } = await useFetch<DAG[]>('/api/airflow', {
+const { data: dags } = await useLazyFetch<DAG[]>('/api/airflow', {
   params: { endpoint: 'getDAGs' }
 });
 
 // Fetch DAG Runs
 const dagId = dags.value?.[0]?.dag_id;
-const { data: dagRuns } = await useFetch<DAGRun[]>('/api/airflow', {
+const { data: dagRuns } = await useLazyFetch<DAGRun[]>('/api/airflow', {
   params: { endpoint: 'getDAGRuns', dagId }
 });
 
 // Fetch Metrics
-const { data: metrics } = await useFetch<Metrics>('/api/airflow', {
+const { data: metrics } = await useLazyFetch<Metrics>('/api/airflow', {
   params: { endpoint: 'getMetrics' }
 });
 
