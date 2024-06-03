@@ -17,7 +17,7 @@
           :rules="field.rules"
           :size="field.size"
           :filled="field.filled"
-          :variant="field.variant"
+          :variant="field.type"
           :icon="field.icon"
           :placeholder="field.placeholder"
           :options="field.options"

@@ -30,7 +30,6 @@ public class AuthController(
         return Challenge(new AuthenticationProperties { RedirectUri = returnUrl }, "GitHub");   
     }
     [HttpPost]
-    [AllowAnonymous]
     [Route("Login")]
     public async Task<IActionResult> Login(LoginInfo info)
     {

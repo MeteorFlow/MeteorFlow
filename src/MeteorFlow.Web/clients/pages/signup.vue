@@ -5,7 +5,7 @@ useSeoMeta({
 
 const fields = [
   {
-    name: "name",
+    name: "userName",
     type: "text",
     label: "Name",
     placeholder: "Enter your name",
@@ -15,6 +15,12 @@ const fields = [
     type: "text",
     label: "Email",
     placeholder: "Enter your email",
+  },
+  {
+    name: "phoneNumber",
+    type: "text",
+    label: "Phone Number",
+    placeholder: "Enter your phone number",
   },
   {
     name: "password",
@@ -44,8 +50,21 @@ const providers = [
   },
 ];
 
-function onSubmit(data: any) {
-  console.log("Submitted", data);
+async function onSubmit(data: any) {
+  const { data: response, error } = await useHttps<string>('/auth/register', {
+    method: 'POST',
+    body: data,
+    default: () => "",
+  });
+
+  if (!error.value) {
+    // Handle successful login
+    console.log('successful');
+    navigateTo('/dashboard');
+  } else {
+    // Handle login error
+    console.error('failed');
+  }
 }
 </script>
 

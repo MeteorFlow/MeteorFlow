@@ -13,8 +13,8 @@ const fields = [
   {
     name: "name",
     type: "text",
-    label: "Email",
-    placeholder: "Enter your email",
+    label: "User Name",
+    placeholder: "Enter your user name",
   },
   {
     name: "password",

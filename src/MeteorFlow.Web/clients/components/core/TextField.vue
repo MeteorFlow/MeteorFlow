@@ -46,7 +46,7 @@ switch (props.variant) {
   case "password":
     state.value.placeholder = "********";
     state.value.icon = "i-heroicons-lock-closed-20-solid";
-    validator.apply(validator.createRules().password());
+    // validator.apply(validator.createRules().password());
     break
   default:
     state.value.placeholder = props.placeholder;
@@ -77,6 +77,7 @@ watch(modelValue, async () => {
       :trailing="false"
       :placeholder="state.placeholder"
       :disabled="disabled"
+      :type="props.variant === 'password' ? 'password' : 'text'"
       :ui="{
         base: 'disabled:cursor-default'
       }"

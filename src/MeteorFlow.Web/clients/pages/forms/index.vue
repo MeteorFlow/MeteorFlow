@@ -16,7 +16,7 @@ const actions = store.actions;
 await actions.loadForms();
 await actions.loadElements();
 
-const { state, formsBlocks } = storeToRefs(store);
+const { state } = storeToRefs(store);
 
 const selectTemplate = (id?: string) => {
   deletingTemplateId.value = id ?? null;
