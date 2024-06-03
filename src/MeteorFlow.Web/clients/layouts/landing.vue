@@ -18,12 +18,12 @@ const links = [
       to: "/dashboard",
     },
     {
-      label: "API",
-      to: "/dashboard",
+      label: "Forms",
+      to: "/forms",
     },
     {
-      label: "Docs",
-      to: "/dashboard",
+      label: "Source",
+      to: "/source",
     },
   ],
   [

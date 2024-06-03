@@ -4,8 +4,9 @@ export function useHttps<T>(
   url: string | (() => string),
   options: Omit<UseFetchOptions<T>, "default"> & { default: () => T | Ref<T> }
 ) {
-  return useFetch(url, {
+  return useLazyFetch(url, {
     ...options,
+    server: false,
     $fetch: useNuxtApp().$https,
   });
 }

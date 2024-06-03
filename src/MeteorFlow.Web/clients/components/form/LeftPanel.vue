@@ -6,65 +6,10 @@ const emits = defineEmits<{
   (e: "click:add", value: FormElement): void;
 }>();
 
-const { data: formElements, error } = useHttps<FormElement[]>("/form/element", {
-  method: "GET",
-  default: () => [],
-});
+const props = defineProps<{
+  formElements: FormElement[];
+}>();
 
-if (error.value) {
-  console.error(error.value);
-}
-
-const els: FormElement[] = [
-  {
-    renderer: "text",
-    name: "Text input",
-    description: "Single line text input",
-  },
-  {
-    renderer: "location",
-    name: "Location",
-    description: "Google places location input",
-  },
-  {
-    renderer: "textarea",
-    name: "Textarea",
-    description: "Single line or multiline text area",
-  },
-  {
-    renderer: "wysiwyg",
-    name: "WYSIWYG editor",
-    description: "Rich text editor",
-  },
-  {
-    renderer: "checkbox",
-    name: "Checkbox",
-    description: "Plain checkbox input",
-  },
-  { renderer: "radio", name: "Radio", description: "Plain radio input" },
-  { renderer: "toggle", name: "Toggle", description: "Toggle / switch button" },
-  { renderer: "select", name: "Select", description: "Select input" },
-  {
-    renderer: "multiselect",
-    name: "Multiselect",
-    description: "Multiselect input",
-  },
-  { renderer: "tags", name: "Tags", description: "Tags input" },
-  { renderer: "date", name: "Date", description: "Datepicker input" },
-  {
-    renderer: "datetime",
-    name: "Datetime",
-    description: "Date & time picker input",
-  },
-  { renderer: "time", name: "Time", description: "Time picker input" },
-  {
-    renderer: "date-range",
-    name: "Date range",
-    description: "Date picker that allows date range",
-  },
-];
-
-// const formElements = ref(els);
 </script>
 
 <template>

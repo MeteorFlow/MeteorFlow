@@ -7,13 +7,16 @@ export const useFormStore = defineStore("form", () => {
     selectedFormBlocks: [] as FormBlock[],
     formDefinitions: [] as Definition[],
     errorMsg: null as string | null,
-    formElements: {} as Record<string, FormElement[]>,
+    formElements: [] as FormElement[],
+    loading: false,
+    loadingElement: false
   }));
 
   const formsBlocks = ref<Record<string, FormBlock[]>>({}) 
 
   const actions = {
     loadForms: async () => {
+      state.loading = true;
       const { data, error } = await useHttps<Definition[]>(
         `/core/definition/?type=1`,
         {
@@ -22,13 +25,15 @@ export const useFormStore = defineStore("form", () => {
         }
       );
 
+      state.loading = false;
+
       if (error.value) {
         state.errorMsg = error.value?.statusMessage ?? null;
         console.error(error.value);
         return null;
       }
 
-      state.formDefinitions = data.value.map(
+      const forms = data.value.map(
         (form) =>
           ({
             ...form,
@@ -36,10 +41,11 @@ export const useFormStore = defineStore("form", () => {
           } as Definition)
       );
 
-      for (const form of state.formDefinitions) {
+      for (const form of forms) {
         await actions.loadFormBlocks(form.latestVersionId);
       }
 
+      state.formDefinitions = forms;
       return data.value;
     },
     addForm: async (form: Definition) => {
@@ -120,6 +126,25 @@ export const useFormStore = defineStore("form", () => {
 
       return state.formDefinitions;
     },
+
+    loadElements: async () => {
+
+      const { data: formElements, error } = useHttps<FormElement[]>("/form/element", {
+        method: "GET",
+        default: () => [],
+      });
+
+
+      if (error.value) {
+        state.errorMsg = error.value?.statusMessage ?? null;
+        return null;
+      }
+
+      state.formElements = formElements.value;
+      console.log("Elements", formElements.value);
+
+      return formElements.value;
+    }
   };
 
   const getters = {
@@ -152,8 +177,9 @@ export const useFormStore = defineStore("form", () => {
     },
   };
 
-  onBeforeMount(async () => {
+  onMounted(async () => {
     await actions.loadForms();
+    await actions.loadElements();
   });
 
   return {
